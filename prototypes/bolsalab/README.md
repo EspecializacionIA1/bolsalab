@@ -31,6 +31,22 @@ Este es un **prototipo HTML inicial** para pruebas de usuarios y optimizaciones.
 - Chat con respuestas predefinidas (simula copiloto)
 - Animación de caída con toma de decisión y análisis de coherencia
 
+## Versiones disponibles
+
+### v1 - Prototipo inicial
+🔗 **[Ver v1 en vivo](https://moonlit-granita-8eec87.netlify.app/)**
+
+Versión base con todas las funcionalidades principales para pruebas iniciales.
+
+### v2 - Iteración con mejoras
+🔗 **[Ver v2 en vivo](https://roaring-faun-b76041.netlify.app/)**
+
+Segunda versión con optimizaciones basadas en feedback de usuarios.
+
+### Local
+
+También puedes abrir los archivos `v1/bolsalab-app.html` o `v2/bolsalab-app.html` directamente en tu navegador.
+
 ## Limitaciones conocidas (es un prototipo)
 
 - Copiloto con respuestas predefinidas, no usa IA real
