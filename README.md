@@ -2,7 +2,7 @@
 
 ## ¿Qué es esto?
 
-**BolsaLAB** es un prototipo educativo que construye un portafolio de inversión personalizado basado en tu perfil de riesgo real. Te muestra primero cuánto puedes perder antes de decirte cuánto puedes ganar.
+**BolsaLAB** es un proyecto que construye un portafolio de inversión personalizado basado en tu perfil de riesgo real. Te muestra primero cuánto puedes perder antes de decirte cuánto puedes ganar.
 
 ## ¿Qué hace diferente?
 
