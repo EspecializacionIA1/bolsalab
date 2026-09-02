@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BolsaLAB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#F2EDE3; --paper:#FAF7F0; --navy:#12283C; --navy-2:#1B3A55;
+  --gold:#B4881F; --gold-2:#C9A03A; --ink:#25303A; --muted:#6B7B88;
+  --line:#DED6C6; --red:#A63030; --red-bg:#F6E2DF; --green:#2E6B4F;
+  --green-bg:#DDE8DE; --purple:#5B45A8; --purple-bg:#EBE6F7; --silver:#8C9199;
+  --serif:"Source Serif 4",Georgia,serif;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--serif);color:var(--navy);margin:0;letter-spacing:-.01em}
+p{margin:0}
+button,input,select{font-family:inherit;font-size:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.app{max-width:940px;margin:0 auto;padding:0 22px}
+.screen{display:none;padding:34px 0 40px}
+.screen.on{display:block;animation:in .25s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ---------- Header ---------- */
+header{position:sticky;top:0;z-index:40;background:rgba(242,237,227,.95);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:none}
+header.on{display:block}
+header .app{display:flex;align-items:center;gap:22px;height:60px}
+.brand{font-family:var(--serif);font-weight:700;font-size:19px;color:var(--navy)}
+.brand i{font-style:normal;color:var(--gold)}
+.ver{font-family:var(--mono);font-size:11px;color:var(--muted);border:1px solid var(--line);
+  padding:2px 7px;border-radius:20px}
+nav.top{display:flex;gap:6px;margin-left:auto}
+nav.top button{background:none;border:none;color:var(--muted);font-size:14.5px;
+  font-weight:500;padding:8px 12px;border-radius:8px}
+nav.top button:hover{color:var(--navy)}
+nav.top button.on{background:var(--navy);color:#fff}
+.who{font-size:14px;color:var(--muted);margin-left:14px}
+@media (max-width:780px){nav.top,.who{display:none}}
+
+/* ---------- Login ---------- */
+.login{min-height:100vh;display:grid;place-items:center;padding:40px 22px}
+.login-box{max-width:520px;width:100%}
+.login h1{font-size:clamp(34px,7vw,52px);line-height:1.05}
+.login .lead{margin-top:18px;color:var(--navy-2);font-size:17.5px}
+.field{margin-top:26px}
+.field label{display:block;font-size:14.5px;font-weight:600;color:var(--navy);margin-bottom:7px}
+.field input{width:100%;padding:15px 17px;border:1px solid var(--line);border-radius:11px;
+  background:var(--paper);color:var(--ink)}
+.field input:focus{border-color:var(--gold);outline:none}
+.btn{border:none;border-radius:11px;padding:15px 26px;font-weight:600;font-size:15.5px;
+  background:var(--gold);color:#fff}
+.btn:hover{background:#9C7419}
+.btn.block{width:100%;margin-top:18px}
+.btn.ghost{background:transparent;color:var(--navy);border:1px solid var(--navy)}
+.btn.ghost:hover{background:var(--navy);color:#fff}
+.btn[disabled]{opacity:.4;cursor:default}
+.guia{margin-top:34px;background:var(--paper);border:1px solid var(--line);
+  border-radius:14px;padding:24px}
+.guia h3{font-size:17px}
+.guia ol{margin:14px 0 0;padding-left:0;list-style:none;counter-reset:t}
+.guia li{counter-increment:t;position:relative;padding:9px 0 9px 38px;font-size:14.8px;
+  border-top:1px dashed var(--line);color:var(--navy-2)}
+.guia li:first-child{border-top:none}
+.guia li::before{content:counter(t);position:absolute;left:0;top:9px;width:25px;height:25px;
+  border-radius:7px;background:var(--navy);color:#fff;font-family:var(--mono);font-size:12px;
+  display:grid;place-items:center}
+.legal{margin-top:22px;font-size:13px;color:var(--muted)}
+
+/* ---------- Comunes ---------- */
+.h-title{font-size:clamp(26px,4.4vw,38px);line-height:1.12}
+.h-sub{margin-top:12px;color:var(--navy-2);font-size:16.5px;max-width:60ch}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px;margin-top:20px}
+.card h3{font-size:19px}
+.card .note{color:var(--muted);font-size:14.5px;margin-top:5px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
+@media (max-width:740px){.grid2{grid-template-columns:1fr}.card{padding:22px 18px}}
+.row-end{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+
+/* ---------- Inicio ---------- */
+.hello{display:flex;align-items:center;gap:16px}
+.avatar{width:52px;height:52px;border-radius:50%;background:var(--navy);color:#fff;
+  display:grid;place-items:center;font-family:var(--serif);font-size:22px;flex:none}
+.state{margin-top:22px;background:var(--navy);border-radius:16px;padding:26px;color:#DCE5EC}
+.state h3{color:#fff;font-size:21px}
+.state p{margin-top:8px;font-size:15.5px;color:#B7C7D4}
+.state .btn{margin-top:18px}
+.mkt{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px dashed var(--line);
+  font-size:15px}
+.mkt:last-child{border-bottom:none}
+.mkt b{font-family:var(--mono);font-weight:500}
+.up{color:var(--green);font-family:var(--mono);font-size:14px}
+.down{color:var(--red);font-family:var(--mono);font-size:14px}
+
+/* ---------- Cuestionario ---------- */
+.qrow{margin-top:26px}
+.qrow h4{font-size:16px;font-weight:700;font-family:var(--sans);color:var(--navy)}
+.qrow .q{color:var(--muted);font-size:14.5px;margin:3px 0 12px}
+.opts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:700px){.opts{grid-template-columns:repeat(2,1fr)}}
+.opt{background:#fff;border:1px solid var(--line);border-radius:11px;padding:14px 8px;
+  text-align:center;color:var(--ink);transition:.15s;line-height:1.3}
+.opt small{display:block;font-size:13.5px;color:var(--muted)}
+.opt:hover{border-color:var(--gold)}
+.opt.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.opt.on small{color:#B9C6D2}
+.progress{height:5px;background:#E4DCCC;border-radius:4px;overflow:hidden;margin-top:22px}
+.progress i{display:block;height:100%;background:var(--gold);width:0;transition:width .3s}
+.money{display:flex;align-items:center;gap:14px;margin-top:12px;flex-wrap:wrap}
+.money input[type=range]{flex:1;min-width:200px;accent-color:var(--gold)}
+.money .val{font-family:var(--mono);font-size:19px;color:var(--navy);font-weight:500}
+
+/* ---------- Perfil resultado ---------- */
+.result{background:var(--navy);border-radius:16px;padding:30px;color:#E8EEF3;margin-top:22px}
+.result h3{color:#fff;font-size:27px}
+.result .lead{margin-top:10px;color:#C4D2DD;font-size:16px}
+.rmetrics{display:flex;gap:38px;margin-top:22px;flex-wrap:wrap}
+.rmetrics div span{display:block;font-family:var(--mono);font-size:11.5px;color:#93A6B5;letter-spacing:.06em}
+.rmetrics div b{font-size:20px;font-family:var(--serif);color:#fff}
+
+/* ---------- Portafolio ---------- */
+.wrow{display:flex;align-items:center;gap:14px;margin-top:14px;font-size:15px}
+.wrow .lbl{width:135px;flex:none}
+.track{flex:1;height:16px;background:#E7E0D2;border-radius:5px;overflow:hidden}
+.fill{height:100%;border-radius:5px;width:0;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.wrow .pct{width:70px;text-align:right;font-family:var(--mono);font-size:14px;font-weight:500}
+.metrics{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+.metric{background:#EFE9DC;border:1px solid var(--line);border-radius:11px;padding:13px 16px;flex:1;min-width:110px}
+.metric span{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.05em}
+.metric b{font-family:var(--mono);font-size:21px}
+/* --- Glosario en línea --- */
+.term{border-bottom:1.5px dotted var(--gold);cursor:help;position:relative}
+.term:hover{background:rgba(180,136,31,.12)}
+.term::after{content:"?";font-size:9px;vertical-align:super;color:var(--gold);font-weight:700;margin-left:1px}
+.tip{
+  position:fixed;z-index:200;max-width:290px;background:var(--navy);color:#E8EEF3;
+  border-radius:11px;padding:14px 17px;font-size:14.5px;line-height:1.45;
+  box-shadow:0 10px 30px rgba(18,40,60,.32);display:none
+}
+.tip.on{display:block}
+.tip b{color:var(--gold-2);display:block;margin-bottom:4px;font-family:var(--serif);font-size:16px}
+
+/* --- Cifra de pérdida dominante --- */
+.hero-loss{background:var(--red-bg);border:1px solid #E3C4C0;border-radius:16px;padding:30px;margin-top:20px}
+.hero-loss .tag{color:var(--red);font-family:var(--mono);font-size:12px;letter-spacing:.05em}
+.hero-loss .money{font-family:var(--serif);font-size:clamp(34px,7vw,52px);font-weight:700;
+  color:var(--red);line-height:1.05;margin:10px 0 2px}
+.hero-loss .pctline{font-family:var(--mono);font-size:17px;color:var(--red);opacity:.85}
+.hero-loss p{margin-top:14px;font-size:15.5px;color:var(--navy-2);max-width:62ch}
+.hero-gain{background:var(--green-bg);border:1px solid #C3D6C6;border-radius:16px;padding:24px 30px;margin-top:14px}
+.hero-gain .tag{color:var(--green);font-family:var(--mono);font-size:12px;letter-spacing:.05em}
+.hero-gain .money{font-family:var(--serif);font-size:clamp(24px,5vw,34px);font-weight:700;
+  color:var(--green);margin:8px 0 2px}
+.hero-gain p{margin-top:10px;font-size:15px;color:var(--navy-2)}
+
+/* --- Detalle plegable --- */
+details.tech{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:0}
+details.tech summary{padding:18px 24px;cursor:pointer;font-weight:600;color:var(--navy);
+  font-size:15.5px;list-style:none}
+details.tech summary::-webkit-details-marker{display:none}
+details.tech summary::before{content:"▸ ";color:var(--gold)}
+details.tech[open] summary::before{content:"▾ "}
+details.tech .inner{padding:0 24px 24px}
+
+/* --- Bloques del reparto --- */
+.slice{padding:16px 0;border-bottom:1px dashed var(--line)}
+.slice:last-child{border-bottom:none}
+.slice .top{display:flex;align-items:center;gap:12px;font-size:15.5px}
+.slice .dotc{width:12px;height:12px;border-radius:3px;flex:none}
+.slice .nm{font-weight:600;color:var(--navy)}
+.slice .amt{margin-left:auto;font-family:var(--mono);font-size:14.5px;color:var(--navy)}
+.slice .track{margin-top:9px;height:12px;background:#E7E0D2;border-radius:4px;overflow:hidden}
+.slice .exp{margin-top:8px;font-size:14.5px;color:var(--navy-2)}
+
+/* --- Pasos guiados --- */
+.stepnote{display:flex;gap:12px;align-items:flex-start;margin-top:18px}
+.stepnote .n{width:26px;height:26px;border-radius:7px;background:var(--navy);color:#fff;flex:none;
+  display:grid;place-items:center;font-family:var(--mono);font-size:12.5px}
+.stepnote p{font-size:15.5px;color:var(--navy-2)}
+
+/* --- Origen de las cifras --- */
+.origin{background:#EFE9DC;border:1px solid var(--line);border-radius:14px;padding:24px;margin-top:20px}
+.origin h3{font-size:17px}
+.origin li{list-style:none;padding:10px 0 10px 20px;position:relative;font-size:14.8px;color:var(--navy-2);
+  border-bottom:1px dashed var(--line)}
+.origin ul{padding:0;margin:10px 0 0}
+.origin li:last-child{border-bottom:none}
+.origin li::before{content:"·";position:absolute;left:4px;color:var(--gold);font-weight:700;font-size:20px;top:4px}
+
+.loss,.gain{border-radius:12px;padding:22px 24px;margin-top:16px}
+.loss{background:var(--red-bg);border:1px solid #E3C4C0}
+.gain{background:var(--green-bg);border:1px solid #C3D6C6}
+.tag{font-family:var(--mono);font-size:12px;letter-spacing:.05em}
+.loss .tag{color:var(--red)}.gain .tag{color:var(--green)}
+.big{font-family:var(--serif);font-size:36px;font-weight:700;margin:6px 0 8px}
+.loss .big{color:var(--red)}.gain .big{color:var(--green)}
+.loss p,.gain p{font-size:15px;color:var(--navy-2)}
+.reasons li{list-style:none;padding:12px 0 12px 22px;border-bottom:1px dashed var(--line);
+  position:relative;font-size:15px;color:var(--navy-2)}
+.reasons ul{padding:0;margin:8px 0 0}
+.reasons li:last-child{border-bottom:none}
+.reasons li::before{content:"›";position:absolute;left:0;color:var(--gold);font-weight:700}
+
+/* ---------- Escenarios ---------- */
+.sc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+@media (max-width:740px){.sc{grid-template-columns:1fr}}
+.scbox{border:1px solid var(--line);border-radius:14px;padding:22px;background:var(--paper)}
+.scbox.bad{background:var(--red-bg);border-color:#E3C4C0}
+.scbox.good{background:var(--green-bg);border-color:#C3D6C6}
+.scbox h4{font-size:16px;font-family:var(--sans);font-weight:700}
+.scbox .amt{font-family:var(--mono);font-size:23px;margin:8px 0 4px;color:var(--navy)}
+.scbox .prob{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.scbox p{font-size:14.5px;color:var(--navy-2);margin-top:10px}
+
+/* ---------- Chat ---------- */
+.chat{display:flex;flex-direction:column;gap:13px;max-height:none}
+.msg{max-width:84%;padding:15px 19px;border-radius:14px;font-size:15.5px}
+.bot{background:#fff;border:1px solid var(--line);align-self:flex-start}
+.me{background:var(--navy);color:#fff;align-self:flex-end}
+.src{margin-top:11px;padding-top:9px;border-top:1px dashed var(--line);
+  font-size:12.8px;color:var(--muted)}
+.guard{background:var(--purple-bg);border-left:4px solid var(--purple);border-radius:0 12px 12px 0;
+  padding:17px 21px;max-width:88%;align-self:flex-start}
+.guard .tag{color:var(--purple);font-weight:500}
+.guard p{margin-top:6px;font-size:15px;color:#3B3160}
+.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
+.qchip{background:transparent;border:1px solid var(--line);border-radius:22px;padding:9px 16px;
+  font-size:14.3px;color:var(--navy)}
+.qchip:hover{border-color:var(--navy)}
+.qchip[disabled]{opacity:.35;cursor:default}
+.composer{display:flex;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.composer input{flex:1;padding:14px 16px;border:1px solid var(--line);border-radius:11px;background:#fff}
+.composer input:focus{border-color:var(--gold);outline:none}
+.composer button{background:var(--navy);color:#fff;border:none;border-radius:11px;padding:0 20px;font-weight:600}
+.typing span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--muted);
+  margin-right:4px;animation:blink 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+
+/* ---------- Simulador ---------- */
+.sim{background:var(--navy);border-radius:14px;padding:24px;color:#fff}
+.sim .head{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13px;color:#93A6B5}
+.sim .head .pct{color:#E08585}
+.sim .amount{font-family:var(--mono);font-size:clamp(25px,5vw,36px);margin-top:6px}
+.sim svg{width:100%;height:160px;margin-top:14px;display:block}
+.simpath{fill:none;stroke:#D95757;stroke-width:2.5;stroke-linecap:round;
+  stroke-dasharray:1200;stroke-dashoffset:1200}
+.simpath.run{animation:draw 3.2s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.react{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:16px}
+@media (max-width:620px){.react{grid-template-columns:1fr}}
+.react button{background:#fff;border:1px solid var(--line);border-radius:11px;padding:16px;
+  font-weight:600;color:var(--navy)}
+.react button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:16px}
+@media (max-width:620px){.rgrid{grid-template-columns:1fr}}
+.rbox{background:#EFE9DC;border:1px solid var(--line);border-radius:11px;padding:13px 15px}
+.rbox span{display:block;font-family:var(--mono);font-size:10.8px;color:var(--muted);letter-spacing:.05em}
+.rbox b{font-family:var(--serif);font-size:18px;color:var(--navy)}
+.verdict{margin-top:15px;background:var(--navy);color:#D6E1EA;border-radius:11px;padding:20px;font-size:15.5px}
+.verdict em{font-style:normal;color:var(--gold-2)}
+
+/* ---------- Cierre ---------- */
+.close-box{text-align:center;padding:20px 0}
+.close-box h2{font-size:clamp(26px,4.5vw,36px)}
+.close-box p{margin:14px auto 0;max-width:52ch;color:var(--navy-2);font-size:16.5px}
+
+footer{padding:34px 0 100px;font-size:13.5px;color:var(--muted);border-top:1px solid var(--line);margin-top:40px}
+footer b{color:var(--navy)}
+footer.hide{display:none}
+
+/* ---------- Nav inferior ---------- */
+.bottomnav{display:none}
+@media (max-width:780px){
+  .bottomnav.on{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;bottom:0;left:0;right:0;
+    background:var(--navy);z-index:50;padding:8px 0 max(8px,env(safe-area-inset-bottom))}
+  .bottomnav button{background:none;border:none;color:#8FA3B4;font-size:10.5px;
+    display:flex;flex-direction:column;align-items:center;gap:3px;padding:2px 0}
+  .bottomnav button.on{color:#fff}
+  .bottomnav svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7}
+  .screen{padding:26px 0 30px}
+}
+.fb{position:fixed;left:18px;bottom:18px;z-index:60;background:var(--gold);color:#fff;
+  border:none;border-radius:26px;padding:13px 20px;font-weight:600;font-size:14.5px;
+  box-shadow:0 6px 20px rgba(18,40,60,.22);display:none}
+.fb.on{display:block}
+@media (max-width:780px){.fb{bottom:76px;left:14px;padding:11px 17px;font-size:13.5px}}
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <div class="app">
+    <div class="brand">Bolsa<i>LAB</i></div>
+    <div class="ver">v2</div>
+    <nav class="top" id="topnav">
+      <button data-go="inicio">Inicio</button>
+      <button data-go="perfil">Mi perfil</button>
+      <button data-go="portafolio">Portafolio</button>
+      <button data-go="copiloto">Copiloto</button>
+      <button data-go="simulador">Simulador</button>
+    </nav>
+    <div class="who" id="who"></div>
+  </div>
+</header>
+
+<!-- ============ LOGIN ============ -->
+<section class="login screen on" id="s-login">
+  <div class="login-box">
+    <h1>Invertir sin entender es apostar</h1>
+    <p class="lead">BolsaLAB te arma un portafolio según tu perfil y te explica, con cifras y en español,
+      por qué quedó así. Te muestra primero lo que puedes perder.</p>
+
+    <div class="field">
+      <label for="nombre">¿Cómo te llamas?</label>
+      <input id="nombre" type="text" placeholder="Tu nombre" autocomplete="off">
+    </div>
+    <button class="btn block" id="entrar">Entrar</button>
+
+    <div class="guia">
+      <h3>Intenta hacer estas cuatro cosas por tu cuenta</h3>
+      <ol>
+        <li>Averigua qué tipo de inversionista eres.</li>
+        <li>Mira el portafolio que te proponen y calcula cuánto podrías perder.</li>
+        <li>Pregúntale al copiloto por qué te sugiere algo y no otra cosa.</li>
+        <li>Vive la caída del simulador y decide qué harías con tu plata.</li>
+      </ol>
+    </div>
+
+    <p style="margin-top:20px;font-size:14.5px;color:var(--navy-2)">
+      Si ves una palabra <span class="term" data-t="portafolio">subrayada</span>, tócala: te
+      explicamos qué significa sin tecnicismos.</p>
+
+    <p class="legal">Prototipo educativo. No es asesoría de inversión ni recomendación de compra o venta
+      de valores. Las cifras son ilustrativas. No se guarda ningún dato: tu nombre solo se usa para
+      personalizar esta sesión.</p>
+  </div>
+</section>
+
+<!-- ============ INICIO ============ -->
+<section class="screen" id="s-inicio">
+  <div class="app">
+    <div class="hello">
+      <div class="avatar" id="ini">—</div>
+      <div>
+        <h2 class="h-title" style="font-size:28px" id="saludo">Hola</h2>
+        <p style="color:var(--muted);font-size:15px" id="nivel">Aún no conocemos tu perfil</p>
+      </div>
+    </div>
+
+    <div class="state" id="estado">
+      <h3>Empecemos por ti, no por el mercado</h3>
+      <p>Son cinco preguntas. Con eso sabemos cuánto riesgo aguanta tu situación y podemos armarte
+        un portafolio que no te quite el sueño.</p>
+      <button class="btn" data-go="perfil">Responder el cuestionario</button>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>El mercado hoy</h3>
+        <p class="note">Cifras ilustrativas del prototipo.</p>
+        <div style="margin-top:14px">
+          <div class="mkt"><span>COLCAP</span><span><b>1.342,18</b> <i class="up">+0,65%</i></span></div>
+          <div class="mkt"><span>Ecopetrol</span><span><b>2.185</b> <i class="up">+1,20%</i></span></div>
+          <div class="mkt"><span>Bancolombia</span><span><b>35.400</b> <i class="down">−0,42%</i></span></div>
+          <div class="mkt"><span>S&amp;P 500</span><span><b>5.123,41</b> <i class="up">+0,35%</i></span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Lo que hace distinto a BolsaLAB</h3>
+        <ul style="padding-left:18px;margin:12px 0 0;color:var(--navy-2);font-size:15px">
+          <li style="margin-bottom:9px">Te dice cuánto puedes perder antes de decirte cuánto puedes ganar.</li>
+          <li style="margin-bottom:9px">Explica cada decisión en español, sin jerga.</li>
+          <li style="margin-bottom:9px">Te pone a vivir una caída real antes de que te pase con tu plata.</li>
+          <li>No te dice qué comprar: eso es asesoría regulada.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PERFILAMIENTO ============ -->
+<section class="screen" id="s-perfil">
+  <div class="app">
+    <h2 class="h-title">Cinco preguntas sobre ti</h2>
+    <p class="h-sub">No hay respuestas correctas. Responde según tu situación real, no según la que
+      te gustaría tener.</p>
+    <div class="progress"><i id="prog"></i></div>
+
+    <div class="card">
+      <div class="qrow" data-dim="capacidad">
+        <h4>¿Cuánto de tu ingreso podrías invertir sin afectar tus gastos?</h4>
+        <p class="q">Piensa en plata que no vas a necesitar para el arriendo ni el mercado.</p>
+        <div class="opts">
+          <button class="opt" data-v="1">Casi nada<small>menos del 5%</small></button>
+          <button class="opt" data-v="2">Algo<small>5 a 10%</small></button>
+          <button class="opt" data-v="3">Una parte buena<small>10 a 20%</small></button>
+          <button class="opt" data-v="4">Bastante<small>más del 20%</small></button>
+        </div>
+      </div>
+
+      <div class="qrow" data-dim="tolerancia">
+        <h4>Si tu inversión cae 20% en un mes, ¿qué haces?</h4>
+        <p class="q">Responde lo que crees que harías de verdad.</p>
+        <div class="opts">
+          <button class="opt" data-v="1">Vendo ya<small>no aguanto</small></button>
+          <button class="opt" data-v="2">Me preocupo<small>pero espero</small></button>
+          <button class="opt" data-v="3">Aguanto<small>sin moverme</small></button>
+          <button class="opt" data-v="4">Compro más<small>está barato</small></button>
+        </div>
+      </div>
+
+      <div class="qrow" data-dim="horizonte">
+        <h4>¿En cuánto tiempo vas a necesitar este dinero?</h4>
+        <p class="q">Si tienes una meta concreta, cuenta desde hoy hasta esa fecha.</p>
+        <div class="opts">
+          <button class="opt" data-v="1">Menos de 1 año<small></small></button>
+          <button class="opt" data-v="2">1 a 3 años<small></small></button>
+          <button class="opt" data-v="3">3 a 7 años<small></small></button>
+          <button class="opt" data-v="4">Más de 7 años<small></small></button>
+        </div>
+      </div>
+
+      <div class="qrow" data-dim="conocimiento">
+        <h4>¿Qué tanto sabes de <span class="term" data-t="invertir">inversiones</span>?</h4>
+        <p class="q">Sinceridad: esto no cambia lo que puedes hacer, cambia cómo te explicamos.</p>
+        <div class="opts">
+          <button class="opt" data-v="1">Nada<small>arranco de cero</small></button>
+          <button class="opt" data-v="2">Poco<small>he leído algo</small></button>
+          <button class="opt" data-v="3">Medio<small>entiendo lo básico</small></button>
+          <button class="opt" data-v="4">Bastante<small>ya he invertido</small></button>
+        </div>
+      </div>
+
+      <div class="qrow">
+        <h4>¿Con cuánto quieres empezar?</h4>
+        <p class="q">No hay monto mínimo: se puede empezar con cien mil pesos. Esto solo sirve para
+          mostrarte las cifras en tu escala, y lo puedes cambiar cuando quieras.</p>
+        <div class="money">
+          <input type="range" id="monto" min="100000" max="50000000" step="100000" value="2000000">
+          <div class="val" id="montoVal">$2.000.000</div>
+        </div>
+      </div>
+
+      <button class="btn" id="calcular" style="margin-top:28px">Ver mi perfil</button>
+    </div>
+
+    <div id="perfilOut"></div>
+  </div>
+</section>
+
+<!-- ============ PORTAFOLIO ============ -->
+<section class="screen" id="s-portafolio">
+  <div class="app" id="portafolioBody"></div>
+</section>
+
+<!-- ============ COPILOTO ============ -->
+<section class="screen" id="s-copiloto">
+  <div class="app">
+    <h2 class="h-title">Pregúntale lo que quieras</h2>
+    <p class="h-sub">El copiloto responde con las cifras de tu portafolio y cita de dónde salen.
+      Si le pides que te diga qué comprar, no va a poder.</p>
+
+    <div class="card">
+      <div class="chat" id="chat">
+        <div class="msg bot">Hola. Soy un asistente que responde solo sobre tu portafolio, usando tus
+          cifras. Puedo explicarte por qué te propusimos esta mezcla, cuánto podrías perder, o qué
+          significa cualquier palabra que no hayas entendido. Toca una de las preguntas de abajo o
+          escríbeme la tuya.</div>
+      </div>
+      <div class="chips" id="chips">
+        <button class="qchip" data-k="porque">¿Por qué me sugieren esto y no otra cosa?</button>
+        <button class="qchip" data-k="perder">¿Cuánto puedo perder realmente?</button>
+        <button class="qchip" data-k="glosario">¿Qué significa renta fija y renta variable?</button>
+        <button class="qchip" data-k="comprar">Entonces compro Ecopetrol mañana</button>
+        <button class="qchip" data-k="educativo">Enséñame a evaluar una acción</button>
+      </div>
+      <div class="composer">
+        <input id="libre" type="text" placeholder="O escribe tu propia pregunta…" autocomplete="off">
+        <button id="enviar">Enviar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SIMULADOR ============ -->
+<section class="screen" id="s-simulador">
+  <div class="app">
+    <h2 class="h-title">Tu tolerancia real, no la que creías tener</h2>
+    <p class="h-sub">En 2020 los mercados se desplomaron en pocas semanas. Vamos a repetir ese
+      episodio sobre tu portafolio, en cámara rápida, para que veas cómo se siente antes de que te
+      pase con plata de verdad.</p>
+
+    <div class="card">
+      <div class="stepnote"><div class="n">1</div>
+        <p>Toca <b>"Ver la caída"</b>. El monto de arriba va a empezar a bajar. No se te está
+          descontando nada: es una simulación.</p></div>
+      <div class="stepnote"><div class="n">2</div>
+        <p>Cuando termine, elige qué harías <b>de verdad</b> en ese momento.</p></div>
+      <div class="stepnote"><div class="n">3</div>
+        <p>Te vamos a mostrar si eso coincide con lo que respondiste en el cuestionario.</p></div>
+    </div>
+
+    <div class="card">
+      <div class="sim">
+        <div class="head"><div>Episodio · marzo 2020</div><div class="pct" id="simPct">0,0%</div></div>
+        <div class="amount" id="simAmount">$0</div>
+        <svg viewBox="0 0 700 160" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="0" y1="40" x2="700" y2="40" stroke="#24405A" stroke-width="1"/>
+          <line x1="0" y1="90" x2="700" y2="90" stroke="#24405A" stroke-width="1"/>
+          <line x1="0" y1="138" x2="700" y2="138" stroke="#24405A" stroke-width="1"/>
+          <path id="simPath" class="simpath"
+            d="M8,20 C90,24 150,38 210,55 C270,72 320,99 380,118 C420,130 450,126 480,111 C520,92 560,105 610,120 C650,132 675,134 692,136"/>
+        </svg>
+      </div>
+      <button class="btn" id="replay" style="margin-top:16px">Ver la caída</button>
+
+      <p style="margin-top:24px;font-family:var(--serif);font-size:19px;color:var(--navy);font-weight:700"
+         id="preguntaSim">Tu portafolio cae. ¿Qué haces?</p>
+      <div class="react" id="react">
+        <button data-r="1">Vendo todo</button>
+        <button data-r="3">Aguanto</button>
+        <button data-r="4">Compro más</button>
+      </div>
+
+      <div id="recalOut"></div>
+    </div>
+
+    <div class="row-end">
+      <button class="btn ghost" data-go="cierre">Terminé el recorrido</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CIERRE ============ -->
+<section class="screen" id="s-cierre">
+  <div class="app close-box">
+    <h2>Gracias por recorrerlo</h2>
+    <p>Lo que nos digas ahora es lo que va a cambiar la próxima versión. Son cinco minutos y no hay
+      respuestas incómodas: si algo no se entendió, queremos saberlo.</p>
+    <button class="btn" id="cierreForm" style="margin-top:26px">Danos tu opinión</button>
+    <p style="margin-top:20px;font-size:14px;color:var(--muted)">
+      ¿Quieres volver a mirar algo? <button style="background:none;border:none;color:var(--gold);
+      font-weight:600;padding:0" data-go="inicio">Volver al inicio</button></p>
+  </div>
+</section>
+
+<footer id="foot" class="hide">
+  <div class="app">
+    <p><b>Prototipo educativo.</b> No constituye asesoría de inversión ni recomendación de compra o
+      venta de valores. Las cifras y los episodios son ilustrativos. Cualquier decisión regulada debe
+      canalizarse por un asesor autorizado ante la Superintendencia Financiera.</p>
+    <p style="margin-top:8px">BolsaLAB · Especialización en Inteligencia Artificial ·
+      Pontificia Universidad Javeriana</p>
+  </div>
+</footer>
+
+<button class="fb" id="fb">Danos tu opinión</button>
+
+<nav class="bottomnav" id="bnav">
+  <button data-go="inicio"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9H4z"/></svg>Inicio</button>
+  <button data-go="perfil"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Perfil</button>
+  <button data-go="portafolio"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5h8v2"/></svg>Portafolio</button>
+  <button data-go="copiloto"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>Copiloto</button>
+  <button data-go="simulador"><svg viewBox="0 0 24 24"><path d="M4 6v12h16"/><path d="M7 14l4-5 3 3 4-6"/></svg>Simular</button>
+</nav>
+
+<script>
+/* ===== CONFIGURA AQUÍ EL FORMULARIO ===== */
+const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSf5c4YVwqcd6hezfUgZpLsOs8qjqQMRLm_dlJnYy-FjCjNl-w/viewform";
+
+const S = { nombre:'', respuestas:{}, monto:2000000, perfil:null };
+
+const TERMO = {
+  'Renta fija en pesos':'rentafija',
+  'Acciones colombianas':'rentavariable',
+  'Fondo global':'etf'
+};
+const termo = nombre => TERMO[nombre]
+  ? '<span class="term" data-t="' + TERMO[nombre] + '">' + nombre + '</span>'
+  : nombre;
+
+const EXPLICA = {
+  'Renta fija en pesos':'Prestas tu plata a cambio de un interés conocido. Se mueve poco y es la parte que te sostiene cuando todo lo demás cae.',
+  'Acciones colombianas':'Compras un pedacito de empresas de la Bolsa de Valores de Colombia. Es lo que más sube y también lo que más baja.',
+  'Fondo global':'Una canasta con cientos de empresas del mundo. Evita que todo tu riesgo dependa de lo que pase en Colombia.',
+  'Efectivo disponible':'Plata que no se invierte y puedes sacar cuando quieras, sin vender nada a pérdida.'
+};
+
+const PERFILES = {
+  conservador:{
+    nombre:'Conservador', hz:'2 años', anios:2,
+    pesos:[['Renta fija en pesos',60,'var(--navy-2)'],['Acciones colombianas',15,'var(--gold)'],
+           ['Fondo global',15,'var(--green)'],['Efectivo disponible',10,'var(--silver)']],
+    vol:'6,8%', cvar:'8,0%', ret:'5,4%', retN:0.054, peor:-0.125,
+    frase:'Priorizas no perder por encima de crecer. Tu mezcla carga hacia lo estable.',
+    razones:['Tu horizonte es corto, así que no hay tiempo para recuperarse de una caída fuerte.',
+             'La mayor parte va a renta fija, que se mueve poco aunque rinda menos.',
+             'Dejamos efectivo disponible para que no tengas que vender si te aprieta un imprevisto.']
+  },
+  moderado:{
+    nombre:'Moderado', hz:'5 años', anios:5,
+    pesos:[['Renta fija en pesos',35,'var(--navy-2)'],['Acciones colombianas',32,'var(--gold)'],
+           ['Fondo global',25,'var(--green)'],['Efectivo disponible',8,'var(--silver)']],
+    vol:'14,2%', cvar:'11,8%', ret:'8,6%', retN:0.086, peor:-0.284,
+    frase:'Aceptas que suba y baje si el tiempo te acompaña. Mezclamos estabilidad con crecimiento.',
+    razones:['Tu horizonte tolera la volatilidad de esta mezcla sin obligarte a vender antes de tiempo.',
+             'La renta fija amortigua la caída que viste arriba.',
+             'El fondo global evita que todo tu riesgo dependa de lo que pase en Colombia.']
+  },
+  agresivo:{
+    nombre:'Agresivo', hz:'8 años', anios:8,
+    pesos:[['Renta fija en pesos',15,'var(--navy-2)'],['Acciones colombianas',45,'var(--gold)'],
+           ['Fondo global',35,'var(--green)'],['Efectivo disponible',5,'var(--silver)']],
+    vol:'21,5%', cvar:'18,0%', ret:'12,1%', retN:0.121, peor:-0.412,
+    frase:'Tienes tiempo y capacidad para aguantar caídas fuertes. Cargamos hacia crecimiento.',
+    razones:['Con más de siete años por delante, una caída fuerte tiene tiempo de recuperarse.',
+             'La mayor parte va a renta variable, que es lo que más se mueve en ambas direcciones.',
+             'Aun así dejamos renta fija: concentrar todo en acciones aumentaría la caída sin subir mucho el retorno.']
+  }
+};
+
+const cop = n => '$' + Math.round(n).toLocaleString('es-CO');
+
+/* ===== Glosario en línea ===== */
+const GLOSARIO = {
+  invertir:['Invertir','Poner tu plata en algo que puede crecer con el tiempo, aceptando que también puede bajar. No es lo mismo que ahorrar: ahorrar no pierde valor de golpe, pero tampoco crece.'],
+  portafolio:['Portafolio','El conjunto de cosas en las que queda repartida tu plata. La idea de repartir es que si una cae, las otras te sostienen.'],
+  rentafija:['Renta fija','Prestas tu plata a cambio de un interés que ya conoces desde el principio. Rinde poco, pero es predecible.'],
+  rentavariable:['Renta variable','Compras pedacitos de empresas. Nadie te promete cuánto vas a ganar: puede subir mucho o caer fuerte.'],
+  etf:['Fondo global','Una canasta con cientos de empresas de todo el mundo. Comprando una sola cosa quedas expuesto a muchas, en vez de a una sola empresa.'],
+  volatilidad:['Volatilidad','Qué tanto sube y baja algo. Alta volatilidad significa cambios bruscos; baja significa que se mueve despacio.'],
+  perfil:['Perfil de inversionista','Una etiqueta que resume cuánto riesgo aguanta tu situación: cuánto tiempo tienes, cuánta plata puedes arriesgar y qué tanto te afecta una caída.'],
+  horizonte:['Horizonte','El tiempo que falta hasta que necesites usar ese dinero. Entre más largo, más puedes aguantar una caída sin verte obligado a vender.']
+};
+
+let tipEl = null;
+function cerrarTip(){ if (tipEl) { tipEl.classList.remove('on'); } }
+document.addEventListener('click', e => {
+  const t = e.target.closest('.term');
+  if (!t) { cerrarTip(); return; }
+  e.preventDefault();
+  const def = GLOSARIO[t.dataset.t];
+  if (!def) return;
+  if (!tipEl) {
+    tipEl = document.createElement('div');
+    tipEl.className = 'tip';
+    document.body.appendChild(tipEl);
+  }
+  tipEl.innerHTML = '<b>' + def[0] + '</b>' + def[1];
+  tipEl.classList.add('on');
+  const r = t.getBoundingClientRect();
+  const w = Math.min(290, window.innerWidth - 32);
+  tipEl.style.width = w + 'px';
+  let left = r.left;
+  if (left + w > window.innerWidth - 16) left = window.innerWidth - w - 16;
+  tipEl.style.left = Math.max(16, left) + 'px';
+  const abajo = r.bottom + 12;
+  if (abajo + tipEl.offsetHeight > window.innerHeight - 16) {
+    tipEl.style.top = Math.max(16, r.top - tipEl.offsetHeight - 12) + 'px';
+  } else {
+    tipEl.style.top = abajo + 'px';
+  }
+});
+window.addEventListener('scroll', cerrarTip, {passive:true});
+
+/* ===== Router ===== */
+const suave = () =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+
+function irA(el, extra){
+  if (!el) return;
+  const hdr = document.getElementById('hdr');
+  const alto = hdr.classList.contains('on') ? hdr.offsetHeight : 0;
+  const y = el.getBoundingClientRect().top + window.scrollY - alto - (extra || 14);
+  window.scrollTo({ top: Math.max(y, 0), behavior: suave() });
+}
+
+function go(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  const destino = document.getElementById('s-' + id);
+  destino.classList.add('on');
+  document.querySelectorAll('#topnav button, #bnav button').forEach(b =>
+    b.classList.toggle('on', b.dataset.go === id));
+  if (id === 'portafolio') pintarPortafolio();
+  if (id === 'simulador') prepararSim();
+  requestAnimationFrame(() => irA(destino));
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-go]');
+  if (b) go(b.dataset.go);
+});
+
+/* ===== Login ===== */
+document.getElementById('entrar').addEventListener('click', () => {
+  const n = document.getElementById('nombre').value.trim();
+  S.nombre = n || 'inversionista';
+  document.getElementById('saludo').textContent = 'Hola, ' + S.nombre.split(' ')[0];
+  document.getElementById('ini').textContent = S.nombre.charAt(0).toUpperCase();
+  document.getElementById('who').textContent = S.nombre;
+  document.getElementById('hdr').classList.add('on');
+  document.getElementById('bnav').classList.add('on');
+  document.getElementById('fb').classList.add('on');
+  document.getElementById('foot').classList.remove('hide');
+  go('inicio');
+});
+document.getElementById('nombre').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('entrar').click();
+});
+
+/* ===== Feedback ===== */
+function abrirForm(){
+  window.open(FORM_URL, '_blank', 'noopener');
+}
+document.getElementById('fb').addEventListener('click', abrirForm);
+document.getElementById('cierreForm').addEventListener('click', abrirForm);
+
+/* ===== Cuestionario ===== */
+document.querySelectorAll('.qrow[data-dim]').forEach(row => {
+  row.querySelectorAll('.opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      row.querySelectorAll('.opt').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      S.respuestas[row.dataset.dim] = Number(btn.dataset.v);
+      const n = Object.keys(S.respuestas).length;
+      document.getElementById('prog').style.width = (n / 4 * 100) + '%';
+    });
+  });
+});
+const montoInput = document.getElementById('monto');
+montoInput.addEventListener('input', () => {
+  S.monto = Number(montoInput.value);
+  document.getElementById('montoVal').textContent = cop(S.monto);
+});
+
+document.getElementById('calcular').addEventListener('click', () => {
+  const dims = ['capacidad','tolerancia','horizonte','conocimiento'];
+  const faltan = dims.filter(d => !S.respuestas[d]);
+  if (faltan.length) { alert('Te faltan ' + faltan.length + ' preguntas por responder.'); return; }
+  const score = dims.reduce((s,d) => s + S.respuestas[d], 0);
+  const key = score <= 7 ? 'conservador' : (score <= 11 ? 'moderado' : 'agresivo');
+  S.perfil = Object.assign({key, score}, PERFILES[key]);
+
+  document.getElementById('nivel').textContent = 'Perfil ' + S.perfil.nombre.toLowerCase();
+  document.getElementById('estado').innerHTML =
+    '<h3>Tu portafolio está listo</h3><p>Armado con tus respuestas y con ' + cop(S.monto) +
+    ' de inversión inicial.</p><button class="btn" data-go="portafolio">Ver mi portafolio</button>';
+
+  document.getElementById('perfilOut').innerHTML =
+    '<div class="result"><h3>Eres un inversionista ' + S.perfil.nombre.toLowerCase() + '</h3>' +
+    '<p class="lead">' + S.perfil.frase + '</p>' +
+    '<div class="rmetrics">' +
+      '<div><span><span class="term" data-t="horizonte" style="color:#93A6B5">HORIZONTE</span></span><b>' + S.perfil.hz + '</b></div>' +
+      '<div><span>PÉRDIDA MÁXIMA ACEPTADA</span><b>' + S.perfil.cvar + '</b></div>' +
+      '<div><span>INVERSIÓN INICIAL</span><b>' + cop(S.monto) + '</b></div>' +
+    '</div></div>' +
+    '<div class="row-end"><button class="btn" data-go="portafolio">Ver el portafolio que te proponemos</button>' +
+    '<button class="btn ghost" id="rehacer">Cambiar mis respuestas</button></div>';
+  irA(document.getElementById('perfilOut'));
+  document.getElementById('rehacer').addEventListener('click', () => {
+    document.querySelectorAll('.opt').forEach(b => b.classList.remove('on'));
+    S.respuestas = {}; S.perfil = null;
+    document.getElementById('prog').style.width = '0';
+    document.getElementById('perfilOut').innerHTML = '';
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+/* ===== Portafolio ===== */
+function pintarPortafolio(){
+  const c = document.getElementById('portafolioBody');
+  if (!S.perfil) {
+    c.innerHTML = '<h2 class="h-title">Todavía no sabemos quién eres invirtiendo</h2>' +
+      '<p class="h-sub">Responde las cinco preguntas y te armamos un portafolio con tus cifras.</p>' +
+      '<div class="row-end"><button class="btn" data-go="perfil">Responder ahora</button></div>';
+    return;
+  }
+  const p = S.perfil;
+  const peorPlata = S.monto * (1 + p.peor);
+  const espPlata  = S.monto * Math.pow(1 + p.retN, p.anios);
+  const mejorPlata= S.monto * Math.pow(1 + p.retN * 1.7, p.anios);
+
+  const perdida = S.monto - peorPlata;
+
+  c.innerHTML =
+  '<h2 class="h-title">Esto te proponemos, ' + S.nombre.split(' ')[0] + '</h2>' +
+  '<p class="h-sub">Antes de cualquier otra cifra, hay un solo número que necesitas retener.</p>' +
+
+  '<div class="hero-loss">' +
+    '<div class="tag">◆ LO MÁXIMO QUE PODRÍAS PERDER</div>' +
+    '<div class="money">−' + cop(perdida) + '</div>' +
+    '<div class="pctline">es el ' + Math.abs(p.peor*100).toFixed(1).replace('.',',') +
+    '% de tus ' + cop(S.monto) + '</div>' +
+    '<p>Si se repitiera el peor episodio de los últimos años, te quedarías con <b>' + cop(peorPlata) +
+    '</b>. No es una predicción ni el límite absoluto: es lo que ya ocurrió antes con una mezcla como esta. ' +
+    'Si ese número te incomoda, este portafolio no es para ti.</p>' +
+  '</div>' +
+
+  '<div class="hero-gain">' +
+    '<div class="tag">◆ Y SOLO DESPUÉS, LO QUE PODRÍAS GANAR</div>' +
+    '<div class="money">+' + p.ret + ' al año</div>' +
+    '<p>Retorno esperado en condiciones normales. Es una estimación, no una promesa.</p>' +
+  '</div>' +
+
+  '<div class="card"><h3>Cómo queda repartida tu plata</h3>' +
+  '<p class="note">Sobre ' + cop(S.monto) + '. Cada bloque cumple una función distinta.</p>' +
+  p.pesos.map(w =>
+    '<div class="slice">' +
+      '<div class="top"><i class="dotc" style="background:' + w[2] + '"></i>' +
+      '<span class="nm">' + termo(w[0]) + '</span>' +
+      '<span class="amt">' + cop(S.monto * w[1] / 100) + ' · ' + w[1] + '%</span></div>' +
+      '<div class="track"><div class="fill" data-w="' + w[1] + '" style="background:' + w[2] + '"></div></div>' +
+      '<div class="exp">' + EXPLICA[w[0]] + '</div>' +
+    '</div>'
+  ).join('') + '</div>' +
+
+  '<div class="origin"><h3>De dónde salen estas cifras</h3><ul>' +
+    '<li>Usamos precios históricos reales de la Bolsa de Valores de Colombia y de mercados internacionales, actualizados a diario.</li>' +
+    '<li>La peor caída no es una simulación: es lo que efectivamente pasó en episodios como marzo de 2020.</li>' +
+    '<li>El reparto lo calcula un modelo que busca el mayor retorno posible sin pasarse del riesgo que tú aceptaste.</li>' +
+    '<li>BolsaLAB no recibe tu dinero ni ejecuta operaciones. Para invertir de verdad necesitas una firma comisionista vigilada por la Superintendencia Financiera.</li>' +
+  '</ul></div>' +
+
+  '<details class="tech"><summary>Ver los números técnicos del portafolio</summary><div class="inner">' +
+    '<div class="metrics">' +
+      '<div class="metric"><span>SE MUEVE AL AÑO</span><b style="color:var(--navy)">' + p.vol + '</b></div>' +
+      '<div class="metric"><span>EN MESES MALOS</span><b style="color:var(--red)">−' + p.cvar + '</b></div>' +
+      '<div class="metric"><span>ESPERADO</span><b style="color:var(--green)">+' + p.ret + '</b></div>' +
+    '</div>' +
+    '<p class="note" style="margin-top:14px">"Se mueve al año" es cuánto sube y baja normalmente. ' +
+    '"En meses malos" es lo que perderías, en promedio, en el 5% de los peores meses. Ninguno de estos ' +
+    'dos es la pérdida máxima que viste arriba.</p>' +
+  '</div></details>' +
+
+  '<div class="card"><h3>Tres escenarios a ' + p.anios + ' años</h3>' +
+  '<p class="note">Simulación sobre ' + cop(S.monto) + '. Ninguno está garantizado.</p>' +
+  '<div class="sc">' +
+    '<div class="scbox bad"><h4>Si sale mal</h4><div class="amt">' + cop(peorPlata) + '</div>' +
+    '<div class="prob">probabilidad ≈ 15%</div>' +
+    '<p>Una crisis fuerte en los primeros años y vendes en el peor momento.</p></div>' +
+    '<div class="scbox"><h4>Lo más probable</h4><div class="amt">' + cop(espPlata) + '</div>' +
+    '<div class="prob">probabilidad ≈ 60%</div>' +
+    '<p>El mercado se comporta como en promedio histórico y te quedas quieto.</p></div>' +
+    '<div class="scbox good"><h4>Si sale bien</h4><div class="amt">' + cop(mejorPlata) + '</div>' +
+    '<div class="prob">probabilidad ≈ 25%</div>' +
+    '<p>Buen ciclo para la renta variable y sostienes toda la inversión.</p></div>' +
+  '</div></div>' +
+
+  '<div class="card"><h3>Por qué quedó así</h3><div class="reasons"><ul>' +
+  p.razones.map(r => '<li>' + r + '</li>').join('') + '</ul></div></div>' +
+
+  '<div class="row-end"><button class="btn" data-go="copiloto">Tengo preguntas sobre esto</button>' +
+  '<button class="btn ghost" data-go="simulador">Ver cómo se sentiría una caída</button></div>';
+
+  setTimeout(() => c.querySelectorAll('.fill').forEach(f => f.style.width = f.dataset.w + '%'), 60);
+}
+
+/* ===== Copiloto ===== */
+const chat = document.getElementById('chat');
+function respuestas(){
+  const p = S.perfil;
+  return {
+    porque:{ user:'¿Por qué me sugieren esto y no otra cosa?',
+      bot: p ? 'Porque tu horizonte es de ' + p.hz + ' y dijiste que aguantas hasta cerca de ' + p.cvar +
+        ' de pérdida. Con esas dos restricciones, esta mezcla es la que más rinde sin pasarse de tu límite. ' +
+        'No es la de mayor rendimiento posible: es la que respeta lo que tú aguantas.'
+        : 'Todavía no tienes perfil. Responde las cinco preguntas y te explico tu caso con tus cifras.',
+      src:'Calculado con tus respuestas y con precios históricos del mercado colombiano.' },
+    perder:{ user:'¿Cuánto puedo perder realmente?',
+      bot: p ? 'En el peor episodio reciente, tus ' + cop(S.monto) + ' habrían bajado a ' +
+        cop(S.monto*(1+p.peor)) + '. Es decir, habrías perdido ' + cop(S.monto - S.monto*(1+p.peor)) +
+        '. Ese es el número que importa. Los otros porcentajes que ves en la sección técnica miden ' +
+        'cosas distintas y son más pequeños.'
+        : 'Necesito tu perfil para darte cifras tuyas. Responde las cinco preguntas primero.',
+      src:'Basado en lo que ocurrió en marzo de 2020, no en una proyección.' },
+    comprar:{ user:'Entonces compro Ecopetrol mañana',
+      guard:'Decirte qué comprar y cuándo sería asesoría de inversión, y para eso se necesita una ' +
+        'licencia que no tenemos. No es que la herramienta no sirva: sirve para que llegues a esa ' +
+        'decisión sabiendo qué estás arriesgando.',
+      salida:['Puedo explicarte cómo evaluar una acción dentro de tu perfil.',
+              'Puedo mostrarte qué preguntas hacerle a un asesor antes de firmar.',
+              'Y para ejecutar la compra, necesitas una firma comisionista vigilada por la ' +
+              'Superintendencia Financiera. Ahí sí te pueden recomendar.'] },
+    educativo:{ user:'Enséñame a evaluar una acción',
+      bot:'Mira tres cosas. Primero, cuánto se mueve esa acción comparada con el resto de tu portafolio. ' +
+        'Segundo, si ya tienes mucho del mismo sector, porque ahí el riesgo se concentra. Y tercero, si el ' +
+        'tiempo de tu dinero aguanta sus caídas típicas. Si quieres, lo aplico a tu caso.',
+      src:'Material educativo sobre perfil de riesgo y diversificación.' },
+    glosario:{ user:'¿Qué significa renta fija y renta variable?',
+      bot:'Renta fija es prestar tu plata a cambio de un interés que ya conoces desde el principio: ' +
+        'rinde poco pero es predecible. Renta variable es comprar pedacitos de empresas: nadie te ' +
+        'promete cuánto vas a ganar, puede subir mucho o caer fuerte. Tu portafolio mezcla las dos ' +
+        'a propósito, para que una amortigüe a la otra.',
+      src:'Definiciones en lenguaje simple, sin tecnicismos.' }
+  };
+}
+function burbuja(clase, texto, fuente){
+  const d = document.createElement('div');
+  d.className = 'msg ' + clase; d.textContent = texto;
+  if (fuente){ const s = document.createElement('div'); s.className='src'; s.textContent=fuente; d.appendChild(s); }
+  chat.appendChild(d); return d;
+}
+function responder(g){
+  const t = document.createElement('div');
+  t.className = 'msg bot typing';
+  t.innerHTML = '<span></span><span></span><span></span>';
+  chat.appendChild(t);
+  t.scrollIntoView({behavior:'smooth', block:'nearest'});
+  setTimeout(() => {
+    t.remove();
+    if (g.guard){
+      const gd = document.createElement('div');
+      gd.className = 'guard';
+      gd.innerHTML = '<div class="tag">◆ Esto no te lo puedo decir</div><p>' + g.guard + '</p>' +
+        (g.salida ? '<p style="margin-top:12px;font-weight:600">Lo que sí puedo hacer:</p><ul style="margin:6px 0 0;padding-left:18px;font-size:15px;color:#3B3160">' +
+          g.salida.map(s => '<li style="margin-top:5px">' + s + '</li>').join('') + '</ul>' : '');
+      chat.appendChild(gd);
+    } else burbuja('bot', g.bot, g.src);
+    chat.lastElementChild.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }, 1000);
+}
+document.getElementById('chips').addEventListener('click', e => {
+  const b = e.target.closest('.qchip');
+  if (!b || b.disabled) return;
+  b.disabled = true;
+  const g = respuestas()[b.dataset.k];
+  burbuja('me', g.user);
+  responder(g);
+});
+function enviarLibre(){
+  const inp = document.getElementById('libre');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = '';
+  burbuja('me', txt);
+  const t = txt.toLowerCase();
+  const R = respuestas();
+  let g;
+  if (/(compr|vend|invierto en|meto la plata en)/.test(t)) g = R.comprar;
+  else if (/(renta fija|renta variable|qué significa|que significa|qué es|que es|colcap|etf|bvc|sfc|amv)/.test(t)) g = R.glosario;
+  else if (/(perder|pierdo|caída|caida|riesg|peor)/.test(t)) g = R.perder;
+  else if (/(por qué|porque|por que|razón|razon|elig)/.test(t)) g = R.porque;
+  else if (/(acción|accion|evaluar|aprender|enséñ|ensen)/.test(t)) g = R.educativo;
+  else g = { bot:'Todavía no sé responder eso en el prototipo. Puedo explicarte por qué te propusimos ' +
+    'este portafolio, cuánto podrías perder, o cómo evaluar una acción dentro de tu perfil.' };
+  responder(g);
+}
+document.getElementById('enviar').addEventListener('click', enviarLibre);
+document.getElementById('libre').addEventListener('keydown', e => { if (e.key === 'Enter') enviarLibre(); });
+
+/* ===== Simulador ===== */
+function prepararSim(){
+  const p = S.perfil;
+  const caida = p ? Math.abs(p.peor) : 0.28;
+  document.getElementById('simAmount').textContent = cop(S.monto);
+  document.getElementById('simPct').textContent = '0,0%';
+  document.getElementById('preguntaSim').textContent =
+    'Tu portafolio cae ' + (caida*100).toFixed(0) + '%. ¿Qué haces?';
+}
+document.getElementById('replay').addEventListener('click', () => {
+  const path = document.getElementById('simPath');
+  path.classList.remove('run'); void path.offsetWidth; path.classList.add('run');
+  const caida = S.perfil ? Math.abs(S.perfil.peor) : 0.28;
+  const ini = S.monto, fin = S.monto * (1 - caida);
+  const t0 = performance.now(), dur = 3200;
+  const amount = document.getElementById('simAmount'), pct = document.getElementById('simPct');
+  (function frame(t){
+    const q = Math.min((t - t0) / dur, 1);
+    amount.textContent = cop(ini + (fin - ini) * q);
+    pct.textContent = '−' + (caida * 100 * q).toFixed(1).replace('.', ',') + '%';
+    if (q < 1) requestAnimationFrame(frame);
+  })(performance.now());
+});
+
+const nivel = {1:'Baja', 2:'Media baja', 3:'Media alta', 4:'Alta'};
+document.getElementById('react').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('#react button').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  const rev = Number(b.dataset.r);
+  const dec = S.respuestas.tolerancia || null;
+  let dif, verdicto;
+  if (!dec){
+    dif = '—';
+    verdicto = 'Para comparar cómo reaccionaste con lo que habías dicho, primero responde las cinco preguntas.';
+  } else {
+    const d = rev - dec;
+    dif = d === 0 ? 'Ninguna' : (d > 0 ? 'Aguantaste más' : 'Aguantaste menos');
+    if (d === 0) verdicto = 'Reaccionaste igual que como te describiste. Tu comportamiento <em>confirma</em> tu perfil, así que dejamos el portafolio como está.';
+    else if (d < 0) verdicto = 'Dijiste que aguantabas más de lo que aguantaste. Frente a una caída real saliste antes. Vamos a <em>bajarte el riesgo</em>, porque el que importa es este comportamiento, no el del cuestionario.';
+    else verdicto = 'Aguantaste más de lo que declaraste. Podríamos <em>abrirte un poco el margen</em>, pero con calma: una simulación no duele igual que la plata real.';
+  }
+  document.getElementById('recalOut').innerHTML =
+    '<div style="margin-top:24px"><h3 style="font-size:19px">Lo que dijiste y lo que hiciste</h3>' +
+    '<div class="rgrid">' +
+      '<div class="rbox"><span>LO QUE DIJISTE</span><b>' + (dec ? nivel[dec] : '—') + '</b></div>' +
+      '<div class="rbox"><span>LO QUE HICISTE</span><b>' + nivel[rev] + '</b></div>' +
+      '<div class="rbox"><span>DIFERENCIA</span><b>' + dif + '</b></div>' +
+    '</div><div class="verdict">' + verdicto + '</div></div>';
+});
+</script>
+</body>
+</html>
