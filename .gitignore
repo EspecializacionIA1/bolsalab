@@ -1,0 +1,31 @@
+# --- Datos: nunca se versionan (licencias de las fuentes y tamaño) ---
+data/**
+!data/**/
+!data/**/.gitkeep
+
+# --- Modelos: solo se versionan artefactos pequeños (< 50 MB) ---
+models/*.pkl
+models/*.h5
+models/*.pt
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- Secretos y entorno ---
+.env
+
+# --- Frontend ---
+node_modules/
+dist/
+
+# --- IDE / SO ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
