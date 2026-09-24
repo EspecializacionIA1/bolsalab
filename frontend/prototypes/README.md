@@ -47,6 +47,23 @@ Segunda versión con optimizaciones basadas en feedback de usuarios.
 
 También puedes abrir los archivos `v1/bolsalab-app.html` o `v2/bolsalab-app.html` directamente en tu navegador.
 
+Antes de usarlo con participantes, configura la URL de Google Forms en la variable `FORM_URL` del HTML para recolectar el feedback.
+
+## Estructura técnica
+
+- **Una sola página HTML** por versión: código, estilos y lógica en `bolsalab-app.html`.
+- **Sin dependencias externas**, salvo Google Fonts.
+- **Vanilla JS**: router, estado, simulaciones y animaciones.
+- **Responsive**, con navegación inferior para móviles.
+
+## Perfiles usados en el prototipo
+
+Reglas fijas de puntaje, que el clasificador entrenado del proyecto reemplazará:
+
+- **Conservador** (score ≤ 7): renta fija 60 %, acciones 15 %, fondo global 15 %, efectivo 10 %
+- **Moderado** (score 8-11): renta fija 35 %, acciones 32 %, fondo global 25 %, efectivo 8 %
+- **Agresivo** (score ≥ 12): renta fija 15 %, acciones 45 %, fondo global 35 %, efectivo 5 %
+
 ## Limitaciones conocidas (es un prototipo)
 
 - Copiloto con respuestas predefinidas, no usa IA real

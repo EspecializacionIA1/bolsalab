@@ -1,0 +1,3 @@
+# Instala el paquete bolsalab en modo editable con herramientas de desarrollo.
+# Las dependencias reales están declaradas en pyproject.toml.
+-e .[dev]
