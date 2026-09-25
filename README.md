@@ -36,14 +36,16 @@ bolsalab/
 │   └── processed/         ← Datasets finales para entrenar
 ├── models/                ← Modelos publicados (.joblib) + su metadata (.json)
 ├── notebooks/             ← Exploración y comparación de modelos
+├── docs/                  ← Documentación de uso (commands.md: comandos para copiar y pegar)
 ├── references/            ← Diccionario de datos, fuentes y licencias
 ├── reports/figures/       ← Gráficas para entregas y sustentación
 ├── tests/                 ← Pruebas del paquete
 ├── backend/               ← API en FastAPI que expone el modelo
 ├── frontend/              ← Aplicación web
 │   └── prototypes/        ← Prototipos HTML v1 y v2 validados con usuarios (Design Thinking)
-├── pyproject.toml         ← Hace instalable el paquete bolsalab (pip install -e .)
-├── requirements.txt
+├── pyproject.toml         ← Dependencias del proyecto (equivale a package.json)
+├── uv.lock                ← Versiones exactas instaladas (equivale a package-lock.json)
+├── .python-version        ← Versión de Python del proyecto (3.12)
 ├── Makefile               ← Atajos: make data / make features / make train
 └── .env.example           ← Variables de entorno necesarias (copiar a .env)
 ```
@@ -70,19 +72,20 @@ Fuentes ──► data/raw ──► data/interim ──► data/processed ─�
 
 ## Primeros pasos
 
+El proyecto usa [uv](https://docs.astral.sh/uv/) para manejar Python y las dependencias (similar a npm). Instalarlo una vez: `powershell -c "irm https://astral.sh/uv/install.ps1 | iex"` en Windows, o `curl -LsSf https://astral.sh/uv/install.sh | sh` en Linux/Mac.
+
 ```bash
 git clone git@github.com:EspecializacionIA1/bolsalab.git
 cd bolsalab
-python -m venv .venv
-.venv\Scripts\activate          # Windows  |  source .venv/bin/activate en Linux/Mac
-pip install -r requirements.txt
+uv sync                         # descarga Python 3.12, crea .venv e instala todo desde uv.lock
 cp .env.example .env            # y completar los valores
 ```
 
-Luego se ejecuta el pipeline por etapas: `make data`, `make features`, `make train`. Si `make` no está disponible en Windows, cada objetivo del `Makefile` indica el comando de Python equivalente.
+**Todos los comandos para copiar y pegar** (descargar datos, revisarlos, correr pruebas, manejar dependencias) están en [`docs/commands.md`](docs/commands.md).
 
 ## Convenciones del equipo
 
+- **Dependencias:** se agregan solo con `uv add`, nunca con `pip install`, y `uv.lock` se sube a git para que todos tengan las mismas versiones.
 - **Ramas:** nadie hace push directo a `main`. Se trabaja en `feature/<descripcion>` y se integra por Pull Request con al menos una aprobación.
 - **Notebooks:** se nombran `<orden>-<iniciales>-<descripcion>.ipynb`, por ejemplo `3.0-jga-comparacion-modelos.ipynb`. Si un notebook produce código que se va a reutilizar, ese código pasa a `bolsalab/`.
 - **Datos:** no se suben a git. Cualquiera los regenera ejecutando el pipeline. Las descargas manuales se documentan en `references/`.
