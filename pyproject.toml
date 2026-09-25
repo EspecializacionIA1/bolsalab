@@ -31,11 +31,19 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Solo para el modelo de sentimiento: uv sync --extra nlp
 nlp = ["transformers>=4.40", "datasets>=2.19", "torch>=2.2"]
-dev = ["pytest>=8.0", "jupyterlab>=4.1", "ruff>=0.4"]
+
+[dependency-groups]
+# Herramientas de desarrollo: uv sync las instala por defecto
+dev = ["pytest>=8.0", "jupyterlab>=4.1", "ipykernel>=6.29", "ruff>=0.4"]
 
 [tool.setuptools.packages.find]
 include = ["bolsalab*"]
 
 [tool.ruff]
 line-length = 100
+
+[tool.ruff.lint]
+# Errores, imports ordenados, bugs comunes y sintaxis moderna
+select = ["E", "F", "I", "B", "UP"]

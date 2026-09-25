@@ -2,17 +2,17 @@
 
 .PHONY: install data features train test
 
-install:   ## Crea el entorno de desarrollo
-	pip install -r requirements.txt
+install:   ## Crea el entorno con las versiones exactas de uv.lock
+	uv sync
 
-data:      ## Etapas 1-2: descarga y limpieza  -> data/raw, data/interim
-	python -m bolsalab.dataset
+data:      ## Etapa 1: descarga de fuentes automáticas -> data/raw
+	uv run python -m bolsalab.dataset
 
 features:  ## Etapa 3: construye los datasets de entrenamiento -> data/processed
-	python -m bolsalab.features
+	uv run python -m bolsalab.features
 
 train:     ## Etapas 4-5: compara modelos, elige y exporta el artefacto -> models/
-	python -m bolsalab.modeling.train
+	uv run python -m bolsalab.modeling.train
 
 test:
-	pytest tests
+	uv run pytest tests
