@@ -25,34 +25,35 @@ FIGURES_DIR = REPORTS_DIR / "figures"
 
 # --- Reproducibilidad ---------------------------------------------------------
 RANDOM_STATE = 42
-FECHA_INICIO = "2010-01-01"
+START_DATE = "2010-01-01"
 
 # --- Universo de activos: una serie por clase del portafolio -----------------
 # Yahoo Finance usa el sufijo .CL para la Bolsa de Valores de Colombia (no .CO).
-CLASES_ACTIVO = {
-    "acciones_colombia": {"fuente": "yfinance", "ticker": "ICOLCAP.CL"},
-    "fondo_global": {"fuente": "yfinance", "ticker": "SPY"},
-    "renta_fija_pesos": {"fuente": "banrep", "serie": "DF_TES_MONTHLY_HIST"},
-    "efectivo": {"fuente": "banrep", "serie": "DF_IBR_DAILY_HIST"},
+ASSET_CLASSES = {
+    "colombian_equity": {"source": "yfinance", "ticker": "ICOLCAP.CL"},
+    "global_equity": {"source": "yfinance", "ticker": "SPY"},
+    "cop_fixed_income": {"source": "banrep", "series": "DF_TES_MONTHLY_HIST"},
+    "cash": {"source": "banrep", "series": "DF_IBR_DAILY_HIST"},
 }
 
-# Acciones BVC líquidas para features y validación del proxy ICOLCAP.
+# Acciones BVC líquidas del COLCAP.
 # PFBCOLOM ya no existe: tras la reorganización de Grupo Cibest se usa PFCIBEST.
-TICKERS_BVC = ["ECOPETROL.CL", "CIBEST.CL", "PFCIBEST.CL", "ISA.CL", "GEB.CL"]
+BVC_TICKERS = ["ECOPETROL.CL", "CIBEST.CL", "PFCIBEST.CL", "ISA.CL", "GEB.CL"]
 
 # --- Series oficiales ---------------------------------------------------------
 BANREP_SDMX_URL = "https://totoro.banrep.gov.co/nsi-jax-ws/rest/data"
 BANREP_FLOWS = {
     "trm": "DF_TRM_DAILY_HIST",
-    "tasa_politica": "DF_CBR_DAILY_HIST",
+    "policy_rate": "DF_CBR_DAILY_HIST",
     "ibr": "DF_IBR_DAILY_HIST",
     "dtf": "DF_DTF_DAILY_HIST",
     "tes": "DF_TES_MONTHLY_HIST",
-    "colcap_mensual": "DF_COLCAP_MONTHLY_HIST",
+    "colcap_monthly": "DF_COLCAP_MONTHLY_HIST",
 }
 TRM_DATOS_GOV_URL = "https://www.datos.gov.co/resource/32sa-8pi3.json"
 
 FRED_SERIES = ["VIXCLS", "VXEEMCLS", "STLFSI4", "DGS10", "DCOILBRENTEU", "DTWEXBGS"]
 
 # --- Clasificador de perfil ---------------------------------------------------
-ARQUETIPOS = {0: "conservador", 1: "moderado", 2: "agresivo"}
+# Los nombres de las clases quedan en español porque son los que ve el usuario
+RISK_PROFILES = {0: "conservador", 1: "moderado", 2: "agresivo"}
