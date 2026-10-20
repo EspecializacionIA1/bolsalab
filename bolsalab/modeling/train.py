@@ -173,7 +173,10 @@ def export_model(model, metrics: dict) -> None:
 
 
 def main() -> None:
-    """Ejecuta todo en orden: partición, comparación, elección, prueba final y exportación."""
+    """Ejecuta todo en orden: variables, partición, comparación, elección, prueba final y exportación."""
+    if rebuild_features or not TRAINING_FILE.exists():
+        print("Generando variables (etapa 2)...")
+        build_training_table()  # escribe 
     table = pd.read_parquet(TRAINING_FILE)
     X_train, X_test, y_train, y_test = split_data(table)
 
