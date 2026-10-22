@@ -8,6 +8,7 @@ from bolsalab.nfcs import (
     build_confidence,
     build_demographics,
     build_knowledge,
+    build_risk_aversion,
     build_target,
     load_nfcs_2018,
     select_respondents,
@@ -47,15 +48,15 @@ def test_everyone_has_non_retirement_investments(survey):
 
 
 def test_respondents(respondents):
-    """Quedan 1.928: 1.942 dijeron qué hicieron y 14 de ellas no calificaron su conocimiento."""
-    assert len(respondents) == 1928
+    """Quedan 1.918: 1.942 dijeron qué hicieron; salen 14 sin calificar su conocimiento y 10 sin calificar su riesgo."""
+    assert len(respondents) == 1918
 
 
 def test_sold_counts(respondents):
-    """Vendieron 86; compraron 392 y no hicieron nada 1.450, y esos cuentan como 0."""
+    """Vendieron 85; compraron 389 y no hicieron nada 1.444, y esos cuentan como 0."""
     sold = build_target(respondents)
-    assert sold.sum() == 86
-    assert (sold == 0).sum() == 392 + 1450
+    assert sold.sum() == 85
+    assert (sold == 0).sum() == 389 + 1444
 
 
 @pytest.fixture(scope="module")
@@ -76,11 +77,11 @@ def test_age_uses_range_midpoints(demographics):
 
 def test_demographic_counts(demographics):
     """Cuántas personas tienen 1 en cada variable de sí o no."""
-    assert demographics["male"].sum() == 1103
-    assert demographics["university"].sum() == 1093
-    assert demographics["married"].sum() == 1230
-    assert demographics["has_children"].sum() == 1357
-    assert demographics["employed"].sum() == 989
+    assert demographics["male"].sum() == 1098
+    assert demographics["university"].sum() == 1090
+    assert demographics["married"].sum() == 1224
+    assert demographics["has_children"].sum() == 1351
+    assert demographics["employed"].sum() == 985
 
 
 def test_demographics_no_missing(demographics):
@@ -91,9 +92,9 @@ def test_demographics_no_missing(demographics):
 def test_knowledge_counts(respondents):
     """Cuántos acertaron cada pregunta; 'no sabe' y 'prefiere no decir' cuentan como 0."""
     knowledge = build_knowledge(respondents)
-    assert knowledge["knows_interest"].sum() == 1674
-    assert knowledge["knows_inflation"].sum() == 1522
-    assert knowledge["knows_diversification"].sum() == 1385
+    assert knowledge["knows_interest"].sum() == 1667
+    assert knowledge["knows_inflation"].sum() == 1518
+    assert knowledge["knows_diversification"].sum() == 1381
     assert set(knowledge.stack().unique()) <= {0, 1}
 
 
@@ -105,9 +106,17 @@ def confidence(respondents):
 def test_confidence_uses_japan_scale(confidence):
     """La confianza queda de 1 a 5, como en Japón."""
     assert confidence["knowledge_confidence"].value_counts().to_dict() == {
-        4: 1302, 5: 444, 3: 146, 2: 31, 1: 5}
+        4: 1298, 5: 442, 3: 144, 2: 29, 1: 5}
 
 
 def test_overconfidence_follows_japan_rule(confidence):
-    """Exceso de confianza: marcó 5, o marcó 4 y acertó 2 o menos. Son 927."""
-    assert confidence["overconfidence"].sum() == 927
+    """Exceso de confianza: marcó 5, o marcó 4 y acertó 2 o menos. Son 922."""
+    assert confidence["overconfidence"].sum() == 922
+
+
+def test_risk_aversion_is_inverted(respondents):
+    """Quien marca 1 en J2 (nada dispuesto) queda en 1; quien marca 10, en 0."""
+    risk = build_risk_aversion(respondents)
+    assert risk[respondents["J2"] == 1].eq(1).all()
+    assert risk[respondents["J2"] == 10].eq(0).all()
+    assert risk.between(0, 1).all()

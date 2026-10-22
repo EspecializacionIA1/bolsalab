@@ -48,6 +48,10 @@ KNOWLEDGE_ANSWERS = {
 # a la escala de Japón (1 a 5) en proporción, redondeando.
 CONFIDENCE_1_TO_5 = {1: 1, 2: 2, 3: 2, 4: 3, 5: 4, 6: 4, 7: 5}
 
+# J2: "Al pensar en sus inversiones, ¿qué tan dispuesto está a asumir riesgos?"
+# de 1 (nada) a 10 (muy dispuesto). En Japón va de 0 a 1 y al revés.
+RISK_ANSWERS = range(1, 11)
+
 
 def read_csv_from_zip(zip_path: Path, csv_name: str) -> pd.DataFrame:
     """Lee un CSV dentro del zip original, sin descomprimirlo en disco."""
@@ -76,9 +80,12 @@ def select_respondents(survey: pd.DataFrame) -> pd.DataFrame:
     Todos tienen inversiones fuera de retiro, porque la encuesta descartaba al
     resto (pregunta A3). No se filtra por lo que tenían en julio (B2), porque
     eso ya depende de si vendieron en febrero. Descartamos a quien no calificó su
-    conocimiento (M4), porque en Japón esa pregunta no tiene "no sabe".
+    conocimiento (M4) o su disposición al riesgo (J2), porque en Japón esas
+    preguntas no tienen "no sabe".
     """
-    keep = survey["D20"].isin([BOUGHT, SOLD, NEITHER]) & survey["M4"].isin(CONFIDENCE_1_TO_5)
+    keep = (survey["D20"].isin([BOUGHT, SOLD, NEITHER])
+            & survey["M4"].isin(CONFIDENCE_1_TO_5)
+            & survey["J2"].isin(RISK_ANSWERS))
     return survey[keep].reset_index(drop=True)
 
 
@@ -123,6 +130,10 @@ def build_confidence(respondents: pd.DataFrame, knowledge: pd.DataFrame) -> pd.D
         "overconfidence": overconfidence.astype(int),
     })
 
+
+def build_risk_aversion(respondents: pd.DataFrame) -> pd.Series:
+    """Devuelve `risk_aversion` de 0 a 1: 1 = nada dispuesto al riesgo, 0 = muy dispuesto."""
+    return ((10 - respondents["J2"]) / 9).rename("risk_aversion")
 
 def main() -> None:
     respondents = select_respondents(load_nfcs_2018())

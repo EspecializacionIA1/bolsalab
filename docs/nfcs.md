@@ -18,11 +18,11 @@ Los archivos no se comparten ni se suben al repo: los términos de FINRA lo proh
 **1. Unimos las dos partes por persona** con `NFCSID`. Las 2.003 personas encontraron su fila. 
 Ojo: 9 preguntas tienen el mismo código en las dos partes y preguntan cosas distintas (`A3` es "tiene inversiones fuera de retiro?" en una y "sexo" en la otra), así que llevan el sufijo `_inv` o `_state`.
 
-**2. Dejamos a quien dijo qué hizo en la caída** (pregunta D20): 1.942 personas. Salen 43 que respondieron "no sabe" y 18 "prefiere no decir". Después sacamos 14 más que no calificaron su conocimiento (ver paso 6), y quedan **1.928**.
+**2. Dejamos a quien dijo qué hizo en la caída** (pregunta D20): 1.942 personas. Salen 43 que respondieron "no sabe" y 18 "prefiere no decir". Después sacamos 14 que no calificaron su conocimiento (paso 6) y 10 que no calificaron su disposición al riesgo (paso 7), y quedan **1.918**.
 
 No filtramos por las inversiones que tenían porque esa pregunta es de julio, después de la caída. Filtrar ahí sacaría a quien vendió todo en febrero, que es justo lo que queremos predecir. Tampoco hacía falta: la encuesta solo dejó seguir a quien tenía inversiones.
 
-**3. Construimos `sold`:** 1 si vendió (86 personas, 4,5 %) y 0 si compró (392) o no hizo nada (1.450). Quien compró va en 0 porque no vendió, igual que en Japón, donde solo hay dos grupos: vendió o mantuvo.
+**3. Construimos `sold`:** 1 si vendió (85 personas, 4,4 %) y 0 si compró (389) o no hizo nada (1.444). Quien compró va en 0 porque no vendió, igual que en Japón, donde solo hay dos grupos: vendió o mantuvo.
 
 **4. Pasamos los datos personales a la forma de Japón.** Usamos los mismos nombres y, cuando había dos opciones, la que más se parece a la pregunta japonesa.
 
@@ -39,11 +39,11 @@ No filtramos por las inversiones que tenían porque esa pregunta es de julio, de
 
 | Variable | Pregunta NFCS | Acertaron |
 |---|---|---|
-| `knows_interest` | M6: $100 al 2 % durante 5 años, ¿más, igual o menos de $102? | 1.674 |
-| `knows_inflation` | M7: interés del 1 % e inflación del 2 %, ¿compra más, igual o menos? | 1.522 |
-| `knows_diversification` | M10: ¿una sola acción es más segura que un fondo? (falso) | 1.385 |
+| `knows_interest` | M6: $100 al 2 % durante 5 años, ¿más, igual o menos de $102? | 1.667 |
+| `knows_inflation` | M7: interés del 1 % e inflación del 2 %, ¿compra más, igual o menos? | 1.518 |
+| `knows_diversification` | M10: ¿una sola acción es más segura que un fondo? (falso) | 1.381 |
 
-"No sabe" y "prefiere no decir" cuentan como 0. Así lo hacen los estudios con estas preguntas, y quitarlos nos haría perder casi una de cada cinco personas. Llama la atención que en diversificación muchas más personas dijeron "no sabe" que en interés (359 contra 91, antes de sacar a las 14 del paso 6).
+"No sabe" y "prefiere no decir" cuentan como 0. Así lo hacen los estudios con estas preguntas, y quitarlos nos haría perder casi una de cada cinco personas. Llama la atención que en diversificación muchas más personas dijeron "no sabe" que en interés (359 contra 91, antes de sacar a las personas de los pasos 6 y 7).
 
 **6. Confianza y exceso de confianza.** La NFCS pregunta "del 1 al 7, ¿cómo califica su conocimiento sobre finanzas?" (M4). Japón usa una escala de 1 a 5, así que la convertimos en proporción y redondeamos:
 
@@ -55,17 +55,22 @@ Sacamos a 14 personas que respondieron "no sabe" o "prefiere no decir", porque e
 
 Para `overconfidence` usamos la misma regla del archivo japonés: 1 si marcó 5, o si marcó 4 y acertó 2 o menos preguntas.
 
-**Hallazgo:** los estadounidenses se califican mucho más alto que los japoneses. El 63 % quedó en 4 o 5, contra el 23 % en Japón, y con la misma regla el 48 % tiene exceso de confianza, contra el 7,5 % en Japón. Decidimos como grupo respetar lo que cada persona dijo, sin igualar los países, porque así respondería un usuario en la app y porque esa diferencia es justo lo que queremos estudiar.
+**Hallazgo:** los estadounidenses se califican mucho más alto que los japoneses. El 64 % se puso 6 o 7 de 7; ya en la escala japonesa, el 91 % queda en 4 o 5, contra el 23 % en Japón, y con la misma regla el 48 % tiene exceso de confianza, contra el 7,5 % en Japón. Decidimos como grupo respetar lo que cada persona dijo, sin igualar los países, porque así respondería un usuario en la app y porque esa diferencia es justo lo que queremos estudiar.
 
-Aun así, la relación va en la misma dirección que en Japón: entre quienes tienen exceso de confianza vendió el 6,6 %, y entre los demás, el 2,5 %.
+Aun así, la relación va en la misma dirección que en Japón: entre quienes tienen exceso de confianza vendió el 6,6 %, y entre los demás, el 2,4 %.
+
+**7. Disposición al riesgo.** La NFCS pregunta "al pensar en sus inversiones, ¿qué tan dispuesto está a asumir riesgos?", de 1 (nada) a 10 (muy dispuesto) (J2). En Japón `risk_aversion` va de 0 a 1 y al revés: más alto es evitar más el riesgo. La convertimos con `(10 − J2) / 9`, sin redondear: quien marcó 1 queda en 1 y quien marcó 10, en 0. Sacamos a 10 personas que respondieron "no sabe" o "prefiere no decir".
+
+**Hallazgo y duda:** la relación con vender no se parece entre los dos países. En la NFCS vende más quien más acepta riesgo (12,8 % con 10 contra 1,5 % con 1). En Japón la relación tiene forma de U: venden más los dos extremos (24,5 % en 0 y 31,7 % en 0,9) que el medio (16 % a 19 %). No sabemos la redacción de la pregunta japonesa, así que no podemos saber si miden lo mismo.
 
 ## Lo que hay que tener en cuenta
 
-- En la NFCS vendió el 4,5 % y en Japón el 19,87 %. La caída de 2018 fue mucho menor que la de marzo de 2020.
+- En la NFCS vendió el 4,4 % y en Japón el 19,87 %. La caída de 2018 fue mucho menor que la de marzo de 2020.
 - La NFCS no separa entre vender todo y vender parte.
 - Algunas personas quizás solo tenían bonos. Como mucho son 110 (5,7 %).
 - La edad es aproximada: todos los de un rango quedan con la misma edad, y el 70 de "65 o más" es una decisión nuestra.
 - La conversión de la confianza de 1-7 a 1-5 es nuestra. Pasar de 5 a 6 en la NFCS no cambia nada (los dos quedan en 4), y eso afecta quién queda con exceso de confianza.
+- No sabemos qué pregunta usó Japón para el riesgo. Puede que no mida lo mismo que la NFCS.
 
 ## Cómo correrlo
 
