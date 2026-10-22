@@ -53,6 +53,10 @@ CONFIDENCE_1_TO_5 = {1: 1, 2: 2, 3: 2, 4: 3, 5: 4, 6: 4, 7: 5}
 # de 1 (nada) a 10 (muy dispuesto). En Japón va de 0 a 1 y al revés.
 RISK_ANSWERS = range(1, 11)
 
+# B4 (parte de inversionistas): valor de las inversiones fuera de cuentas de
+# retiro, en 10 tramos de dólares.
+ASSET_ANSWERS = range(1, 11)
+
 
 def read_csv_from_zip(zip_path: Path, csv_name: str) -> pd.DataFrame:
     """Lee un CSV dentro del zip original, sin descomprimirlo en disco."""
@@ -81,12 +85,13 @@ def select_respondents(survey: pd.DataFrame) -> pd.DataFrame:
     Todos tienen inversiones fuera de retiro, porque la encuesta descartaba al
     resto (pregunta A3). No se filtra por lo que tenían en julio (B2), porque
     eso ya depende de si vendieron en febrero. Descartamos a quien no calificó su
-    conocimiento (M4) o su disposición al riesgo (J2), porque en Japón esas
-    preguntas no tienen "no sabe".
+    conocimiento (M4), su disposición al riesgo (J2) o el valor de sus
+    inversiones (B4), porque en Japón esas preguntas no tienen "no sabe".
     """
     keep = (survey["D20"].isin([BOUGHT, SOLD, NEITHER])
             & survey["M4"].isin(CONFIDENCE_1_TO_5)
-            & survey["J2"].isin(RISK_ANSWERS))
+            & survey["J2"].isin(RISK_ANSWERS)
+            & survey["B4_inv"].isin(ASSET_ANSWERS))
     return survey[keep].reset_index(drop=True)
 
 
@@ -159,14 +164,21 @@ def build_income(respondents: pd.DataFrame, japan_income: pd.Series) -> pd.Serie
     mapping = match_brackets_by_position(respondents["A8"], japan_income)
     return respondents["A8"].map(mapping).rename("income_bracket")
 
+def build_assets(respondents: pd.DataFrame, japan_assets: pd.Series) -> pd.Series:
+    """Devuelve `assets_bracket` en tramos japoneses, por posición dentro de cada país."""
+    mapping = match_brackets_by_position(respondents["B4_inv"], japan_assets)
+    return respondents["B4_inv"].map(mapping).rename("assets_bracket")
+
 def main() -> None:
     respondents = select_respondents(load_nfcs_2018())
     sold = build_target(respondents)
     print(f"{len(respondents)} personas; vendieron {sold.sum()} ({sold.mean():.1%})")
     print(build_demographics(respondents).describe().loc[["mean", "min", "max"]].round(2))
-    japan_income = pd.read_parquet(TRAINING_FILE, columns=["income_bracket"])["income_bracket"]
+    japan = pd.read_parquet(TRAINING_FILE, columns=["income_bracket", "assets_bracket"])
     print("Tramo de ingreso NFCS -> tramo japonés:",
-          match_brackets_by_position(respondents["A8"], japan_income))
+          match_brackets_by_position(respondents["A8"], japan["income_bracket"]))
+    print("Tramo de inversiones NFCS -> tramo japonés de activos:",
+          match_brackets_by_position(respondents["B4_inv"], japan["assets_bracket"]))
 
 
 if __name__ == "__main__":

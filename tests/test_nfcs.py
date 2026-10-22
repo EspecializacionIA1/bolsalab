@@ -8,6 +8,7 @@ from bolsalab.config import NFCS_INVESTOR_ZIP, NFCS_STATE_ZIP
 from bolsalab.features import TRAINING_FILE
 from bolsalab.nfcs import (
     DEMOGRAPHICS,
+    build_assets,
     build_confidence,
     build_demographics,
     build_income,
@@ -53,15 +54,15 @@ def test_everyone_has_non_retirement_investments(survey):
 
 
 def test_respondents(respondents):
-    """Quedan 1.918: 1.942 dijeron qué hicieron; salen 14 sin calificar su conocimiento y 10 sin calificar su riesgo."""
-    assert len(respondents) == 1918
+    """Quedan 1.825: de las 1.942 que dijeron qué hicieron, salen quienes no respondieron M4, J2 o B4."""
+    assert len(respondents) == 1825
 
 
 def test_sold_counts(respondents):
-    """Vendieron 85; compraron 389 y no hicieron nada 1.444, y esos cuentan como 0."""
+    """Vendieron 84; compraron 377 y no hicieron nada 1.364, y esos cuentan como 0."""
     sold = build_target(respondents)
-    assert sold.sum() == 85
-    assert (sold == 0).sum() == 389 + 1444
+    assert sold.sum() == 84
+    assert (sold == 0).sum() == 377 + 1364
 
 
 @pytest.fixture(scope="module")
@@ -82,11 +83,11 @@ def test_age_uses_range_midpoints(demographics):
 
 def test_demographic_counts(demographics):
     """Cuántas personas tienen 1 en cada variable de sí o no."""
-    assert demographics["male"].sum() == 1098
-    assert demographics["university"].sum() == 1090
-    assert demographics["married"].sum() == 1224
-    assert demographics["has_children"].sum() == 1351
-    assert demographics["employed"].sum() == 985
+    assert demographics["male"].sum() == 1054
+    assert demographics["university"].sum() == 1041
+    assert demographics["married"].sum() == 1155
+    assert demographics["has_children"].sum() == 1291
+    assert demographics["employed"].sum() == 952
 
 
 def test_demographics_no_missing(demographics):
@@ -97,9 +98,9 @@ def test_demographics_no_missing(demographics):
 def test_knowledge_counts(respondents):
     """Cuántos acertaron cada pregunta; 'no sabe' y 'prefiere no decir' cuentan como 0."""
     knowledge = build_knowledge(respondents)
-    assert knowledge["knows_interest"].sum() == 1667
-    assert knowledge["knows_inflation"].sum() == 1518
-    assert knowledge["knows_diversification"].sum() == 1381
+    assert knowledge["knows_interest"].sum() == 1586
+    assert knowledge["knows_inflation"].sum() == 1447
+    assert knowledge["knows_diversification"].sum() == 1322
     assert set(knowledge.stack().unique()) <= {0, 1}
 
 
@@ -111,12 +112,12 @@ def confidence(respondents):
 def test_confidence_uses_japan_scale(confidence):
     """La confianza queda de 1 a 5, como en Japón."""
     assert confidence["knowledge_confidence"].value_counts().to_dict() == {
-        4: 1298, 5: 442, 3: 144, 2: 29, 1: 5}
+        4: 1237, 5: 419, 3: 136, 2: 28, 1: 5}
 
 
 def test_overconfidence_follows_japan_rule(confidence):
-    """Exceso de confianza: marcó 5, o marcó 4 y acertó 2 o menos. Son 922."""
-    assert confidence["overconfidence"].sum() == 922
+    """Exceso de confianza: marcó 5, o marcó 4 y acertó 2 o menos. Son 873."""
+    assert confidence["overconfidence"].sum() == 873
 
 
 def test_risk_aversion_is_inverted(respondents):
@@ -140,3 +141,12 @@ def test_income_matches_japan_by_position(respondents):
     assert match_brackets_by_position(respondents["A8"], japan_income) == {
         1: 1, 2: 2, 3: 3, 4: 3, 5: 4, 6: 5, 7: 6, 8: 9}
     assert build_income(respondents, japan_income).notna().all()
+
+
+@pytest.mark.skipif(not TRAINING_FILE.exists(), reason="Falta la tabla de Japón")
+def test_assets_match_japan_by_position(respondents):
+    """La tabla de conversión de inversiones que quedó documentada en docs/nfcs.md."""
+    japan_assets = pd.read_parquet(TRAINING_FILE, columns=["assets_bracket"])["assets_bracket"]
+    assert match_brackets_by_position(respondents["B4_inv"], japan_assets) == {
+        1: 1, 2: 1, 3: 1, 4: 2, 5: 2, 6: 3, 7: 5, 8: 7, 9: 8, 10: 9}
+    assert build_assets(respondents, japan_assets).notna().all()
