@@ -44,6 +44,10 @@ KNOWLEDGE_ANSWERS = {
     "knows_diversification": ("M10", 2), # falso
 }
 
+# M4: "Del 1 al 7,cómo califica su conocimiento sobre finanzas?". La pasamos
+# a la escala de Japón (1 a 5) en proporción, redondeando.
+CONFIDENCE_1_TO_5 = {1: 1, 2: 2, 3: 2, 4: 3, 5: 4, 6: 4, 7: 5}
+
 
 def read_csv_from_zip(zip_path: Path, csv_name: str) -> pd.DataFrame:
     """Lee un CSV dentro del zip original, sin descomprimirlo en disco."""
@@ -67,13 +71,15 @@ def load_nfcs_2018(investor_zip: Path = NFCS_INVESTOR_ZIP,
 
 
 def select_respondents(survey: pd.DataFrame) -> pd.DataFrame:
-    """Deja a quien dijo qué hizo en la caída: compró, vendió o ninguna.
+    """Deja a quien dijo qué hizo en la caída y calificó su conocimiento.
 
     Todos tienen inversiones fuera de retiro, porque la encuesta descartaba al
     resto (pregunta A3). No se filtra por lo que tenían en julio (B2), porque
-    eso ya depende de si vendieron en febrero.
+    eso ya depende de si vendieron en febrero. Descartamos a quien no calificó su
+    conocimiento (M4), porque en Japón esa pregunta no tiene "no sabe".
     """
-    return survey[survey["D20"].isin([BOUGHT, SOLD, NEITHER])].reset_index(drop=True)
+    keep = survey["D20"].isin([BOUGHT, SOLD, NEITHER]) & survey["M4"].isin(CONFIDENCE_1_TO_5)
+    return survey[keep].reset_index(drop=True)
 
 
 def build_target(respondents: pd.DataFrame) -> pd.Series:
@@ -100,6 +106,21 @@ def build_knowledge(respondents: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame({
         name: respondents[column].eq(correct).astype(int)
         for name, (column, correct) in KNOWLEDGE_ANSWERS.items()
+    })
+
+
+def build_confidence(respondents: pd.DataFrame, knowledge: pd.DataFrame) -> pd.DataFrame:
+    """Devuelve la confianza (1 a 5) y el exceso de confianza con la regla de Japón.
+
+     En el archivo japonés hay exceso de confianza si la persona marcó 5, o si
+    marcó 4 y acertó 2 o menos de las 3 preguntas
+    """
+    confidence = respondents["M4"].map(CONFIDENCE_1_TO_5)
+    correct = knowledge.sum(axis=1)
+    overconfidence = confidence.eq(5) | (confidence.eq(4) & correct.le(2))
+    return pd.DataFrame({
+        "knowledge_confidence": confidence,
+        "overconfidence": overconfidence.astype(int),
     })
 
 

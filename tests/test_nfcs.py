@@ -5,6 +5,7 @@ import pytest
 from bolsalab.config import NFCS_INVESTOR_ZIP, NFCS_STATE_ZIP
 from bolsalab.nfcs import (
     DEMOGRAPHICS,
+    build_confidence,
     build_demographics,
     build_knowledge,
     build_target,
@@ -45,16 +46,16 @@ def test_everyone_has_non_retirement_investments(survey):
     assert survey["A3_inv"].eq(1).all()
 
 
-def test_respondents_exclude_dont_know(respondents):
-    """Quedan 1.942: se excluyen 43 'no sabe' y 18 'prefiere no decir'."""
-    assert len(respondents) == 1942
+def test_respondents(respondents):
+    """Quedan 1.928: 1.942 dijeron qué hicieron y 14 de ellas no calificaron su conocimiento."""
+    assert len(respondents) == 1928
 
 
 def test_sold_counts(respondents):
-    """Vendieron 87; compraron 396 y no hicieron nada 1.459, y esos cuentan como 0."""
+    """Vendieron 86; compraron 392 y no hicieron nada 1.450, y esos cuentan como 0."""
     sold = build_target(respondents)
-    assert sold.sum() == 87
-    assert (sold == 0).sum() == 396 + 1459
+    assert sold.sum() == 86
+    assert (sold == 0).sum() == 392 + 1450
 
 
 @pytest.fixture(scope="module")
@@ -75,11 +76,11 @@ def test_age_uses_range_midpoints(demographics):
 
 def test_demographic_counts(demographics):
     """Cuántas personas tienen 1 en cada variable de sí o no."""
-    assert demographics["male"].sum() == 1110
-    assert demographics["university"].sum() == 1097
-    assert demographics["married"].sum() == 1239
-    assert demographics["has_children"].sum() == 1370
-    assert demographics["employed"].sum() == 994
+    assert demographics["male"].sum() == 1103
+    assert demographics["university"].sum() == 1093
+    assert demographics["married"].sum() == 1230
+    assert demographics["has_children"].sum() == 1357
+    assert demographics["employed"].sum() == 989
 
 
 def test_demographics_no_missing(demographics):
@@ -90,7 +91,23 @@ def test_demographics_no_missing(demographics):
 def test_knowledge_counts(respondents):
     """Cuántos acertaron cada pregunta; 'no sabe' y 'prefiere no decir' cuentan como 0."""
     knowledge = build_knowledge(respondents)
-    assert knowledge["knows_interest"].sum() == 1685
-    assert knowledge["knows_inflation"].sum() == 1530
-    assert knowledge["knows_diversification"].sum() == 1389
+    assert knowledge["knows_interest"].sum() == 1674
+    assert knowledge["knows_inflation"].sum() == 1522
+    assert knowledge["knows_diversification"].sum() == 1385
     assert set(knowledge.stack().unique()) <= {0, 1}
+
+
+@pytest.fixture(scope="module")
+def confidence(respondents):
+    return build_confidence(respondents, build_knowledge(respondents))
+
+
+def test_confidence_uses_japan_scale(confidence):
+    """La confianza queda de 1 a 5, como en Japón."""
+    assert confidence["knowledge_confidence"].value_counts().to_dict() == {
+        4: 1302, 5: 444, 3: 146, 2: 31, 1: 5}
+
+
+def test_overconfidence_follows_japan_rule(confidence):
+    """Exceso de confianza: marcó 5, o marcó 4 y acertó 2 o menos. Son 927."""
+    assert confidence["overconfidence"].sum() == 927
