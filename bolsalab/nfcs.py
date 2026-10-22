@@ -13,6 +13,7 @@ from pathlib import Path
 import pandas as pd
 
 from bolsalab.config import NFCS_INVESTOR_ZIP, NFCS_STATE_ZIP
+from bolsalab.features import TRAINING_FILE
 
 INVESTOR_CSV = "NFCS 2018 Investor Data 191107.csv"
 STATE_CSV = "NFCS 2018 State Data 190603.csv"
@@ -135,11 +136,37 @@ def build_risk_aversion(respondents: pd.DataFrame) -> pd.Series:
     """Devuelve `risk_aversion` de 0 a 1: 1 = nada dispuesto al riesgo, 0 = muy dispuesto."""
     return ((10 - respondents["J2"]) / 9).rename("risk_aversion")
 
+def match_brackets_by_position(source: pd.Series, target: pd.Series) -> dict:
+    """Asigna a cada tramo de `source` el tramo de `target` en la misma posición.
+
+    La posición de un tramo es la mitad de su franja en la distribución
+    acumulada de su país. Por ejemplo, un tramo que va del 24 % al 47 % de la
+    gente queda en el 36 %, y se le asigna el tramo de `target` que contiene
+    ese 36 %.
+    """
+    source_share = source.value_counts(normalize=True).sort_index().cumsum()
+    target_share = target.value_counts(normalize=True).sort_index().cumsum()
+    mapping, start = {}, 0.0
+    for bracket, end in source_share.items():
+        middle = (start + end) / 2
+        mapping[int(bracket)] = int(target_share.index[(target_share >= middle).argmax()])
+        start = end
+    return mapping
+
+
+def build_income(respondents: pd.DataFrame, japan_income: pd.Series) -> pd.Series:
+    """Devuelve `income_bracket` en tramos japoneses, por posición dentro de cada país."""
+    mapping = match_brackets_by_position(respondents["A8"], japan_income)
+    return respondents["A8"].map(mapping).rename("income_bracket")
+
 def main() -> None:
     respondents = select_respondents(load_nfcs_2018())
     sold = build_target(respondents)
     print(f"{len(respondents)} personas; vendieron {sold.sum()} ({sold.mean():.1%})")
     print(build_demographics(respondents).describe().loc[["mean", "min", "max"]].round(2))
+    japan_income = pd.read_parquet(TRAINING_FILE, columns=["income_bracket"])["income_bracket"]
+    print("Tramo de ingreso NFCS -> tramo japonés:",
+          match_brackets_by_position(respondents["A8"], japan_income))
 
 
 if __name__ == "__main__":

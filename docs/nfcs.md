@@ -39,7 +39,7 @@ No filtramos por las inversiones que tenían porque esa pregunta es de julio, de
 
 | Variable | Pregunta NFCS | Acertaron |
 |---|---|---|
-| `knows_interest` | M6: $100 al 2 % durante 5 años, ¿más, igual o menos de $102? | 1.667 |
+| `knows_interest` | M6: USD 100 al 2 % durante 5 años, ¿más, igual o menos de USD 102? | 1.667 |
 | `knows_inflation` | M7: interés del 1 % e inflación del 2 %, ¿compra más, igual o menos? | 1.518 |
 | `knows_diversification` | M10: ¿una sola acción es más segura que un fondo? (falso) | 1.381 |
 
@@ -63,6 +63,23 @@ Aun así, la relación va en la misma dirección que en Japón: entre quienes ti
 
 **Hallazgo y duda:** la relación con vender no se parece entre los dos países. En la NFCS vende más quien más acepta riesgo (12,8 % con 10 contra 1,5 % con 1). En Japón la relación tiene forma de U: venden más los dos extremos (24,5 % en 0 y 31,7 % en 0,9) que el medio (16 % a 19 %). No sabemos la redacción de la pregunta japonesa, así que no podemos saber si miden lo mismo.
 
+**8. Ingreso.** Japón tiene 12 tramos en yenes y la NFCS 8 en dólares (A8), con cortes distintos. Decidimos no convertir con la tasa de cambio, porque el costo de vida no cuesta lo mismo en cada país: con 110 yenes por dólar, muchos estadounidenses quedarían arriba solo por la moneda. Comparamos por posición: quien está en el 20 % que más gana en EE. UU. queda en el tramo japonés del 20 % que más gana en Japón. Para cada tramo tomamos la mitad de su franja en la fila de ingresos y buscamos el tramo japonés que contiene ese punto:
+
+| Ingreso NFCS (USD al año) | `income_bracket` (tramo japonés) |
+|---|---|
+| Menos de 15.000 | 1 |
+| 15.000 a 25.000 | 2 |
+| 25.000 a 35.000 | 3 |
+| 35.000 a 50.000 | 3 |
+| 50.000 a 75.000 | 4 |
+| 75.000 a 100.000 | 5 |
+| 100.000 a 150.000 | 6 |
+| 150.000 o más | 9 |
+
+Así planemaos hacer también los tramos en pesos de la app.
+
+**Hallazgo:** en los dos países vende más quien gana menos. En Japón, el 32,7 % del tramo más bajo contra cerca del 18 % de los del medio; en la NFCS, el 15,2 % del tramo más bajo contra el 2,2 % del más alto.
+
 ## Lo que hay que tener en cuenta
 
 - En la NFCS vendió el 4,4 % y en Japón el 19,87 %. La caída de 2018 fue mucho menor que la de marzo de 2020.
@@ -71,6 +88,7 @@ Aun así, la relación va en la misma dirección que en Japón: entre quienes ti
 - La edad es aproximada: todos los de un rango quedan con la misma edad, y el 70 de "65 o más" es una decisión nuestra.
 - La conversión de la confianza de 1-7 a 1-5 es nuestra. Pasar de 5 a 6 en la NFCS no cambia nada (los dos quedan en 4), y eso afecta quién queda con exceso de confianza.
 - No sabemos qué pregunta usó Japón para el riesgo. Puede que no mida lo mismo que la NFCS.
+- El ingreso compara posiciones, no montos. La tabla depende de cómo se reparten los ingresos de los inversionistas en cada encuesta.
 
 ## Cómo correrlo
 

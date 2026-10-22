@@ -2,15 +2,20 @@
 
 import pytest
 
+import pandas as pd
+
 from bolsalab.config import NFCS_INVESTOR_ZIP, NFCS_STATE_ZIP
+from bolsalab.features import TRAINING_FILE
 from bolsalab.nfcs import (
     DEMOGRAPHICS,
     build_confidence,
     build_demographics,
+    build_income,
     build_knowledge,
     build_risk_aversion,
     build_target,
     load_nfcs_2018,
+    match_brackets_by_position,
     select_respondents,
 )
 
@@ -120,3 +125,18 @@ def test_risk_aversion_is_inverted(respondents):
     assert risk[respondents["J2"] == 1].eq(1).all()
     assert risk[respondents["J2"] == 10].eq(0).all()
     assert risk.between(0, 1).all()
+
+
+def test_match_brackets_by_position():
+    """Con dos países de igual distribución, cada tramo cae en el mismo número."""
+    same = pd.Series([1, 2, 2, 3, 3, 3])
+    assert match_brackets_by_position(same, same) == {1: 1, 2: 2, 3: 3}
+
+
+@pytest.mark.skipif(not TRAINING_FILE.exists(), reason="Falta la tabla de Japón")
+def test_income_matches_japan_by_position(respondents):
+    """La tabla de conversión que quedó documentada en docs/nfcs.md."""
+    japan_income = pd.read_parquet(TRAINING_FILE, columns=["income_bracket"])["income_bracket"]
+    assert match_brackets_by_position(respondents["A8"], japan_income) == {
+        1: 1, 2: 2, 3: 3, 4: 3, 5: 4, 6: 5, 7: 6, 8: 9}
+    assert build_income(respondents, japan_income).notna().all()
