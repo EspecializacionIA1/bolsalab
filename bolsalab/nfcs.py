@@ -12,8 +12,15 @@ from pathlib import Path
 
 import pandas as pd
 
-from bolsalab.config import NFCS_INVESTOR_ZIP, NFCS_STATE_ZIP
-from bolsalab.features import TRAINING_FILE
+from bolsalab.config import NFCS_INVESTOR_ZIP, NFCS_STATE_ZIP, PROCESSED_DATA_DIR
+from bolsalab.features import FEATURES, TRAINING_FILE
+
+# Se guarda solo en el computador de cada integrante: data/ no se sube al repo.
+NFCS_TABLE_FILE = PROCESSED_DATA_DIR / "nfcs_table.parquet"
+
+# Variables de Japón que la NFCS no pregunta.
+MISSING_IN_NFCS = ["urban", "short_term_view"]
+NFCS_FEATURES = [f for f in FEATURES if f not in MISSING_IN_NFCS]
 
 INVESTOR_CSV = "NFCS 2018 Investor Data 191107.csv"
 STATE_CSV = "NFCS 2018 State Data 190603.csv"
@@ -169,17 +176,31 @@ def build_assets(respondents: pd.DataFrame, japan_assets: pd.Series) -> pd.Serie
     mapping = match_brackets_by_position(respondents["B4_inv"], japan_assets)
     return respondents["B4_inv"].map(mapping).rename("assets_bracket")
 
+def build_table(respondents: pd.DataFrame, japan: pd.DataFrame) -> pd.DataFrame:
+    """Devuelve la tabla final: las 15 variables en el orden de Japón y `sold`.
+
+    `japan` es la tabla de entrenamiento japonesa; se usa para convertir los
+    tramos de ingreso y de inversiones por posición.
+    """
+    knowledge = build_knowledge(respondents)
+    table = pd.concat([
+        build_demographics(respondents),
+        knowledge,
+        build_confidence(respondents, knowledge),
+        build_risk_aversion(respondents),
+        build_income(respondents, japan["income_bracket"]),
+        build_assets(respondents, japan["assets_bracket"]),
+    ], axis=1)
+    return table[NFCS_FEATURES].assign(sold=build_target(respondents))
+
+
 def main() -> None:
     respondents = select_respondents(load_nfcs_2018())
-    sold = build_target(respondents)
-    print(f"{len(respondents)} personas; vendieron {sold.sum()} ({sold.mean():.1%})")
-    print(build_demographics(respondents).describe().loc[["mean", "min", "max"]].round(2))
     japan = pd.read_parquet(TRAINING_FILE, columns=["income_bracket", "assets_bracket"])
-    print("Tramo de ingreso NFCS -> tramo japonés:",
-          match_brackets_by_position(respondents["A8"], japan["income_bracket"]))
-    print("Tramo de inversiones NFCS -> tramo japonés de activos:",
-          match_brackets_by_position(respondents["B4_inv"], japan["assets_bracket"]))
-
+    table = build_table(respondents, japan)
+    table.to_parquet(NFCS_TABLE_FILE, index=False)
+    print(f"{len(table)} personas y {len(NFCS_FEATURES)} variables guardadas en {NFCS_TABLE_FILE}")
+    print(f"Vendieron {table['sold'].sum()} ({table['sold'].mean():.1%})")
 
 if __name__ == "__main__":
     main()

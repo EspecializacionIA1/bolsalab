@@ -8,12 +8,15 @@ from bolsalab.config import NFCS_INVESTOR_ZIP, NFCS_STATE_ZIP
 from bolsalab.features import TRAINING_FILE
 from bolsalab.nfcs import (
     DEMOGRAPHICS,
+    MISSING_IN_NFCS,
+    NFCS_FEATURES,
     build_assets,
     build_confidence,
     build_demographics,
     build_income,
     build_knowledge,
     build_risk_aversion,
+    build_table,
     build_target,
     load_nfcs_2018,
     match_brackets_by_position,
@@ -150,3 +153,14 @@ def test_assets_match_japan_by_position(respondents):
     assert match_brackets_by_position(respondents["B4_inv"], japan_assets) == {
         1: 1, 2: 1, 3: 1, 4: 2, 5: 2, 6: 3, 7: 5, 8: 7, 9: 8, 10: 9}
     assert build_assets(respondents, japan_assets).notna().all()
+
+
+@pytest.mark.skipif(not TRAINING_FILE.exists(), reason="Falta la tabla de Japón")
+def test_final_table(respondents):
+    """15 variables con los nombres y el orden de Japón, más `sold`, sin celdas vacías."""
+    japan = pd.read_parquet(TRAINING_FILE)
+    table = build_table(respondents, japan)
+    assert len(NFCS_FEATURES) == 15
+    assert list(table.columns) == [c for c in japan.columns if c not in MISSING_IN_NFCS]
+    assert len(table) == 1825
+    assert not table.isna().any().any()

@@ -8,7 +8,7 @@ La NFCS es una encuesta de FINRA, el ente que vigila a los corredores de bolsa e
 
 Es la fuente más parecida a la encuesta japonesa que encontramos, por eso es la primera pieza del dataset multipaís. Con ella vamos a ver si lo que aprende el modelo en Japón sirve en otro país.
 
-Los archivos no se comparten ni se suben al repo: los términos de FINRA lo prohíben. Cada uno los baja de https://www.finrafoundation.org/knowledge-we-gain-share/nfcs/data-and-downloads y deja los dos zip, sin descomprimir, en `data/external/crash/nfcs_investor/raw/`:
+Los archivos no se comparten ni se suben al repo: los términos de FINRA lo prohíben. Los datos son propiedad exclusiva de la FINRA Investor Education Foundation y se recogieron en julio de 2018. Cada uno los baja de https://www.finrafoundation.org/knowledge-we-gain-share/nfcs/data-and-downloads y deja los dos zip, sin descomprimir, en `data/external/crash/nfcs_investor/raw/`:
 
 - `Inv-Data-and-Data-Info-2018.zip`
 - `2018-SxS-Data-and-Data-Info.zip`
@@ -97,6 +97,10 @@ Así planeamos hacer también los tramos en pesos de la app.
 
 **Hallazgo:** en la NFCS vende más quien tiene menos invertido (entre 5 % y 11 % en los tramos bajos, entre 1,6 % y 2,5 % en los altos). En Japón la relación tiene forma de U: 25 % en el tramo más bajo, cerca de 18 % en el medio y 23 % en el más alto.
 
+**10. Tabla final.** Juntamos todo en una tabla con 15 de las 17 variables de Japón, con los mismos nombres y en el mismo orden, más `sold`: 1.825 personas, de las que vendieron 84. Faltan `urban` y `short_term_view`, que la NFCS no pregunta. La tabla se guarda en `data/processed/nfcs_table.parquet`, solo en el computador de cada uno.
+
+Los resultados de la comparación con Japón están en el notebook `notebooks/NFCS frente a Japón.ipynb`.
+
 ## Lo que hay que tener en cuenta
 
 - En la NFCS vendió el 4,6 % y en Japón el 19,87 %. La caída de 2018 fue mucho menor que la de marzo de 2020.
@@ -111,6 +115,6 @@ Así planeamos hacer también los tramos en pesos de la app.
 ## Cómo correrlo
 
 ```bash
-uv run python -m bolsalab.nfcs     # cuántas personas quedan y cuántas vendieron
+uv run python -m bolsalab.nfcs     # arma la tabla final y la guarda en data/processed
 uv run pytest tests/test_nfcs.py   # se saltan si no tienes los archivos
 ```
