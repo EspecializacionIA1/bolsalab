@@ -132,6 +132,25 @@ Gana el de mayor AUROC medio, salvo que uno más simple quede a menos de una des
 | CatBoost | 300 iteraciones; `learning_rate` 0,03 o 0,1; `depth` 4 o 6 |
 | Red neuronal | capas (16,) o (32, 16); `alpha` 0,0001 o 0,01; parada temprana |
 
+**Exploración adicional (registrada el 21 de octubre de 2026, antes de correrla).** `bolsalab/modeling/experiments.py` prueba XGBoost, LightGBM y CatBoost con los rangos de arriba y con estos rangos ampliados. Usa la misma partición, la misma validación anidada 5 × 3 y las mismas métricas, y no toca el conjunto de prueba.
+
+| Modelo | Rangos ampliados |
+|---|---|
+| XGBoost | `learning_rate` 0,01; 0,03 o 0,1; `max_depth` 3, 5 o 7; `subsample` 0,8 o 1; `min_child_weight` 1 o 10 |
+| LightGBM | `learning_rate` 0,01; 0,03 o 0,1; `max_depth` 3, 5 o 7; `num_leaves` 15 o 31; `min_child_samples` 20 o 100 |
+| CatBoost | `learning_rate` 0,01; 0,03 o 0,1; `depth` 4, 6 u 8; `l2_leaf_reg` 1, 3 o 10 |
+
+Cada combinación se prueba también con cuatro variantes de las 17 variables:
+
+| Variante | Qué cambia |
+|---|---|
+| `base` | Nada |
+| `sin_edad_cuadrado` | Quita `age_squared` |
+| `log_ingreso` | Cambia `income_bracket` por log(1 + número de tramo) |
+| `edad_x_ingreso` | Agrega `age` × `income_bracket` |
+
+Un experimento puede reemplazar al ganador de la comparación oficial, con la misma lógica de la regla de arriba: lo reemplaza solo si su AUROC medio supera al del ganador por más de una desviación estándar del ganador. Si no, se queda el ganador oficial, porque usa los rangos del protocolo y las 17 variables sin cambios. Esta regla se fijó antes de correr los experimentos.
+
 **Alarmas.** Revisamos si hay fuga ante un AUROC de 0,82 o más (Elkind lo logró con historial de portafolio, no con un cuestionario), ante un intervalo que incluya 0,5 o ante una variable que domine la explicación SHAP.
 
 ## 8. Qué ve el usuario
