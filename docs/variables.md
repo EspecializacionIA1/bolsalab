@@ -32,6 +32,31 @@ El modelo aprende de la encuesta japonesa (54.704 inversionistas). Usa 17 variab
 
 `age`, `university`, `married`, `has_children` y `employed` también existen en el panel SCF 2007-2009, con los mismos nombres, para probar el modelo fuera de Japón.
 
+## Japón frente a la NFCS 2018 (EE. UU.)
+
+La NFCS tiene 15 de las 17 variables. Las pasamos a los nombres y escalas de Japón en `bolsalab/nfcs.py`; el porqué de cada decisión está en `docs/nfcs.md`.
+
+| Variable | Japón | NFCS | Cómo la igualamos |
+|---|---|---|---|
+| `sold` | Vendió todo o parte en marzo de 2020 | D20: compró, vendió o nada en febrero de 2018 | 1 si vendió; 0 si compró o no hizo nada |
+| `knows_interest` | `Interest_Score` | M6, la misma pregunta | 1 si acertó; "no sabe" cuenta como 0 |
+| `knows_inflation` | `Inflation_Score` | M7, la misma pregunta | Igual |
+| `knows_diversification` | `Diversification_Score` | M10, la misma pregunta | Igual |
+| `knowledge_confidence` | 1 a 5 | M4, de 1 a 7 | En proporción: 1→1, 2→2, 3→2, 4→3, 5→4, 6→4, 7→5 |
+| `overconfidence` | Columna del archivo | Se construye | Misma regla de Japón: marcó 5, o marcó 4 y acertó 2 o menos |
+| `age` | Edad exacta | A3Ar_w, solo 6 rangos | Punto medio del rango; 70 para "65 o más" |
+| `age_squared` | Edad al cuadrado | Se calcula | Desde la edad aproximada |
+| `male` | `Gender` | A3 | 1 si es hombre |
+| `university` | `Uni_Educ` | A5 | Pregrado o posgrado; el técnico de 2 años no cuenta |
+| `married` | `Married` | A6 | 1 si está casado |
+| `has_children` | `Childreen` | A11 | 1 si tiene hijos, dependan o no de él |
+| `urban` | `Urban_Dummey` | No existe | Solo trae el estado donde vive |
+| `employed` | `Employment` | A9 | Independiente, tiempo completo o medio tiempo |
+| `income_bracket` | 12 tramos en yenes | A8, 8 tramos en dólares | Por posición dentro de cada país |
+| `assets_bracket` | 10 tramos de activos en yenes | B4, valor de las inversiones fuera de retiro, 10 tramos en dólares | Por posición dentro de cada país. No incluye cuentas de retiro |
+| `risk_aversion` | 0 a 1; más alto evita más el riesgo | J2, disposición al riesgo de 1 a 10 | Invertida: (10 − J2) / 9. No sabemos la pregunta japonesa |
+| `short_term_view` | `Myopic_View` | No existe | No hay una pregunta parecida |
+
 ## Decisiones
 
 - **Las tres preguntas de conocimiento van por separado y no sumadas.** Así el modelo aprende cuál pesa más, y la app sabe qué pregunta falló cada persona. El conocimiento financiero es el único predictor con dirección estable en los estudios leídos (Bucher-Koenen y Ziegelmeyer, 2011; Bawalle et al., 2025).
