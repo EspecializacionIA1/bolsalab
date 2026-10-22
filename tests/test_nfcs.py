@@ -3,7 +3,14 @@
 import pytest
 
 from bolsalab.config import NFCS_INVESTOR_ZIP, NFCS_STATE_ZIP
-from bolsalab.nfcs import build_target, load_nfcs_2018, select_respondents
+from bolsalab.nfcs import (
+    DEMOGRAPHICS,
+    build_demographics,
+    build_knowledge,
+    build_target,
+    load_nfcs_2018,
+    select_respondents,
+)
 
 pytestmark = pytest.mark.skipif(
     not (NFCS_INVESTOR_ZIP.exists() and NFCS_STATE_ZIP.exists()),
@@ -48,3 +55,42 @@ def test_sold_counts(respondents):
     sold = build_target(respondents)
     assert sold.sum() == 87
     assert (sold == 0).sum() == 396 + 1459
+
+
+@pytest.fixture(scope="module")
+def demographics(respondents):
+    return build_demographics(respondents)
+
+
+def test_demographics_have_japan_names(demographics):
+    """Las columnas se llaman igual que en la tabla de Japón."""
+    assert list(demographics.columns) == DEMOGRAPHICS
+
+
+def test_age_uses_range_midpoints(demographics):
+    """La edad es el punto medio de cada rango; 70 para '65 o más'."""
+    assert set(demographics["age"].unique()) <= {21, 29.5, 39.5, 49.5, 59.5, 70}
+    assert (demographics["age_squared"] == demographics["age"] ** 2).all()
+
+
+def test_demographic_counts(demographics):
+    """Cuántas personas tienen 1 en cada variable de sí o no."""
+    assert demographics["male"].sum() == 1110
+    assert demographics["university"].sum() == 1097
+    assert demographics["married"].sum() == 1239
+    assert demographics["has_children"].sum() == 1370
+    assert demographics["employed"].sum() == 994
+
+
+def test_demographics_no_missing(demographics):
+    """Nadie queda sin dato: la encuesta no dejaba saltar estas preguntas."""
+    assert not demographics.isna().any().any()
+
+
+def test_knowledge_counts(respondents):
+    """Cuántos acertaron cada pregunta; 'no sabe' y 'prefiere no decir' cuentan como 0."""
+    knowledge = build_knowledge(respondents)
+    assert knowledge["knows_interest"].sum() == 1685
+    assert knowledge["knows_inflation"].sum() == 1530
+    assert knowledge["knows_diversification"].sum() == 1389
+    assert set(knowledge.stack().unique()) <= {0, 1}

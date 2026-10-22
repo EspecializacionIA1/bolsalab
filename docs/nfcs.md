@@ -24,11 +24,33 @@ No filtramos por las inversiones que tenían porque esa pregunta es de julio, de
 
 **3. Construimos `sold`:** 1 si vendió (87 personas, 4,5 %) y 0 si compró (396) o no hizo nada (1.459). Quien compró va en 0 porque no vendió, igual que en Japón, donde solo hay dos grupos: vendió o mantuvo.
 
+**4. Pasamos los datos personales a la forma de Japón.** Usamos los mismos nombres y, cuando había dos opciones, la que más se parece a la pregunta japonesa.
+
+| Variable | Pregunta NFCS | Cómo queda |
+|---|---|---|
+| `age` y `age_squared` | A3Ar_w | El archivo público solo trae la edad en 6 rangos. Usamos el punto medio de cada uno (21, 29,5, 39,5, 49,5 y 59,5) y 70 para "65 o más" |
+| `male` | A3 | 1 si es hombre |
+| `university` | A5 | 1 si tiene pregrado o posgrado. El técnico de 2 años no cuenta |
+| `married` | A6 | 1 si está casado |
+| `has_children` | A11 | 1 si tiene hijos, dependan o no de él. En Japón la pregunta es "tiene hijos?", sin importar si dependen |
+| `employed` | A9 | 1 si es independiente o trabaja tiempo completo o medio tiempo. Así agrupa a los empleados el propio cuestionario |
+
+**5. Las tres preguntas de conocimiento.** La NFCS hace las mismas tres que la encuesta japonesa, las clásicas de Lusardi y Mitchell. Cada una queda en 1 si acertó y 0 si no.
+
+| Variable | Pregunta NFCS | Acertaron |
+|---|---|---|
+| `knows_interest` | M6: $100 al 2 % durante 5 años, más, igual o menos de $102? | 1.685 |
+| `knows_inflation` | M7: interés del 1 % e inflación del 2 %, ¿compra más, igual o menos? | 1.530 |
+| `knows_diversification` | M10:  una sola acción es más segura que un fondo? (falso) | 1.389 |
+
+"No sabe" y "prefiere no decir" cuentan como 0. Así lo hacen los estudios con estas preguntas, y quitarlos nos haría perder casi una de cada cinco personas. Llama la atención que en diversificación 359 personas dijeron "no sabe", contra 91 en interés.
+
 ## Lo que hay que tener en cuenta
 
 - En la NFCS vendió el 4,5 % y en Japón el 19,87 %. La caída de 2018 fue mucho menor que la de marzo de 2020.
 - La NFCS no separa entre vender todo y vender parte.
 - Algunas personas quizás solo tenían bonos. Como mucho son 110 (5,7 %).
+- La edad es aproximada: todos los de un rango quedan con la misma edad, y el 70 de "65 o más" es una decisión nuestra.
 
 ## Cómo correrlo
 
