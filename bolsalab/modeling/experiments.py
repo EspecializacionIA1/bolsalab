@@ -30,12 +30,11 @@ EXPERIMENTS_FILE = MODELS_DIR / "experiments.csv"
 MY_MODELS = ["xgboost", "lightgbm", "catboost"]
 
 # Variantes de variables. "base" son las 17 variables de features.py sin cambios.
-# Los nombres de columna son ejemplos: cámbialos por los reales.
 FEATURE_SETS = {
     "base": {},
-    "sin_edad_cuadrado": {"drop": ["edad_cuadrado"]},
-    "log_ingreso": {"log": ["ingreso"]},
-    "edad_x_ingreso": {"interactions": [("edad", "ingreso")]},
+    "sin_edad_cuadrado": {"drop": ["age_squared"]},
+    "log_ingreso": {"log": ["income_bracket"]},
+    "edad_x_ingreso": {"interactions": [("age", "income_bracket")]},
 }
 
 # Rejillas más amplias que las del protocolo. Cada modelo se prueba con la del

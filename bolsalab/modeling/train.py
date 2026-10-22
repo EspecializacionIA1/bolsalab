@@ -6,9 +6,16 @@ los compara con las mismas reglas y guarda el ganador para que la API lo use.
 
 Todas las reglas salen de docs/protocolo-evaluacion.md (secciones 4 a 7).
 
-Uso: uv run python -m bolsalab.modeling.train
+Corre en dos etapas, porque el 20 % de prueba se mira una sola vez:
+
+    uv run python -m bolsalab.modeling.train          # compara los modelos
+    uv run python -m bolsalab.modeling.train --final  # mide al ganador en la prueba
+
+La primera no toca la prueba y guarda la comparación en reports/benchmark.csv.
+La segunda lee ese archivo, entrena al ganador y lo guarda en models/.
 """
 
+import argparse
 import json
 from datetime import date
 
@@ -28,9 +35,11 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
-from bolsalab.config import MODELS_DIR, PROCESSED_DATA_DIR, RANDOM_STATE
+from bolsalab.config import MODELS_DIR, RANDOM_STATE, REPORTS_DIR
+from bolsalab.features import TRAINING_FILE
+from bolsalab.features import main as build_training_table
 
-TRAINING_FILE = PROCESSED_DATA_DIR / "japan_training.parquet"
+BENCHMARK_FILE = REPORTS_DIR / "benchmark.csv"
 TARGET = "sold"
 
 # Un modelo por línea, de más simple a más complejo:
@@ -112,23 +121,30 @@ def split_data(table: pd.DataFrame):
     return train_test_split(X, y, test_size=0.2, stratify=y, random_state=RANDOM_STATE)
 
 
-def compare_models(X_train: pd.DataFrame, y_train: pd.Series) -> pd.DataFrame:
-    """Compara los modelos de MODELS y devuelve una fila por modelo.
+def evaluate_model(pipeline: Pipeline, grid: dict,
+                   X_train: pd.DataFrame, y_train: pd.Series) -> dict:
+    """Mide un modelo con validación cruzada anidada y devuelve sus métricas.
 
-    Para cada modelo usa validación cruzada anidada: 3 particiones internas
-    eligen los hiperparámetros y 5 externas miden el modelo con datos que no
-    usó para elegirlos.
+    3 particiones internas eligen los hiperparámetros y 5 externas miden el
+    modelo con datos que no usó para elegirlos. Devuelve el promedio y la
+    desviación estándar de cada métrica. experiments.py usa esta misma función.
     """
     outer = StratifiedKFold(5, shuffle=True, random_state=RANDOM_STATE)
     inner = StratifiedKFold(3, shuffle=True, random_state=RANDOM_STATE)
+    search = GridSearchCV(pipeline, grid, cv=inner, scoring="roc_auc", n_jobs=-1)
+    scores = cross_validate(search, X_train, y_train, cv=outer, scoring=SCORERS)
+    metrics = {}
+    for metric in SCORERS:
+        metrics[metric] = scores[f"test_{metric}"].mean()
+        metrics[f"{metric}_sd"] = scores[f"test_{metric}"].std()
+    return metrics
+
+
+def compare_models(X_train: pd.DataFrame, y_train: pd.Series) -> pd.DataFrame:
+    """Compara los modelos de MODELS y devuelve una fila por modelo."""
     rows = []
     for name, (pipeline, grid) in MODELS.items():
-        search = GridSearchCV(pipeline, grid, cv=inner, scoring="roc_auc", n_jobs=-1)
-        scores = cross_validate(search, X_train, y_train, cv=outer, scoring=SCORERS)
-        row = {"model": name}
-        for metric in SCORERS:
-            row[metric] = scores[f"test_{metric}"].mean()
-            row[f"{metric}_sd"] = scores[f"test_{metric}"].std()
+        row = {"model": name, **evaluate_model(pipeline, grid, X_train, y_train)}
         rows.append(row)
         print(f"  {name}: AUROC {row['auroc']:.3f} ± {row['auroc_sd']:.3f}")
     return pd.DataFrame(rows)
@@ -172,19 +188,20 @@ def export_model(model, metrics: dict) -> None:
         json.dumps(metadata, indent=2, default=float), encoding="utf-8")
 
 
-def main() -> None:
-    """Ejecuta todo en orden: variables, partición, comparación, elección, prueba final y exportación."""
-    if rebuild_features or not TRAINING_FILE.exists():
-        print("Generando variables (etapa 2)...")
-        build_training_table()  # escribe 
-    table = pd.read_parquet(TRAINING_FILE)
-    X_train, X_test, y_train, y_test = split_data(table)
-
+def run_benchmark(X_train: pd.DataFrame, y_train: pd.Series) -> None:
+    """Etapa 1: compara los modelos y guarda la tabla. No toca la prueba."""
     print("Comparando modelos (validación anidada 5 x 3)...")
     benchmark = compare_models(X_train, y_train)
     print(benchmark.round(3).to_string(index=False))
+    REPORTS_DIR.mkdir(exist_ok=True)
+    benchmark.to_csv(BENCHMARK_FILE, index=False)
+    print(f"Ganador según la regla del protocolo: {choose_winner(benchmark)}")
+    print(f"Comparación guardada en {BENCHMARK_FILE}")
 
-    winner = choose_winner(benchmark)
+
+def run_final(X_train, X_test, y_train, y_test) -> None:
+    """Etapa 2: entrena al ganador, lo mide una vez en la prueba y lo exporta."""
+    winner = choose_winner(pd.read_csv(BENCHMARK_FILE))
     pipeline, grid = MODELS[winner]
     inner = StratifiedKFold(3, shuffle=True, random_state=RANDOM_STATE)
     final = GridSearchCV(pipeline, grid, cv=inner, scoring="roc_auc").fit(X_train, y_train)
@@ -193,6 +210,23 @@ def main() -> None:
                "test": evaluate_on_test(final.best_estimator_, X_test, y_test)}
     print(f"Ganador: {winner} | prueba final: {metrics['test']}")
     export_model(final.best_estimator_, metrics)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--final", action="store_true",
+                        help="mide al ganador en la prueba (hacerlo una sola vez)")
+    args = parser.parse_args()
+
+    if not TRAINING_FILE.exists():
+        print("No existe la tabla de entrenamiento; la genero con features.py...")
+        build_training_table()
+    X_train, X_test, y_train, y_test = split_data(pd.read_parquet(TRAINING_FILE))
+
+    if args.final:
+        run_final(X_train, X_test, y_train, y_test)
+    else:
+        run_benchmark(X_train, y_train)
 
 
 if __name__ == "__main__":
