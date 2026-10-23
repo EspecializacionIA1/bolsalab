@@ -20,11 +20,12 @@ import pandas as pd
 from sklearn.base import clone
 from sklearn.pipeline import Pipeline
 
-from bolsalab.config import MODELS_DIR
+from bolsalab.config import REPORTS_DIR
 from bolsalab.modeling.train import MODELS, TRAINING_FILE, evaluate_model, split_data
 from bolsalab.modeling.transformers import FeatureEngineer
 
-EXPERIMENTS_FILE = MODELS_DIR / "experiments.csv"
+# Al lado de reports/benchmark.csv, la comparación oficial.
+EXPERIMENTS_FILE = REPORTS_DIR / "experiments.csv"
 
 # Modelos que se exploran (deben existir en MODELS de train.py).
 MY_MODELS = ["xgboost", "lightgbm", "catboost"]
@@ -107,7 +108,7 @@ def main() -> None:
             "run_at": datetime.now().isoformat(timespec="seconds"),
         }
         print(f"    AUROC {row['auroc']:.3f} ± {row['auroc_sd']:.3f}")
-        MODELS_DIR.mkdir(exist_ok=True)
+        REPORTS_DIR.mkdir(exist_ok=True)
         pd.DataFrame([row]).to_csv(
             EXPERIMENTS_FILE, mode="a", header=not EXPERIMENTS_FILE.exists(), index=False)
 
