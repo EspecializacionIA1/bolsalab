@@ -127,16 +127,20 @@ def evaluate_model(pipeline: Pipeline, grid: dict,
 
     3 particiones internas eligen los hiperparámetros y 5 externas miden el
     modelo con datos que no usó para elegirlos. Devuelve el promedio y la
-    desviación estándar de cada métrica. experiments.py usa esta misma función.
+    desviación estándar de cada métrica, y los hiperparámetros que eligió cada
+    una de las 5 particiones externas. experiments.py usa esta misma función.
     """
     outer = StratifiedKFold(5, shuffle=True, random_state=RANDOM_STATE)
     inner = StratifiedKFold(3, shuffle=True, random_state=RANDOM_STATE)
     search = GridSearchCV(pipeline, grid, cv=inner, scoring="roc_auc", n_jobs=-1)
-    scores = cross_validate(search, X_train, y_train, cv=outer, scoring=SCORERS)
+    scores = cross_validate(search, X_train, y_train, cv=outer, scoring=SCORERS,
+                            return_estimator=True)
     metrics = {}
     for metric in SCORERS:
         metrics[metric] = scores[f"test_{metric}"].mean()
         metrics[f"{metric}_sd"] = scores[f"test_{metric}"].std()
+    metrics["best_params"] = json.dumps(
+        [fold.best_params_ for fold in scores["estimator"]], default=str)
     return metrics
 
 
