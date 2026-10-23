@@ -1,0 +1,166 @@
+"""Pruebas de la tabla de la NFCS 2018. Las cifras esperadas están en docs/nfcs.md."""
+
+import pytest
+
+import pandas as pd
+
+from bolsalab.config import NFCS_INVESTOR_ZIP, NFCS_STATE_ZIP
+from bolsalab.features import TRAINING_FILE
+from bolsalab.nfcs import (
+    DEMOGRAPHICS,
+    MISSING_IN_NFCS,
+    NFCS_FEATURES,
+    build_assets,
+    build_confidence,
+    build_demographics,
+    build_income,
+    build_knowledge,
+    build_risk_aversion,
+    build_table,
+    build_target,
+    load_nfcs_2018,
+    match_brackets_by_position,
+    select_respondents,
+)
+
+pytestmark = pytest.mark.skipif(
+    not (NFCS_INVESTOR_ZIP.exists() and NFCS_STATE_ZIP.exists()),
+    reason="Faltan los archivos de la NFCS en data/external (no se versionan ni se comparten)",
+)
+
+
+@pytest.fixture(scope="module")
+def survey():
+    """Las dos partes unidas, cargadas una sola vez."""
+    return load_nfcs_2018()
+
+
+@pytest.fixture(scope="module")
+def respondents(survey):
+    return select_respondents(survey)
+
+
+def test_every_investor_finds_state_record(survey):
+    """Las 2.003 personas de inversionistas encuentran su fila en State-by-State."""
+    assert len(survey) == 2003
+    assert survey["STATEQ"].notna().all()
+
+
+def test_repeated_codes_are_kept_apart(survey):
+    """A3 existe en las dos partes con preguntas distintas y no se mezclan."""
+    assert {"A3_inv", "A3_state"} <= set(survey.columns)
+
+
+def test_everyone_has_non_retirement_investments(survey):
+    """La encuesta solo dejó seguir a quien tenía inversiones fuera de retiro."""
+    assert survey["A3_inv"].eq(1).all()
+
+
+def test_respondents(respondents):
+    """Quedan 1.825: de las 1.942 que dijeron qué hicieron, salen quienes no respondieron M4, J2 o B4."""
+    assert len(respondents) == 1825
+
+
+def test_sold_counts(respondents):
+    """Vendieron 84; compraron 377 y no hicieron nada 1.364, y esos cuentan como 0."""
+    sold = build_target(respondents)
+    assert sold.sum() == 84
+    assert (sold == 0).sum() == 377 + 1364
+
+
+@pytest.fixture(scope="module")
+def demographics(respondents):
+    return build_demographics(respondents)
+
+
+def test_demographics_have_japan_names(demographics):
+    """Las columnas se llaman igual que en la tabla de Japón."""
+    assert list(demographics.columns) == DEMOGRAPHICS
+
+
+def test_age_uses_range_midpoints(demographics):
+    """La edad es el punto medio de cada rango; 70 para '65 o más'."""
+    assert set(demographics["age"].unique()) <= {21, 29.5, 39.5, 49.5, 59.5, 70}
+    assert (demographics["age_squared"] == demographics["age"] ** 2).all()
+
+
+def test_demographic_counts(demographics):
+    """Cuántas personas tienen 1 en cada variable de sí o no."""
+    assert demographics["male"].sum() == 1054
+    assert demographics["university"].sum() == 1041
+    assert demographics["married"].sum() == 1155
+    assert demographics["has_children"].sum() == 1291
+    assert demographics["employed"].sum() == 952
+
+
+def test_demographics_no_missing(demographics):
+    """Nadie queda sin dato: la encuesta no dejaba saltar estas preguntas."""
+    assert not demographics.isna().any().any()
+
+
+def test_knowledge_counts(respondents):
+    """Cuántos acertaron cada pregunta; 'no sabe' y 'prefiere no decir' cuentan como 0."""
+    knowledge = build_knowledge(respondents)
+    assert knowledge["knows_interest"].sum() == 1586
+    assert knowledge["knows_inflation"].sum() == 1447
+    assert knowledge["knows_diversification"].sum() == 1322
+    assert set(knowledge.stack().unique()) <= {0, 1}
+
+
+@pytest.fixture(scope="module")
+def confidence(respondents):
+    return build_confidence(respondents, build_knowledge(respondents))
+
+
+def test_confidence_uses_japan_scale(confidence):
+    """La confianza queda de 1 a 5, como en Japón."""
+    assert confidence["knowledge_confidence"].value_counts().to_dict() == {
+        4: 1237, 5: 419, 3: 136, 2: 28, 1: 5}
+
+
+def test_overconfidence_follows_japan_rule(confidence):
+    """Exceso de confianza: marcó 5, o marcó 4 y acertó 2 o menos. Son 873."""
+    assert confidence["overconfidence"].sum() == 873
+
+
+def test_risk_aversion_is_inverted(respondents):
+    """Quien marca 1 en J2 (nada dispuesto) queda en 1; quien marca 10, en 0."""
+    risk = build_risk_aversion(respondents)
+    assert risk[respondents["J2"] == 1].eq(1).all()
+    assert risk[respondents["J2"] == 10].eq(0).all()
+    assert risk.between(0, 1).all()
+
+
+def test_match_brackets_by_position():
+    """Con dos países de igual distribución, cada tramo cae en el mismo número."""
+    same = pd.Series([1, 2, 2, 3, 3, 3])
+    assert match_brackets_by_position(same, same) == {1: 1, 2: 2, 3: 3}
+
+
+@pytest.mark.skipif(not TRAINING_FILE.exists(), reason="Falta la tabla de Japón")
+def test_income_matches_japan_by_position(respondents):
+    """La tabla de conversión que quedó documentada en docs/nfcs.md."""
+    japan_income = pd.read_parquet(TRAINING_FILE, columns=["income_bracket"])["income_bracket"]
+    assert match_brackets_by_position(respondents["A8"], japan_income) == {
+        1: 1, 2: 2, 3: 3, 4: 3, 5: 4, 6: 5, 7: 6, 8: 9}
+    assert build_income(respondents, japan_income).notna().all()
+
+
+@pytest.mark.skipif(not TRAINING_FILE.exists(), reason="Falta la tabla de Japón")
+def test_assets_match_japan_by_position(respondents):
+    """La tabla de conversión de inversiones que quedó documentada en docs/nfcs.md."""
+    japan_assets = pd.read_parquet(TRAINING_FILE, columns=["assets_bracket"])["assets_bracket"]
+    assert match_brackets_by_position(respondents["B4_inv"], japan_assets) == {
+        1: 1, 2: 1, 3: 1, 4: 2, 5: 2, 6: 3, 7: 5, 8: 7, 9: 8, 10: 9}
+    assert build_assets(respondents, japan_assets).notna().all()
+
+
+@pytest.mark.skipif(not TRAINING_FILE.exists(), reason="Falta la tabla de Japón")
+def test_final_table(respondents):
+    """15 variables con los nombres y el orden de Japón, más `sold`, sin celdas vacías."""
+    japan = pd.read_parquet(TRAINING_FILE)
+    table = build_table(respondents, japan)
+    assert len(NFCS_FEATURES) == 15
+    assert list(table.columns) == [c for c in japan.columns if c not in MISSING_IN_NFCS]
+    assert len(table) == 1825
+    assert not table.isna().any().any()
