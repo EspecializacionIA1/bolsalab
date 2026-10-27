@@ -8,11 +8,14 @@ Todas las reglas salen de docs/protocolo-evaluacion.md (secciones 4 a 7).
 
 Corre en dos etapas, porque el 20 % de prueba se mira una sola vez:
 
-    uv run python -m bolsalab.modeling.train          # compara los modelos
-    uv run python -m bolsalab.modeling.train --final  # mide al ganador en la prueba
+    uv run python -m bolsalab.modeling.train              # compara los modelos
+    uv run python -m bolsalab.modeling.train --final      # mide al ganador en la prueba
+    uv run python -m bolsalab.modeling.train --prototype  # exporta sin mirar la prueba
 
 La primera no toca la prueba y guarda la comparación en reports/benchmark.csv.
 La segunda lee ese archivo, entrena al ganador y lo guarda en models/.
+La tercera entrena al mismo ganador y lo guarda para la app, sin medirlo en la
+prueba; --final lo reemplaza después con las métricas de prueba.
 """
 
 import argparse
@@ -25,11 +28,18 @@ import pandas as pd
 import sklearn
 from catboost import CatBoostClassifier
 from lightgbm import LGBMClassifier
+from sklearn.base import clone
 from sklearn.dummy import DummyClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score, brier_score_loss, make_scorer, roc_auc_score
-from sklearn.model_selection import GridSearchCV, StratifiedKFold, cross_validate, train_test_split
+from sklearn.model_selection import (
+    GridSearchCV,
+    StratifiedKFold,
+    cross_val_predict,
+    cross_validate,
+    train_test_split,
+)
 from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -38,6 +48,12 @@ from xgboost import XGBClassifier
 from bolsalab.config import MODELS_DIR, RANDOM_STATE, REPORTS_DIR
 from bolsalab.features import TRAINING_FILE
 from bolsalab.features import main as build_training_table
+from bolsalab.nfcs import match_brackets_by_position
+
+# Las dos preguntas que la app todavía no hace (protocolo, sección 8).
+NOT_ASKED = ["risk_aversion", "short_term_view"]
+# Niveles de ingreso y activos que pregunta la app: bajo, medio bajo, medio, medio alto, alto.
+APP_LEVELS = [1, 2, 3, 4, 5]
 
 BENCHMARK_FILE = REPORTS_DIR / "benchmark.csv"
 TARGET = "sold"
@@ -183,11 +199,46 @@ def evaluate_on_test(model, X_test: pd.DataFrame, y_test: pd.Series) -> dict:
     }
 
 
-def export_model(model, metrics: dict) -> None:
+def category_cutoffs(model, X_train: pd.DataFrame, y_train: pd.Series) -> list[float]:
+    """Cortes de las tres categorías de la app: percentiles 33,3 y 66,7.
+
+    Cada persona del entrenamiento recibe la probabilidad de un modelo que no
+    la vio (validación cruzada de 5 particiones). Protocolo, sección 8.
+    """
+    folds = StratifiedKFold(5, shuffle=True, random_state=RANDOM_STATE)
+    p = cross_val_predict(clone(model), X_train, y_train, cv=folds, method="predict_proba")[:, 1]
+    return [float(q) for q in np.quantile(p, [1 / 3, 2 / 3])]
+
+
+def app_reference(X_train: pd.DataFrame) -> dict:
+    """Valores que la app necesita del entrenamiento (protocolo, sección 8)."""
+    levels = pd.Series(APP_LEVELS)
+    return {
+        "not_asked": {c: float(X_train[c].mode()[0]) for c in NOT_ASKED},
+        "income_level_to_bracket": match_brackets_by_position(levels, X_train["income_bracket"]),
+        "assets_level_to_bracket": match_brackets_by_position(levels, X_train["assets_bracket"]),
+        "age_range": [int(X_train["age"].min()), int(X_train["age"].max())],
+        "features": list(X_train.columns),
+    }
+
+
+def fit_winner(X_train: pd.DataFrame, y_train: pd.Series):
+    """Entrena al ganador de reports/benchmark.csv con su rejilla, solo con el entrenamiento."""
+    winner = choose_winner(pd.read_csv(BENCHMARK_FILE))
+    pipeline, grid = MODELS[winner]
+    inner = StratifiedKFold(3, shuffle=True, random_state=RANDOM_STATE)
+    search = GridSearchCV(pipeline, grid, cv=inner, scoring="roc_auc").fit(X_train, y_train)
+    return winner, search
+
+
+def export_model(model, metrics: dict, X_train: pd.DataFrame, y_train: pd.Series) -> None:
     """Guarda el Pipeline ganador en models/ como .joblib y su metadata en .json."""
     MODELS_DIR.mkdir(exist_ok=True)
     joblib.dump(model, MODELS_DIR / "crash_reaction_v1.joblib")
-    metadata = {**metrics, "trained_on": str(date.today()), "sklearn": sklearn.__version__}
+    metadata = {**metrics, "trained_on": str(date.today()), "sklearn": sklearn.__version__,
+                "base_rate": float(y_train.mean()),
+                "cutoffs": category_cutoffs(model, X_train, y_train),
+                **app_reference(X_train)}
     (MODELS_DIR / "crash_reaction_v1.json").write_text(
         json.dumps(metadata, indent=2, default=float), encoding="utf-8")
 
@@ -205,21 +256,28 @@ def run_benchmark(X_train: pd.DataFrame, y_train: pd.Series) -> None:
 
 def run_final(X_train, X_test, y_train, y_test) -> None:
     """Etapa 2: entrena al ganador, lo mide una vez en la prueba y lo exporta."""
-    winner = choose_winner(pd.read_csv(BENCHMARK_FILE))
-    pipeline, grid = MODELS[winner]
-    inner = StratifiedKFold(3, shuffle=True, random_state=RANDOM_STATE)
-    final = GridSearchCV(pipeline, grid, cv=inner, scoring="roc_auc").fit(X_train, y_train)
-
+    winner, final = fit_winner(X_train, y_train)
     metrics = {"winner": winner, "params": final.best_params_,
                "test": evaluate_on_test(final.best_estimator_, X_test, y_test)}
     print(f"Ganador: {winner} | prueba final: {metrics['test']}")
-    export_model(final.best_estimator_, metrics)
+    export_model(final.best_estimator_, metrics, X_train, y_train)
+
+
+def run_prototype(X_train: pd.DataFrame, y_train: pd.Series) -> None:
+    """Entrena al ganador y lo exporta para la app sin mirar la prueba."""
+    winner, search = fit_winner(X_train, y_train)
+    metrics = {"winner": winner, "params": search.best_params_, "test": None}
+    print(f"Ganador: {winner} {search.best_params_} | exportado sin medir en la prueba")
+    export_model(search.best_estimator_, metrics, X_train, y_train)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--final", action="store_true",
-                        help="mide al ganador en la prueba (hacerlo una sola vez)")
+    stage = parser.add_mutually_exclusive_group()
+    stage.add_argument("--final", action="store_true",
+                       help="mide al ganador en la prueba (hacerlo una sola vez)")
+    stage.add_argument("--prototype", action="store_true",
+                       help="exporta al ganador para la app sin mirar la prueba")
     args = parser.parse_args()
 
     if not TRAINING_FILE.exists():
@@ -229,6 +287,8 @@ def main() -> None:
 
     if args.final:
         run_final(X_train, X_test, y_train, y_test)
+    elif args.prototype:
+        run_prototype(X_train, y_train)
     else:
         run_benchmark(X_train, y_train)
 
