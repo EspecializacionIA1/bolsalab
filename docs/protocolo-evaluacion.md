@@ -155,9 +155,23 @@ Un experimento puede reemplazar al ganador de la comparación oficial, con la mi
 
 ## 8. Qué ve el usuario
 
-**Regla.** La app muestra si la persona es más, igual o menos propensa a vender que el promedio, nunca la probabilidad. Fijamos los cortes con datos de validación.
+**Regla.** La app muestra si la persona es más, igual o menos propensa a vender que los inversionistas del estudio, nunca la probabilidad. Fijamos los cortes con datos de validación.
 
 **Por qué.** Entrenamos con japoneses y la usarán colombianos. Al cambiar de población, la calibración falla primero (Van Calster et al., 2019; Riley et al., 2024).
+
+**Cortes (registrado el 23 de octubre de 2026, antes de calcularlos).** Con los ajustes del ganador, sacamos la probabilidad de cada persona del entrenamiento con validación cruzada de 5 particiones (semilla 42): cada persona recibe la predicción de un modelo que no la vio. Los dos cortes son los percentiles 33,3 y 66,7 de esas probabilidades:
+
+| Categoría | Probabilidad |
+|---|---|
+| Más propensa | Igual o mayor al percentil 66,7 |
+| Parecida | Entre los dos cortes |
+| Menos propensa | Menor al percentil 33,3 |
+
+No usamos el conjunto de prueba. Los cortes se guardan con el modelo.
+
+**Decisión nuestra:** usar tercios. Así cada categoría agrupa a un tercio de los inversionistas japoneses, y la app puede decir "estás en el tercio que más vende" sin mostrar un porcentaje.
+
+**Ingreso y activos en la app (decisión nuestra, provisional).** La persona dice en cuál de cinco niveles está frente a la gente de su país: bajo, medio bajo, medio, medio alto o alto. Cada nivel ocupa el 20 % de la gente y su posición es la mitad de esa franja: 10 %, 30 %, 50 %, 70 % y 90 %. A cada nivel le damos el tramo japonés que contiene esa posición, con la misma función que usamos para la NFCS (`match_brackets_by_position`). Se cambia cuando tengamos los tramos colombianos de la IEFIC.
 
 ## 9. Reporte
 

@@ -25,6 +25,9 @@ dependencies = [
 ]
 
 [dependency-groups]
+app = [
+    "streamlit>=1.66.1",
+]
 # Herramientas de desarrollo: uv sync las instala por defecto
 dev = ["pytest>=8.0", "jupyterlab>=4.1", "ipykernel>=6.29", "ruff>=0.4"]
 

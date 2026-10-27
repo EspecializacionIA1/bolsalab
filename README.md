@@ -24,6 +24,15 @@ BolsaLAB estima **qué tan propensa es una persona a vender sus inversiones dura
 
 Las reglas para preparar los datos, partirlos, medir y elegir el modelo están en [`docs/protocolo-evaluacion.md`](docs/protocolo-evaluacion.md). Cada regla cita el artículo que la respalda. Las variables que usa el modelo, y las que no, están en [`docs/variables.md`](docs/variables.md).
 
+## Prototipo en Streamlit
+
+`app/app.py` es la app del prototipo: cuestionario, resultado explicado con SHAP y qué aprender. Cómo correrla, las decisiones y lo que encontramos con SHAP están en [`docs/prototipo.md`](docs/prototipo.md).
+
+```bash
+uv sync --group app
+uv run --group app streamlit run app/app.py
+```
+
 ## La API
 
 El backend expone un endpoint. Los nombres de la ruta y de los campos son una propuesta del equipo.
@@ -81,6 +90,7 @@ bolsalab/
 │   ├── config.py          ← Rutas y semilla. Todo parámetro sale de aquí
 │   ├── dataset.py         ← Carga y limpieza del dataset de Japón
 │   ├── features.py        ← Variables de entrada y variable objetivo
+│   ├── explain.py         ← Explicación global del modelo con SHAP
 │   ├── modeling/
 │   │   ├── train.py       ← Entrenar, comparar y exportar el modelo
 │   │   └── predict.py     ← Cargar el modelo publicado y predecir
@@ -94,6 +104,7 @@ bolsalab/
 ├── notebooks/             ← Exploración y análisis
 ├── reports/figures/       ← Gráficas para entregas y sustentación
 ├── tests/                 ← Pruebas del paquete
+├── app/                   ← Prototipo en Streamlit
 ├── backend/               ← API en FastAPI que expone el modelo
 └── frontend/prototypes/   ← Prototipos HTML validados con usuarios
 ```
