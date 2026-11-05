@@ -28,7 +28,10 @@ from bolsalab.modeling.transformers import FeatureEngineer
 EXPERIMENTS_FILE = REPORTS_DIR / "experiments.csv"
 
 # Modelos que se exploran (deben existir en MODELS de train.py).
-MY_MODELS = ["xgboost", "lightgbm", "catboost"]
+# La red neuronal entra aunque haya quedado última en la comparación (0,635):
+# es el único modelo al que las transformaciones de variables pueden cambiarle
+# el resultado, porque no parte por "mayor o menor que" como los árboles.
+MY_MODELS = ["xgboost", "lightgbm", "catboost", "neural_net"]
 
 # Variantes de variables. "base" son las 17 variables de features.py sin cambios.
 FEATURE_SETS = {
@@ -57,6 +60,14 @@ EXTRA_GRIDS = {
         "model__learning_rate": [0.01, 0.03, 0.1],
         "model__depth": [4, 6, 8],
         "model__l2_leaf_reg": [1, 3, 10],
+    },
+    # Redes más grandes, más regularización y dos velocidades de aprendizaje,
+    # para ver si la red quedó última por la rejilla estrecha del protocolo
+    # (solo dos arquitecturas) o porque el cuestionario no da para más.
+    "neural_net": {
+        "model__hidden_layer_sizes": [(16,), (32,), (32, 16), (64, 32)],
+        "model__alpha": [0.0001, 0.01, 1.0],
+        "model__learning_rate_init": [0.001, 0.01],
     },
 }
 
