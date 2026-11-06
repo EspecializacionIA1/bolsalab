@@ -132,8 +132,8 @@ with ask:
         st.divider()
         st.markdown(f"<h3 style='color:{color};margin-bottom:0'>{title}</h3>",
                     unsafe_allow_html=True)
-        st.markdown("Comparado con los inversionistas japoneses con los que aprendió el modelo. "
-                    "No mostramos un porcentaje porque el modelo aprendió en Japón y ese número "
+        st.markdown("Comparado con los inversionistas con los que aprendió el modelo. "
+                    "No mostramos un porcentaje porque el modelo está en pruebas y ese número "
                     "no sería confiable para ti.")
 
         factors = pd.DataFrame(result["top_factors"])
