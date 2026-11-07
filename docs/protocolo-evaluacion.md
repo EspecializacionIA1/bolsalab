@@ -151,6 +151,13 @@ Cada combinación se prueba también con cuatro variantes de las 17 variables:
 
 Un experimento puede reemplazar al ganador de la comparación oficial, con la misma lógica de la regla de arriba: lo reemplaza solo si su AUROC medio supera al del ganador por más de una desviación estándar del ganador. Si no, se queda el ganador oficial, porque usa los rangos del protocolo y las 17 variables sin cambios. Esta regla se fijó antes de correr los experimentos.
 
+**Ajuste por familias (registrado el  2 de noviembre de 2026, antes de correrlo).** Responde a la retroalimentación: ajustar cada familia según cómo aprende, no con rejillas más grandes. El plan completo está en `docs/plan-ajuste-por-familias.md` y el código en `bolsalab/modeling/tuning.py`. Usa la misma partición, la misma validación anidada 5 × 3 y las mismas métricas, y además reporta la brecha de sobreajuste (AUROC de entrenamiento menos AUROC de validación). No toca el conjunto de prueba.
+
+- **Reemplazo del ganador.** Sigue la misma regla: el AUROC medio debe pasar de 0,6636. Además, la brecha de sobreajuste no puede pasar de 0,03; XGBoost tiene 0,017. *Decisión nuestra.*
+- **Paso 1, parada temprana.** XGBoost, LightGBM y CatBoost con las mismas velocidades y profundidades de arriba, pero el número de árboles lo decide el modelo: máximo 2.000, se detiene tras 50 árboles sin mejorar, y para decidirlo aparta el 10 % de los datos que recibe, con la misma proporción de ventas. El 10 % es el valor por defecto de `HistGradientBoostingClassifier` de scikit-learn; el 2.000 y el 50 son *decisión nuestra*.
+- **Restricciones monótonas.** Si la versión que obliga a que acertar las tres preguntas de conocimiento nunca suba el riesgo queda a 0,004 o menos del AUROC sin restricción, y su pendiente de calibración no se aleja de 1, la preferimos aunque no gane por AUROC. La dirección sale de SHAP (`docs/prototipo.md`) y de Bawalle et al. (2025). *Decisión nuestra.*
+- **Pérdidas en las redes de PyTorch.** Se prueban la entropía cruzada estándar y la pérdida focal (Lin et al., 2017) solo con su parámetro de enfoque (`gamma`), sin su peso por clase (`alpha`). La pérdida ponderada no se prueba, porque es un peso por clase y la sección 5 los prohíbe.
+
 **Alarmas.** Revisamos si hay fuga ante un AUROC de 0,82 o más (Elkind lo logró con historial de portafolio, no con un cuestionario), ante un intervalo que incluya 0,5 o ante una variable que domine la explicación SHAP.
 
 ## 8. Qué ve el usuario
@@ -187,6 +194,7 @@ Seguimos la guía TRIPOD+AI (Collins et al., 2024): población, objetivo, tamañ
 - Elkind, D., Kaminski, K., Lo, A. W., Siah, K. W., & Wong, C. H. (2022). When do investors freak out? Machine learning predictions of panic selling. *The Journal of Financial Data Science, 4*(1), 11–39.
 - Grinsztajn, L., Oyallon, E., & Varoquaux, G. (2022). Why do tree-based models still outperform deep learning on typical tabular data? *NeurIPS 35*.
 - Kapoor, S., & Narayanan, A. (2023). Leakage and the reproducibility crisis in machine-learning-based science. *Patterns, 4*(9), 100804.
+- Lin, T.-Y., Goyal, P., Girshick, R., He, K., & Dollár, P. (2017). Focal loss for dense object detection. *ICCV 2017*.
 - McDermott, M. B. A., et al. (2024). A closer look at AUROC and AUPRC under class imbalance. *NeurIPS 2024*.
 - McElfresh, D., et al. (2023). When do neural nets outperform boosted trees on tabular data? *NeurIPS 36*.
 - Riley, R. D., et al. (2024). Evaluation of clinical prediction models (part 2): How to undertake an external validation study. *BMJ, 384*, e074820.
