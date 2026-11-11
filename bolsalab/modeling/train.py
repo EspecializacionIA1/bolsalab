@@ -138,25 +138,41 @@ def split_data(table: pd.DataFrame):
 
 
 def evaluate_model(pipeline: Pipeline, grid: dict,
-                   X_train: pd.DataFrame, y_train: pd.Series) -> dict:
+                   X_train: pd.DataFrame, y_train: pd.Series,
+                   overfit_gap: bool = False, fold_detail=None) -> dict:
     """Mide un modelo con validación cruzada anidada y devuelve sus métricas.
 
     3 particiones internas eligen los hiperparámetros y 5 externas miden el
     modelo con datos que no usó para elegirlos. Devuelve el promedio y la
     desviación estándar de cada métrica, y los hiperparámetros que eligió cada
     una de las 5 particiones externas. experiments.py usa esta misma función.
+
+    Con overfit_gap=True agrega el AUROC sobre las personas con las que entrenó
+    cada partición y la brecha frente al de validación: si la brecha crece, el
+    modelo está memorizando. Viene apagado para que benchmark.csv y
+    experiments.csv conserven sus columnas.
+
+    fold_detail es una función opcional que recibe el modelo ganador de cada
+    partición externa y devuelve un dato para guardar, por ejemplo cuántos
+    árboles usó con parada temprana.
     """
     outer = StratifiedKFold(5, shuffle=True, random_state=RANDOM_STATE)
     inner = StratifiedKFold(3, shuffle=True, random_state=RANDOM_STATE)
     search = GridSearchCV(pipeline, grid, cv=inner, scoring="roc_auc", n_jobs=-1)
     scores = cross_validate(search, X_train, y_train, cv=outer, scoring=SCORERS,
-                            return_estimator=True)
+                            return_estimator=True, return_train_score=overfit_gap)
     metrics = {}
     for metric in SCORERS:
         metrics[metric] = scores[f"test_{metric}"].mean()
         metrics[f"{metric}_sd"] = scores[f"test_{metric}"].std()
+    if overfit_gap:
+        metrics["train_auroc"] = scores["train_auroc"].mean()
+        metrics["overfit_gap"] = (scores["train_auroc"] - scores["test_auroc"]).mean()
     metrics["best_params"] = json.dumps(
         [fold.best_params_ for fold in scores["estimator"]], default=str)
+    if fold_detail is not None:
+        metrics["fold_detail"] = json.dumps(
+            [fold_detail(fold.best_estimator_) for fold in scores["estimator"]], default=str)
     return metrics
 
 
