@@ -158,6 +158,16 @@ Un experimento puede reemplazar al ganador de la comparación oficial, con la mi
 - **Restricciones monótonas.** Si la versión que obliga a que acertar las tres preguntas de conocimiento nunca suba el riesgo queda a 0,004 o menos del AUROC sin restricción, y su pendiente de calibración no se aleja de 1, la preferimos aunque no gane por AUROC. La dirección sale de SHAP (`docs/prototipo.md`) y de Bawalle et al. (2025). *Decisión nuestra.*
 - **Pérdidas en las redes de PyTorch.** Se prueban la entropía cruzada estándar y la pérdida focal (Lin et al., 2017) solo con su parámetro de enfoque (`gamma`), sin su peso por clase (`alpha`). La pérdida ponderada no se prueba, porque es un peso por clase y la sección 5 los prohíbe.
 
+**Búsqueda con Optuna (registrado el 11 de noviembre de 2026, antes de ver resultados).** Hasta ahora probamos listas cortas de valores. Queremos saber si buscando en rangos completos aparece una combinación mejor que se nos estaba escapando. Optuna prueba una combinación, mira cómo le fue y con eso decide cuál probar después.
+
+- **Qué se prueba.** Solo XGBoost con parada temprana y las 17 variables de siempre. Misma partición, misma validación 5 × 3 y mismas métricas. No toca el conjunto de prueba.
+- **Rangos.** Velocidad de aprendizaje de 0,01 a 0,3; profundidad de 2 a 6; `gamma` de 0 a 5; `reg_lambda` de 0,1 a 20. Cubren la rejilla de la poda y se abren más allá de sus bordes, porque varias particiones eligieron el tope. *Decisión nuestra.*
+- **Intentos.** 50 por partición, cerca del doble de las 24 combinaciones de la poda. Semilla 42. *Decisión nuestra.*
+- **Regla.** La misma del ganador: debe pasar de 0,6636 y su brecha no puede pasar de 0,03. Una mejora menor de 0,004 la contamos como ruido.
+- **Qué esperamos.** Que no cambie mucho. Si es así, confirma que el límite está en el cuestionario y no en el ajuste.
+
+El código está en `bolsalab/modeling/optuna_search.py`.
+
 **Alarmas.** Revisamos si hay fuga ante un AUROC de 0,82 o más (Elkind lo logró con historial de portafolio, no con un cuestionario), ante un intervalo que incluya 0,5 o ante una variable que domine la explicación SHAP.
 
 ## 8. Qué ve el usuario
