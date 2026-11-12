@@ -9,6 +9,7 @@ from sklearn.pipeline import Pipeline
 from xgboost import XGBClassifier
 
 from bolsalab.modeling.early_stopping import EarlyStoppingBooster
+from bolsalab.modeling.optuna_search import OptunaSearch
 
 
 @pytest.fixture(scope="module")
@@ -45,6 +46,28 @@ def test_works_inside_grid_search(data):
     grid = {"model__estimator__max_depth": [2, 3]}
     search = GridSearchCV(pipeline, grid, cv=StratifiedKFold(3), scoring="roc_auc").fit(*data)
     assert search.best_score_ > 0.6
+
+
+def test_works_inside_optuna_search(data):
+    """Optuna puede mover los hiperparámetros del modelo envuelto, igual que la rejilla."""
+    X, y = data
+    pipeline = Pipeline([("model", EarlyStoppingBooster(XGBClassifier(n_estimators=500)))])
+    ranges = {"model__estimator__max_depth": ("int", 2, 3),
+              "model__estimator__learning_rate": ("log", 0.05, 0.3)}
+    search = OptunaSearch(pipeline, ranges, n_trials=3, cv=StratifiedKFold(3)).fit(X, y)
+    assert search.best_score_ > 0.6
+    assert search.best_params_["model__estimator__max_depth"] in (2, 3)
+    assert 0.05 <= search.best_params_["model__estimator__learning_rate"] <= 0.3
+    assert search.predict_proba(X).shape == (len(X), 2)
+
+
+def test_optuna_search_is_repeatable(data):
+    """Con la misma semilla elige la misma combinación."""
+    pipeline = Pipeline([("model", EarlyStoppingBooster(XGBClassifier(n_estimators=500)))])
+    ranges = {"model__estimator__learning_rate": ("log", 0.05, 0.3)}
+    first = OptunaSearch(pipeline, ranges, n_trials=3, cv=StratifiedKFold(3)).fit(*data)
+    second = OptunaSearch(pipeline, ranges, n_trials=3, cv=StratifiedKFold(3)).fit(*data)
+    assert first.best_params_ == second.best_params_
 
 
 def test_rejects_other_models(data):
