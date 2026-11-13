@@ -90,7 +90,26 @@ En vez de listas cortas de valores, Optuna buscó en rangos completos: 50 combin
 - **`reg_lambda` alto no era una pista.** En el paso 2 las 5 particiones eligieron el tope de la rejilla (10). Con el rango abierto hasta 20, solo una pasó de 10.
 - **Conclusión:** con rejilla o con búsqueda en rangos llegamos al mismo techo. El límite está en la información del cuestionario.
 
+### Paso 5. Variables (12 de noviembre de 2026)
+
+Después de tres formas de ajuste sin mejora, probamos si al modelo le ayuda recibir algunas respuestas ya combinadas. Las ideas salieron del artículo y de mirar, solo con el entrenamiento, qué porcentaje vendió según cada respuesta (`notebooks/Exploración de variables.ipynb`). Las seis pruebas usan el XGBoost con poda del paso 2; solo cambian las columnas.
+
+| Prueba | AUROC | Diferencia | Brecha | Decisión |
+|---|---|---|---|---|
+| Sin cambios (paso 2) | 0,6595 ± 0,004 | | 0,019 | Referencia |
+| Total de aciertos | 0,6590 ± 0,003 | −0,0006 | 0,017 | No se adopta |
+| Confianza sin sustento | 0,6592 ± 0,003 | −0,0003 | 0,019 | No se adopta |
+| Hombre con pocos aciertos | 0,6591 ± 0,004 | −0,0004 | 0,017 | No se adopta |
+| Poco colchón financiero | 0,6588 ± 0,004 | −0,0008 | 0,019 | No se adopta |
+| Tramos como grupos | 0,6573 ± 0,004 | −0,0022 | 0,022 | No se adopta |
+| Solo lo que pregunta la app | 0,6520 ± 0,003 | −0,0075 | 0,013 | Las dos preguntas se quedan |
+
+- **Ninguna variable nueva mejoró el modelo.** Las cuatro quedaron a menos de 0,001 de la referencia; la regla pedía más de 0,004.
+- **El modelo ya lo sabía.** Los valores SHAP de interacción (`reports/shap_interacciones.csv`) muestran que el modelo ya usaba juntas las preguntas de finanzas y el sexo. Dárselas combinadas no le enseñó nada nuevo.
+- **Las dos preguntas que la app no hace sí aportan.** Sin aversión al riesgo ni visión de corto plazo, el AUROC baja 0,0075, casi el doble del umbral. Se quedan en el modelo, y la app debería preguntarlas.
+- **Conclusión:** el modelo conserva las 17 variables. Lo que se ve en una tabla no siempre le sirve al modelo: los hombres con pocos aciertos venden 42 %, pero eso ya estaba aprendido.
+
 ## Lo que sigue
 
-- Pasos 3 a 6 del plan de ajuste por familias.
+- Pasos 3, 4 y 6 del plan de ajuste por familias.
 - Congelar el modelo y medirlo una sola vez en el 20 % de prueba (`uv run python -m bolsalab.modeling.train --final`) y en la NFCS.

@@ -60,7 +60,7 @@ Fijamos estas reglas antes de entrenar. Así como integrantes del equipo compara
 
 **Límites**
 
-- El artículo (Tabla 1) define el exceso de confianza como "menos aciertos que el promedio y confiado". La columna del archivo no sigue ese texto en 3.450 personas, pero su promedio (0,07) coincide con el publicado: los autores la usaron así.
+- El artículo (Tabla 1) define el exceso de confianza como "menos aciertos que el promedio y confiado". Leyendo "confiado" como confianza 4 o 5, la columna del archivo no sigue ese texto en 992 de las 54.704 personas: todas tienen confianza 5 y los 3 aciertos. Aun así, su promedio (0,07) coincide con el publicado: los autores la usaron así.
 - Todas las respuestas son de 2023, después de la caída. Alguien que vendió y se arrepintió pudo declararse después más averso al riesgo. No podemos corregirlo con código; lo declaramos en el reporte y usamos el panel SCF 2007-2009, que midió antes, como contraste.
 - En el cuestionario, 1 en confianza era "totalmente de acuerdo". En el archivo, quien marca 5 acierta más (2,64 frente a 1,98), así que deducimos que el archivo invirtió la escala. La app debe preguntar en el sentido del archivo.
 
@@ -167,6 +167,25 @@ Un experimento puede reemplazar al ganador de la comparación oficial, con la mi
 - **Qué esperamos.** Que no cambie mucho. Si es así, confirma que el límite está en el cuestionario y no en el ajuste.
 
 El código está en `bolsalab/modeling/optuna_search.py`.
+
+**Variables nuevas (registrado el 12 de noviembre de 2026, antes de medirlas).** El ajuste ya no mejora el modelo, así que probamos si le ayuda recibir algunas respuestas ya combinadas. Las ideas salieron del artículo y de mirar, solo con el entrenamiento, qué porcentaje vendió según cada respuesta (`notebooks/Exploración de variables.ipynb`).
+
+- **Cómo se mide.** Cada prueba usa el XGBoost con poda del ajuste por familias, con su misma rejilla, partición y validación 5 × 3. Solo cambian las columnas. Se compara con ese mismo modelo sin cambios (AUROC 0,6595). No toca el conjunto de prueba.
+- **Regla.** Una variable se adopta solo si sube el AUROC más de 0,004 y la brecha de sobreajuste no pasa de 0,03. Menos que eso lo contamos como ruido.
+- **Cambio a la sección 3.** Allí dejamos fuera el total de aciertos por repetir las tres preguntas. Ahora lo probamos **junto** a ellas, porque a un árbol de 3 niveles le cuesta sumarlas. Si no pasa la regla, la sección 3 queda como estaba.
+
+| Prueba | Qué cambia | Por qué |
+|---|---|---|
+| Total de aciertos | Agrega los aciertos de 0 a 3 | Las tres preguntas miden lo mismo |
+| Confianza sin sustento | Cambia la columna de exceso de confianza por la definición del artículo: menos aciertos que el promedio y confianza 4 o 5 | La columna actual marca también a quien confía y acertó todo |
+| Hombre con pocos aciertos | Agrega una marca para los hombres con 0 o 1 aciertos | Exploratoria: en el entrenamiento, fallar las preguntas pesa casi el doble en los hombres. No tenemos todavía una explicación |
+| Poco colchón financiero | Agrega una marca para quien está en los dos tramos más bajos de ingreso y de activos | Quien gana poco y tiene pocos ahorros no puede aguantar una pérdida |
+| Tramos como grupos | Trata ingreso y activos como grupos y no como números | El tramo 6 no es el doble del tramo 3 |
+| Solo lo que pregunta la app | Quita aversión al riesgo y visión de corto plazo | La app no las pregunta. Si quitarlas cuesta 0,004 o menos, el modelo final va sin ellas |
+
+*Decisión nuestra:* "confiado" es confianza 4 o 5 (el artículo no da el número), "pocos aciertos" es 0 o 1, y "tramo bajo" son los tramos 1 y 2. Los dos últimos cortes los elegimos después de mirar el entrenamiento, y por eso esas dos pruebas tienen más riesgo de acertar por casualidad.
+
+El código está en `bolsalab/modeling/transformers.py` y las pruebas en `bolsalab/modeling/tuning.py` (paso 5).
 
 **Alarmas.** Revisamos si hay fuga ante un AUROC de 0,82 o más (Elkind lo logró con historial de portafolio, no con un cuestionario), ante un intervalo que incluya 0,5 o ante una variable que domine la explicación SHAP.
 
