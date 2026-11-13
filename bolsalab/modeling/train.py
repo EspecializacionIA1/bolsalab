@@ -48,6 +48,7 @@ from xgboost import XGBClassifier
 from bolsalab.config import MODELS_DIR, RANDOM_STATE, REPORTS_DIR
 from bolsalab.features import TRAINING_FILE
 from bolsalab.features import main as build_training_table
+from bolsalab.modeling.optuna_search import OptunaSearch
 from bolsalab.nfcs import match_brackets_by_position
 
 # Las dos preguntas que la app todavía no hace (protocolo, sección 8).
@@ -139,7 +140,8 @@ def split_data(table: pd.DataFrame):
 
 def evaluate_model(pipeline: Pipeline, grid: dict,
                    X_train: pd.DataFrame, y_train: pd.Series,
-                   overfit_gap: bool = False, fold_detail=None) -> dict:
+                   overfit_gap: bool = False, fold_detail=None,
+                   n_trials: int | None = None) -> dict:
     """Mide un modelo con validación cruzada anidada y devuelve sus métricas.
 
     3 particiones internas eligen los hiperparámetros y 5 externas miden el
@@ -155,10 +157,18 @@ def evaluate_model(pipeline: Pipeline, grid: dict,
     fold_detail es una función opcional que recibe el modelo ganador de cada
     partición externa y devuelve un dato para guardar, por ejemplo cuántos
     árboles usó con parada temprana.
+
+    Con n_trials, los hiperparámetros los busca Optuna en vez de la rejilla:
+    grid trae rangos (mínimo y máximo) en lugar de listas, y Optuna prueba
+    n_trials combinaciones en cada partición externa (optuna_search.py). La
+    validación 5 x 3 y las métricas son las mismas.
     """
     outer = StratifiedKFold(5, shuffle=True, random_state=RANDOM_STATE)
     inner = StratifiedKFold(3, shuffle=True, random_state=RANDOM_STATE)
-    search = GridSearchCV(pipeline, grid, cv=inner, scoring="roc_auc", n_jobs=-1)
+    if n_trials is None:
+        search = GridSearchCV(pipeline, grid, cv=inner, scoring="roc_auc", n_jobs=-1)
+    else:
+        search = OptunaSearch(pipeline, grid, n_trials=n_trials, cv=inner)
     scores = cross_validate(search, X_train, y_train, cv=outer, scoring=SCORERS,
                             return_estimator=True, return_train_score=overfit_gap)
     metrics = {}

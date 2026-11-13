@@ -74,6 +74,22 @@ Sobre la parada temprana del paso 1, con la profundidad fija en 3, probamos `gam
 - **Lo que pesa es `reg_lambda`, no `gamma`.** XGBoost eligió el valor más alto (10) en las 5 particiones, y `gamma` no mostró un patrón. Como la poda no mejoró más que la variación entre particiones, no ampliamos esta rejilla (regla del plan).
 - **Conclusión:** la profundidad 3 ya controlaba bien el árbol; la poda lo confirma.
 
+### Paso 8. Búsqueda con Optuna (11 de noviembre de 2026)
+
+En vez de listas cortas de valores, Optuna buscó en rangos completos: 50 combinaciones por partición, 250 en total. Solo XGBoost, con parada temprana y las 17 variables de siempre.
+
+| Prueba | AUROC | Pendiente | Brecha |
+|---|---|---|---|
+| XGBoost oficial | 0,6601 ± 0,004 | 1,056 | 0,017 |
+| XGBoost con poda (paso 2) | 0,6595 ± 0,004 | 1,010 | 0,019 |
+| XGBoost con Optuna | 0,6595 ± 0,003 | 1,015 | 0,016 |
+
+- **El AUROC no cambió.** Quedó a 0,0006 del oficial, muy por debajo del 0,004 que contamos como ruido, y lejos de 0,6636. XGBoost oficial sigue siendo el ganador.
+- **Ninguna partición quiso árboles profundos.** Podían llegar a profundidad 6 y eligieron 2 o 3.
+- **No hay una combinación mejor que las demás.** La velocidad elegida fue de 0,03 a 0,15 y `reg_lambda` de 0,3 a 13,6, según la partición. Cuando valores tan distintos dan el mismo resultado, el ajuste no es lo que limita al modelo.
+- **`reg_lambda` alto no era una pista.** En el paso 2 las 5 particiones eligieron el tope de la rejilla (10). Con el rango abierto hasta 20, solo una pasó de 10.
+- **Conclusión:** con rejilla o con búsqueda en rangos llegamos al mismo techo. El límite está en la información del cuestionario.
+
 ## Lo que sigue
 
 - Pasos 3 a 6 del plan de ajuste por familias.

@@ -102,6 +102,30 @@ def lightgbm_with_pruning():
     return pipeline, grid
 
 
+# Paso 8: los mismos cuatro hiperparámetros del paso 2, pero buscados con Optuna.
+# La rejilla solo prueba los valores de una lista. Optuna recibe un rango, prueba
+# una combinación, mira el AUROC y con eso decide cuál probar después.
+# Los rangos cubren la rejilla del paso 2 y se abren más allá de sus bordes,
+# porque varias particiones eligieron el borde (reg_lambda 10).
+# Cada rango es (tipo, mínimo, máximo). El tipo "log" reparte los intentos por
+# escala: tantos entre 0,01 y 0,1 como entre 0,1 y 1.
+OPTUNA_TRIALS = 50
+
+
+def xgboost_with_optuna():
+    """El XGBoost del paso 1 con rangos para Optuna en vez de una rejilla."""
+    pipeline, _ = xgboost_with_early_stopping()
+    ranges = {"model__estimator__learning_rate": ("log", 0.01, 0.3),
+              "model__estimator__max_depth": ("int", 2, 6),
+              "model__estimator__gamma": ("float", 0, 5),
+              "model__estimator__reg_lambda": ("log", 0.1, 20)}
+    return pipeline, ranges
+
+
+# Pruebas que busca Optuna: nombre -> número de intentos por partición externa.
+SEARCHED_WITH_OPTUNA = {"xgboost|optuna": OPTUNA_TRIALS}
+
+
 def trees_used(pipeline: Pipeline) -> int:
     """Cuántos árboles usó el modelo de una partición después de la parada temprana."""
     model = pipeline.named_steps["model"]
@@ -132,6 +156,11 @@ STEPS = {
             lightgbm_with_pruning,
             "Mismo motivo, con min_split_gain, que es el equivalente de gamma"),
     },
+    8: {
+        "xgboost|optuna": (
+            xgboost_with_optuna,
+            "La rejilla solo prueba unos pocos valores; Optuna busca en rangos completos"),
+    },
 }
 
 
@@ -154,7 +183,8 @@ def run_step(step: int, X_train: pd.DataFrame, y_train: pd.Series, rerun: bool =
             "step": step, "experiment": name, "reason": reason,
             "grid": json.dumps(grid, default=str),
             **evaluate_model(pipeline, grid, X_train, y_train,
-                             overfit_gap=True, fold_detail=trees_used),
+                             overfit_gap=True, fold_detail=trees_used,
+                             n_trials=SEARCHED_WITH_OPTUNA.get(name)),
             "run_at": datetime.now().isoformat(timespec="seconds"),
         }
         print(f"    AUROC {row['auroc']:.4f} ± {row['auroc_sd']:.4f} · "

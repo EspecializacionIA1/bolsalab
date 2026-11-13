@@ -27,10 +27,11 @@ Hasta ahora corrimos 32 experimentos y ninguno superó a XGBoost. Con este plan 
 | 5 | **Variables** (ver abajo) | Una variable nueva solo ayuda si trae información que el modelo no tenía | Por correr |
 | 6 | **Redes en PyTorch** (ver abajo) | Lo pidió el tutor | Por correr |
 | 7 | **Cierre**: congelar el modelo y medirlo una vez en el 20 % de prueba y en la NFCS | | Al final |
+| 8 | **Búsqueda con Optuna** en XGBoost: busca en rangos completos en vez de listas cortas (se corre antes del cierre; el 8 es solo el siguiente número libre) | Queremos descartar que una combinación mejor se nos esté escapando entre los valores de la rejilla | El AUROC no cambió (0,6595). Brecha de 0,016. Cada partición eligió valores distintos: no hay una combinación mejor que las demás |
 
 El detalle de cada resultado está en `docs/experimentos.md`, sección 3, y los números en `reports/tuning.csv`.
 
-**Lo que llevamos:** después de dos pasos, el límite parece estar en la información del cuestionario y no en el ajuste del modelo.
+**Lo que llevamos:** después de dos pasos y de la búsqueda con Optuna, el límite parece estar en la información del cuestionario y no en el ajuste del modelo.
 
 ## Decisiones tomadas
 
