@@ -15,6 +15,7 @@ Uso: uv run python -m bolsalab.modeling.tuning --step 1 [--rerun]
 import argparse
 import json
 from datetime import datetime
+from functools import partial
 
 import pandas as pd
 from catboost import CatBoostClassifier
@@ -25,6 +26,7 @@ from xgboost import XGBClassifier
 from bolsalab.config import RANDOM_STATE, REPORTS_DIR
 from bolsalab.modeling.early_stopping import EarlyStoppingBooster
 from bolsalab.modeling.train import TRAINING_FILE, evaluate_model, split_data
+from bolsalab.modeling.transformers import FeatureEngineer
 
 TUNING_FILE = REPORTS_DIR / "tuning.csv"
 
@@ -102,6 +104,19 @@ def lightgbm_with_pruning():
     return pipeline, grid
 
 
+# Paso 5: variables. El modelo y la rejilla son los del paso 2 (XGBoost con poda);
+# lo único que cambia entre pruebas son las columnas. Así, si el AUROC se mueve,
+# es por la variable y no por el ajuste. Se compara con "xgboost|poda" del paso 2.
+def xgboost_with_variables(**changes):
+    """El XGBoost del paso 2 con un cambio en las variables (ver FeatureEngineer)."""
+    pipeline, grid = xgboost_with_pruning()
+    pipeline.steps.insert(0, ("variables", FeatureEngineer(**changes)))
+    if changes.get("categorical"):
+        # XGBoost solo trata una columna como grupos si se le pide.
+        pipeline.set_params(model__estimator__enable_categorical=True)
+    return pipeline, grid
+
+
 # Paso 8: los mismos cuatro hiperparámetros del paso 2, pero buscados con Optuna.
 # La rejilla solo prueba los valores de una lista. Optuna recibe un rango, prueba
 # una combinación, mira el AUROC y con eso decide cuál probar después.
@@ -155,6 +170,26 @@ STEPS = {
         "lightgbm|poda": (
             lightgbm_with_pruning,
             "Mismo motivo, con min_split_gain, que es el equivalente de gamma"),
+    },
+    5: {
+        "variables|total_aciertos": (
+            partial(xgboost_with_variables, add_correct_answers=True),
+            "Tres preguntas miden lo mismo y a un árbol de 3 niveles le cuesta sumarlas"),
+        "variables|confianza_sin_sustento": (
+            partial(xgboost_with_variables, unjustified_confidence=True),
+            "La columna actual marca también a quien confía y acertó todo; el artículo no"),
+        "variables|hombre_pocos_aciertos": (
+            partial(xgboost_with_variables, man_with_few_correct=True),
+            "Exploratoria: fallar las preguntas pesa casi el doble en los hombres"),
+        "variables|poco_colchon": (
+            partial(xgboost_with_variables, low_financial_cushion=True),
+            "Quien gana poco y tiene pocos ahorros no puede aguantar una pérdida"),
+        "variables|tramos_como_grupos": (
+            partial(xgboost_with_variables, categorical=("income_bracket", "assets_bracket")),
+            "El tramo 6 no es el doble del tramo 3: los tramos son grupos, no cantidades"),
+        "variables|solo_app": (
+            partial(xgboost_with_variables, drop=("risk_aversion", "short_term_view")),
+            "La app no pregunta estas dos; queremos saber cuánto AUROC cuesta quitarlas"),
     },
     8: {
         "xgboost|optuna": (

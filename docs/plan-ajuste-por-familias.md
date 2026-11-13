@@ -24,7 +24,7 @@ Hasta ahora corrimos 32 experimentos y ninguno superó a XGBoost. Con este plan 
 | 2 | **Poda**: `gamma` exige que cada corte valga la pena y `reg_lambda` castiga las hojas con riesgos extremos | Los modelos siempre eligen la profundidad mínima, señal de mucho ruido | El AUROC no cambió (0,660). La brecha bajó a 0,019. Lo que pesó fue `reg_lambda` |
 | 3 | **Restricciones monótonas**: acertar las preguntas de finanzas nunca puede subir el riesgo | SHAP y Bawalle et al. (2025) muestran esa dirección, y la app enseña eso | Por correr |
 | 4 | **Random Forest con poda**: `ccp_alpha` corta las ramas que aportan poco y `max_features` limita cuántas variables mira cada corte | Es la poda clásica que mencionó el tutor | Por correr |
-| 5 | **Variables** (ver abajo) | Una variable nueva solo ayuda si trae información que el modelo no tenía | Por correr |
+| 5 | **Variables** (ver abajo) | Una variable nueva solo ayuda si trae información que el modelo no tenía | Ninguna variable nueva mejoró (todas a menos de 0,001). Quitar las dos preguntas que la app no hace cuesta 0,0075: se quedan. El modelo conserva las 17 variables |
 | 6 | **Redes en PyTorch** (ver abajo) | Lo pidió el tutor | Por correr |
 | 7 | **Cierre**: congelar el modelo y medirlo una vez en el 20 % de prueba y en la NFCS | | Al final |
 | 8 | **Búsqueda con Optuna** en XGBoost: busca en rangos completos en vez de listas cortas (se corre antes del cierre; el 8 es solo el siguiente número libre) | Queremos descartar que una combinación mejor se nos esté escapando entre los valores de la rejilla | El AUROC no cambió (0,6595). Brecha de 0,016. Cada partición eligió valores distintos: no hay una combinación mejor que las demás |
@@ -45,10 +45,14 @@ El detalle de cada resultado está en `docs/experimentos.md`, sección 3, y los 
 
 | Prueba | Por qué |
 |---|---|
-| Exceso de confianza con la definición del artículo | La columna que usamos no la sigue en 3.450 personas (protocolo, sección 3) |
+| Exceso de confianza con la definición del artículo | La columna que usamos no la sigue en 992 personas: las de confianza 5 y los 3 aciertos (protocolo, sección 3) |
 | Modelo solo con lo que pregunta la app | La app no pregunta `risk_aversion` ni `short_term_view`. Queremos saber cuánto AUROC perdemos sin ellas |
 | Ingreso y activos como categorías | El tramo 6 no es "el doble" del tramo 3 |
 | Agregar la suma de aciertos (0 a 3) | Con profundidad 3, a un árbol le cuesta sumar tres preguntas |
+| Marca de hombre con 0 o 1 aciertos (exploratoria) | En el entrenamiento, fallar las preguntas pesa casi el doble en los hombres |
+| Marca de poco colchón financiero (ingreso y activos en los dos tramos más bajos) | Quien gana poco y tiene pocos ahorros no puede aguantar una pérdida |
+
+Las dos últimas salieron de la exploración (`notebooks/Exploración de variables.ipynb`). Las reglas de las seis pruebas están en el protocolo, sección 7.
 
 **Paso 6, redes en PyTorch.** Las conectamos con **skorch**, una librería que hace que una red de PyTorch funcione como un modelo de scikit-learn, para medirlas con las mismas reglas.
 
