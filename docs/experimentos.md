@@ -149,5 +149,5 @@ Con el visto bueno y apoyo de nuestro tutor cerramos las pruebas. El modelo fina
 
 ## Lo que sigue
 
-- Pasos 3, 4 y 6 del plan de ajuste por familias.
-- Congelar el modelo y medirlo una sola vez en el 20 % de prueba (`uv run python -m bolsalab.modeling.train --final`) y en la NFCS.
+- Correr una sola vez la prueba final con la configuración elegida y las reglas del protocolo (sección 7).
+- Sumar los resultados de las redes en PyTorch cuando se una su código. Ninguna pasó de 0,66.
