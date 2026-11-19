@@ -209,6 +209,32 @@ El código está en `bolsalab/modeling/tuning.py` (paso 9).
 
 El código está en `bolsalab/modeling/tuning.py` (paso 10).
 
+**Configuración final (registrado el 18 de noviembre de 2026, antes de medir en la prueba).** con el visto bueno de nuestro tutor y aprobación del equipo, damos por cerradas las pruebas: ninguna superó 0,6636 y el límite está en la información del cuestionario. Para elegir la configuración final aplicamos las reglas de esta sección, en orden:
+
+1. **AUROC.** Ninguna versión pasó de 0,6636, así que todas empatan con el XGBoost oficial.
+2. **Simplicidad entre familias.** En un empate gana la familia más simple según el orden de la tabla de modelos: XGBoost va antes que LightGBM y CatBoost, y un modelo solo es más simple que un promedio. Queda XGBoost.
+3. **Calibración entre las versiones de XGBoost.** Gana la pendiente más cercana a 1.
+
+| Versión de XGBoost | AUROC | Pendiente | Distancia a 1 | Brecha |
+|---|---|---|---|---|
+| Oficial (300 árboles fijos) | 0,6601 | 1,056 | 0,056 | |
+| Parada temprana (paso 1) | 0,6594 | 0,988 | 0,012 | 0,022 |
+| **Parada temprana y poda (paso 2)** | **0,6595** | **1,010** | **0,010** | **0,019** |
+| Optuna (paso 8) | 0,6595 | 1,015 | 0,015 | 0,016 |
+| Aleatoriedad (paso 9) | 0,6611 | 1,030 | 0,030 | 0,022 |
+| Tres clases (paso 10) | 0,6593 | 1,058 | 0,058 | 0,016 |
+
+**Elegida: XGBoost con parada temprana y poda (paso 2).**
+
+- Hasta 2.000 árboles. Para cuando pasan 50 seguidos sin mejorar, y aparta el 10 % de lo que recibe para decidirlo.
+- Profundidad 3.
+- La rejilla del paso 2: velocidad 0,03 o 0,1; `gamma` 0, 0,5, 1 o 2; `reg_lambda` 1, 5 o 10. En el entrenamiento final la elige una validación de 3 particiones sobre todo el 80 %, igual que dentro de cada partición de la validación anidada.
+- Las mismas 17 variables.
+
+LightGBM calibra un poco mejor (pendiente 0,999 con parada temprana), pero la regla de simplicidad se aplica antes que la de calibración. La brecha de la elegida (0,019) está por debajo del límite de 0,03.
+
+La prueba final se corre una sola vez con `uv run python -m bolsalab.modeling.train --final`, con las métricas de la sección 6. Después de ver su resultado no se cambia nada del modelo.
+
 **Alarmas.** Revisamos si hay fuga ante un AUROC de 0,82 o más (Elkind lo logró con historial de portafolio, no con un cuestionario), ante un intervalo que incluya 0,5 o ante una variable que domine la explicación SHAP.
 
 ## 8. Qué ve el usuario
