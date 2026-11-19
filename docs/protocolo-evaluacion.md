@@ -235,6 +235,16 @@ LightGBM calibra un poco mejor (pendiente 0,999 con parada temprana), pero la re
 
 La prueba final se corre una sola vez con `uv run python -m bolsalab.modeling.train --final`, con las métricas de la sección 6. Después de ver su resultado no se cambia nada del modelo.
 
+**Prueba final (registrado el 18 de noviembre de 2026, antes de correrla).** La corremos una sola vez con `train --final` y dejamos anotado el commit: el modelo aprende con todo el 80 % y se mide con el 20 % (10.941 personas, unas 2.170 ventas).
+
+- **Qué reportamos:** AUROC con su intervalo del 95 %, AUPRC, Brier, calibración y cuántos vendieron dentro del 10 % de mayor riesgo. También por grupos: sexo, edad, ingreso y principiantes (unos 420, con 130 ventas).
+- **Cómo lo leemos:** si el intervalo incluye 0,6595, el valor de la validación cruzada, el resultado es consistente. Si sale más bajo, se reporta tal cual y se explica.
+- **Lo que no hacemos:** correrla dos veces ni cambiar nada después de ver el resultado. Los cortes de la app salen del 80 %, nunca de la prueba. Solo si el programa falla antes de mostrar métricas, se corrige y se vuelve a correr.
+- **Beneficio neto:** no lo reportamos, porque la app no decide con un umbral. *Decisión nuestra.*
+
+**Alarmas.** Las de esta sección: un AUROC de 0,82 o más (posible fuga) o un intervalo que incluya 0,5.
+- **Qué no se hace.** No se corre dos veces. Después de ver las métricas no se cambian el modelo, los hiperparámetros, las variables ni los cortes de la app. Los cortes de los tercios salen del 80 %, nunca de la prueba. Solo si el programa falla antes de mostrar métricas se corrige y se vuelve a correr.
+
 **Alarmas.** Revisamos si hay fuga ante un AUROC de 0,82 o más (Elkind lo logró con historial de portafolio, no con un cuestionario), ante un intervalo que incluya 0,5 o ante una variable que domine la explicación SHAP.
 
 ## 8. Qué ve el usuario

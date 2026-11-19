@@ -58,22 +58,26 @@ Peso medio de cada respuesta en 5.000 personas del entrenamiento (`reports/shap_
 
 ## Desempeño por grupos
 
-Código en `bolsalab/modeling/groups.py`, tabla en `reports/groups.csv`. Usamos las predicciones de validación cruzada del entrenamiento (5 particiones, semilla 42), así que no tocamos la prueba.
+Código en `bolsalab/modeling/groups.py`, tabla en `reports/groups.csv`. Medido con la configuración final (XGBoost con parada temprana y poda) y las predicciones de validación cruzada del entrenamiento (5 particiones, semilla 42), así que no tocamos la prueba.
 
 | Grupo | Personas | Vendió | Predicción media | AUROC | Pendiente de calibración |
 |---|---|---|---|---|---|
-| Hombres | 29.348 | 23,6 % | 23,5 % | 0,623 | 1,06 |
-| Mujeres | 14.415 | 12,2 % | 12,5 % | 0,643 | 1,06 |
-| 18 a 39 años | 13.449 | 18,3 % | 18,2 % | 0,693 | 1,13 |
-| 40 a 59 años | 22.635 | 18,9 % | 19,0 % | 0,646 | 1,04 |
-| 60 años o más | 7.679 | 25,6 % | 25,3 % | 0,588 | 0,85 |
-| Ingreso, tramos 1 a 4 | 18.045 | 22,2 % | 22,0 % | 0,660 | 1,02 |
-| Ingreso, tramos 5 a 7 | 20.103 | 17,9 % | 18,2 % | 0,653 | 1,07 |
-| Ingreso, tramos 8 o más | 5.615 | 19,5 % | 19,0 % | 0,652 | 1,14 |
+| Hombres | 29.348 | 23,6 % | 23,5 % | 0,623 | 1,01 |
+| Mujeres | 14.415 | 12,2 % | 12,4 % | 0,639 | 0,97 |
+| 18 a 39 años | 13.449 | 18,3 % | 18,2 % | 0,693 | 1,08 |
+| 40 a 59 años | 22.635 | 18,9 % | 19,0 % | 0,646 | 0,99 |
+| 60 años o más | 7.679 | 25,6 % | 25,3 % | 0,585 | 0,78 |
+| Ingreso, tramos 1 a 4 | 18.045 | 22,2 % | 22,0 % | 0,658 | 0,96 |
+| Ingreso, tramos 5 a 7 | 20.103 | 17,9 % | 18,1 % | 0,653 | 1,04 |
+| Ingreso, tramos 8 o más | 5.615 | 19,5 % | 19,2 % | 0,651 | 1,08 |
+| **Principiantes** | 1.697 | 31,1 % | 28,1 % | **0,721** | 1,02 |
+| Resto | 42.066 | 19,4 % | 19,5 % | 0,653 | 0,99 |
 
-- **En promedio, el modelo acierta en todos los grupos:** la predicción media queda a menos de medio punto de lo que pasó.
-- **Con los mayores de 60 distingue peor** (0,588 contra 0,693 en los de 18 a 39), y su pendiente de 0,85 dice que ahí las probabilidades salen algo exageradas. Es el grupo que más vendió. En la app, el resultado para esta edad debe leerse con más cautela.
-- **Dentro de cada sexo el AUROC baja** (0,62 y 0,64 frente a 0,66 en total) porque parte de lo que el modelo distingue es el sexo mismo. Cortamos edades en 40 y 60 y el ingreso en tramos 4 y 7 para tener grupos grandes; es decisión nuestra.
+- **Principiantes** (menores de 35 con 0 o 1 aciertos en finanzas) son lo más parecido a nuestro usuario. Ahí el modelo ordena mejor que en cualquier otro grupo (0,721), aunque los subestima un poco: predice 28,1 % y vendieron 31,1 %. Ojo: el grupo se define con preguntas que el modelo también usa, así que el 0,721 dice que ordena bien dentro del grupo, no que sirva más para principiantes en general.
+- **Mayores de 60:** es donde peor distingue (0,585) y exagera las probabilidades (pendiente 0,78). Su resultado en la app debe leerse con cautela.
+- **En los demás grupos** la predicción media queda a menos de medio punto de lo real.
+- **Frente al modelo anterior**, el AUROC casi no cambia y la calibración mejora, salvo en los mayores de 60 y en los tramos de ingreso 1 a 4.
+- **Dentro de cada sexo el AUROC baja** porque parte de lo que distingue el modelo es el sexo mismo. Los cortes de edad e ingreso son decisión nuestra, para tener grupos grandes.
 
 ## Publicarlo en Streamlit Community Cloud
 

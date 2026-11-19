@@ -131,7 +131,9 @@ class CrashReactionModel:
         self.pipeline = joblib.load(artifact_path)
         self.metadata = json.loads(artifact_path.with_suffix(".json").read_text(encoding="utf-8"))
         # Explicación exacta para árboles, en la escala interna del modelo (log-odds).
-        self.explainer = shap.TreeExplainer(self.pipeline[-1])
+        # Con parada temprana, el XGBoost va dentro del envoltorio (estimator_).
+        model = self.pipeline[-1]
+        self.explainer = shap.TreeExplainer(getattr(model, "estimator_", model))
 
     def explain(self, X: pd.DataFrame) -> pd.Series:
         """Aporte SHAP de cada variable para una persona. Edad y edad² van juntas."""
