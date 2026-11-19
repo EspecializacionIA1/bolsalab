@@ -289,13 +289,18 @@ def fit_winner(X_train: pd.DataFrame, y_train: pd.Series):
 
 
 def git_state() -> dict:
-    """Commit con el que se entrenó y si había cambios sin guardar."""
+    """Commit con el que se entrenó y si había cambios sin guardar en el código.
+
+    No cuenta models/ ni reports/, que los escribe el mismo entrenamiento, ni
+    los archivos que no están en git.
+    """
     def git(*args):
         return subprocess.run(["git", *args], cwd=PROJ_ROOT, capture_output=True,
                               text=True, check=True).stdout.strip()
     try:
-        return {"commit": git("rev-parse", "HEAD"),
-                "uncommitted_changes": bool(git("status", "--porcelain"))}
+        changes = git("status", "--porcelain", "--untracked-files=no", "--",
+                      ".", ":!models", ":!reports")
+        return {"commit": git("rev-parse", "HEAD"), "uncommitted_changes": bool(changes)}
     except (OSError, subprocess.CalledProcessError):
         return {"commit": None, "uncommitted_changes": None}
 
