@@ -262,14 +262,21 @@ def app_reference(X_train: pd.DataFrame) -> dict:
 FINAL_MODEL = "xgboost|poda"
 
 
-def fit_winner(X_train: pd.DataFrame, y_train: pd.Series):
-    """Entrena la configuración final con su rejilla, solo con el entrenamiento."""
+def final_search() -> GridSearchCV:
+    """La configuración final sin entrenar: el modelo y su rejilla con 3 particiones.
+
+    La usan fit_winner (entrenamiento final) y groups.py (desempeño por grupos).
+    """
     # tuning.py importa este módulo; por eso se importa aquí y no arriba.
     from bolsalab.modeling.tuning import xgboost_with_pruning
     pipeline, grid = xgboost_with_pruning()
     inner = StratifiedKFold(3, shuffle=True, random_state=RANDOM_STATE)
-    search = GridSearchCV(pipeline, grid, cv=inner, scoring="roc_auc", n_jobs=-1).fit(X_train, y_train)
-    return FINAL_MODEL, search
+    return GridSearchCV(pipeline, grid, cv=inner, scoring="roc_auc", n_jobs=-1)
+
+
+def fit_winner(X_train: pd.DataFrame, y_train: pd.Series):
+    """Entrena la configuración final con su rejilla, solo con el entrenamiento."""
+    return FINAL_MODEL, final_search().fit(X_train, y_train)
 
 
 def export_model(model, metrics: dict, X_train: pd.DataFrame, y_train: pd.Series) -> None:
