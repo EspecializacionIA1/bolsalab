@@ -101,7 +101,10 @@ bolsalab/
 │   └── processed/         ← Datasets finales para entrenar
 ├── docs/                  ← Protocolo de evaluación, comandos de uv y entregables
 ├── models/                ← Modelos publicados (.joblib) y su metadata
-├── notebooks/             ← Exploración y análisis
+├── notebooks/             ← Resultados para el tutor, en orden (00, 01, ...)
+│   ├── 1_datos/           ← Exploración de los datos y comparación con la NFCS
+│   ├── 2_modelado/        ← Comparación de modelos, modelado paso a paso y SHAP
+│   └── 3_mejora_auroc/    ← Ajuste por familias, variables y ruta para mejorar el AUROC
 ├── reports/figures/       ← Gráficas para entregas y sustentación
 ├── tests/                 ← Pruebas del paquete
 ├── app/                   ← Prototipo en Streamlit
@@ -136,7 +139,7 @@ Los comandos de uso diario están en [`docs/uv-commands.md`](docs/uv-commands.md
 ## Convenciones del equipo
 
 - **Ramas:** nadie hace push directo a `main`. Cada tarea va en `feature/<descripcion>` y entra por Pull Request con al menos una aprobación.
-- **Notebooks:** se nombran `<orden>-<iniciales>-<descripcion>.ipynb`, por ejemplo `3.0-jga-comparacion-modelos.ipynb`. El código que se reutiliza pasa a `bolsalab/`.
+- **Notebooks:** van en la subcarpeta de su tema y se nombran `<orden> - <descripción>.ipynb`, con un número que sigue el orden del proyecto, por ejemplo `2_modelado/02 - Comparación de modelos.ipynb`. Un notebook nuevo toma el siguiente número libre. El código que se reutiliza pasa a `bolsalab/`.
 - **Datos:** no se suben a git. Los de la NFCS tampoco se comparten entre integrantes: sus términos lo prohíben.
 - **Parámetros:** rutas y semillas se leen de `bolsalab/config.py`.
 
