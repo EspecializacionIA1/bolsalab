@@ -26,6 +26,7 @@ from bolsalab.modeling.train import calibration_line, final_search, split_data
 from bolsalab.modeling.transformers import QUESTIONS
 
 GROUPS_FILE = REPORTS_DIR / "groups.csv"
+GROUPS_TEST_FILE = REPORTS_DIR / "groups_test.csv"  # lo escribe train --final
 
 # Principiante: menos de 35 años y 0 o 1 aciertos de 3 (decisión nuestra, protocolo sección 7).
 BEGINNER_AGE_UNDER = 35
@@ -45,20 +46,26 @@ def group_labels(X: pd.DataFrame) -> dict[str, pd.Series]:
     }
 
 
-def performance_by_group(model, X_train: pd.DataFrame, y_train: pd.Series) -> pd.DataFrame:
-    folds = StratifiedKFold(5, shuffle=True, random_state=RANDOM_STATE)
-    p = cross_val_predict(clone(model), X_train, y_train, cv=folds, method="predict_proba")[:, 1]
-    p = pd.Series(p, index=X_train.index)
+def table_by_group(X: pd.DataFrame, y: pd.Series, p) -> pd.DataFrame:
+    """AUROC y calibración de cada grupo, a partir de las probabilidades p de cada persona."""
+    p = pd.Series(p, index=X.index)
     rows = []
-    for group, labels in group_labels(X_train).items():
+    for group, labels in group_labels(X).items():
         for value in sorted(labels.unique()):
             m = labels == value
-            intercept, slope = calibration_line(y_train[m].to_numpy(), p[m].to_numpy())
+            intercept, slope = calibration_line(y[m].to_numpy(), p[m].to_numpy())
             rows.append({"grupo": group, "valor": value, "personas": int(m.sum()),
-                         "vendio": y_train[m].mean(), "prediccion_media": p[m].mean(),
-                         "auroc": roc_auc_score(y_train[m], p[m]),
+                         "vendio": y[m].mean(), "prediccion_media": p[m].mean(),
+                         "auroc": roc_auc_score(y[m], p[m]),
                          "calibration_intercept": intercept, "calibration_slope": slope})
     return pd.DataFrame(rows)
+
+
+def performance_by_group(model, X_train: pd.DataFrame, y_train: pd.Series) -> pd.DataFrame:
+    """Tabla por grupos con predicciones de validación cruzada del entrenamiento."""
+    folds = StratifiedKFold(5, shuffle=True, random_state=RANDOM_STATE)
+    p = cross_val_predict(clone(model), X_train, y_train, cv=folds, method="predict_proba")[:, 1]
+    return table_by_group(X_train, y_train, p)
 
 
 def main() -> None:
