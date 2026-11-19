@@ -13,9 +13,10 @@ Corre en dos etapas, porque el 20 % de prueba se mira una sola vez:
     uv run python -m bolsalab.modeling.train --prototype  # exporta sin mirar la prueba
 
 La primera no toca la prueba y guarda la comparación en reports/benchmark.csv.
-La segunda lee ese archivo, entrena al ganador y lo guarda en models/.
-La tercera entrena al mismo ganador y lo guarda para la app, sin medirlo en la
-prueba; --final lo reemplaza después con las métricas de prueba.
+La segunda entrena la configuración final (FINAL_MODEL, elegida en el protocolo,
+sección 7, después del ajuste por familias), la mide una vez en la prueba y la
+guarda en models/. La tercera entrena esa misma configuración y la guarda para la
+app, sin medirla en la prueba; --final la reemplaza después con las métricas.
 """
 
 import argparse
@@ -256,13 +257,19 @@ def app_reference(X_train: pd.DataFrame) -> dict:
     }
 
 
+# Configuración final (protocolo, sección 7): el XGBoost con parada temprana y poda
+# del paso 2 del ajuste por familias, con su misma rejilla.
+FINAL_MODEL = "xgboost|poda"
+
+
 def fit_winner(X_train: pd.DataFrame, y_train: pd.Series):
-    """Entrena al ganador de reports/benchmark.csv con su rejilla, solo con el entrenamiento."""
-    winner = choose_winner(pd.read_csv(BENCHMARK_FILE))
-    pipeline, grid = MODELS[winner]
+    """Entrena la configuración final con su rejilla, solo con el entrenamiento."""
+    # tuning.py importa este módulo; por eso se importa aquí y no arriba.
+    from bolsalab.modeling.tuning import xgboost_with_pruning
+    pipeline, grid = xgboost_with_pruning()
     inner = StratifiedKFold(3, shuffle=True, random_state=RANDOM_STATE)
-    search = GridSearchCV(pipeline, grid, cv=inner, scoring="roc_auc").fit(X_train, y_train)
-    return winner, search
+    search = GridSearchCV(pipeline, grid, cv=inner, scoring="roc_auc", n_jobs=-1).fit(X_train, y_train)
+    return FINAL_MODEL, search
 
 
 def export_model(model, metrics: dict, X_train: pd.DataFrame, y_train: pd.Series) -> None:
