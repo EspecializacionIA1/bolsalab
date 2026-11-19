@@ -35,3 +35,7 @@ FIGURES_DIR = REPORTS_DIR / "figures"
 
 # --- Reproducibilidad: misma semilla para que el azar siempre salga igual ---
 RANDOM_STATE = 42
+
+# --- Reglas de decisión (docs/protocolo-evaluacion.md) ---
+AUROC_NOISE = 0.004      # diferencia de AUROC que no se distingue del ruido entre particiones
+MAX_OVERFIT_GAP = 0.03   # brecha máxima entre el AUROC de entrenamiento y el de validación

@@ -28,6 +28,8 @@ Hasta ahora corrimos 32 experimentos y ninguno superó a XGBoost. Con este plan 
 | 6 | **Redes en PyTorch** (ver abajo) | Lo pidió el tutor | Por correr |
 | 7 | **Cierre**: congelar el modelo y medirlo una vez en el 20 % de prueba y en la NFCS | | Al final |
 | 8 | **Búsqueda con Optuna** en XGBoost: busca en rangos completos en vez de listas cortas (se corre antes del cierre; el 8 es solo el siguiente número libre) | Queremos descartar que una combinación mejor se nos esté escapando entre los valores de la rejilla | El AUROC no cambió (0,6595). Brecha de 0,016. Cada partición eligió valores distintos: no hay una combinación mejor que las demás |
+| 9 | **Ideas de la literatura**: aleatoriedad en XGBoost (`subsample`, `colsample_bytree`, `min_child_weight`) y promedio de XGBoost, CatBoost y regresión logística | Son las dos ideas de los benchmarks recientes que no habíamos probado; las dos buscan no aumentar el sobreajuste | Ninguna pasó 0,6636. Aleatoriedad 0,6611 (brecha 0,022) y promedio 0,6597 (brecha 0,014, la más baja). El XGBoost oficial sigue ganando |
+| 10 | **Etiqueta de tres clases**: el modelo aprende "mantuvo", "vendió parte" y "vendió todo", y la probabilidad de vender es la suma de las dos ventas | `sold` junta dos comportamientos distintos; verlos por separado podría ayudar a separar a quien vende | No cambió: 0,6593 frente a 0,6595. Brecha 0,016, calibración peor (1,058) |
 
 El detalle de cada resultado está en `docs/experimentos.md`, sección 3, y los números en `reports/tuning.csv`.
 
@@ -52,7 +54,7 @@ El detalle de cada resultado está en `docs/experimentos.md`, sección 3, y los 
 | Marca de hombre con 0 o 1 aciertos (exploratoria) | En el entrenamiento, fallar las preguntas pesa casi el doble en los hombres |
 | Marca de poco colchón financiero (ingreso y activos en los dos tramos más bajos) | Quien gana poco y tiene pocos ahorros no puede aguantar una pérdida |
 
-Las dos últimas salieron de la exploración (`notebooks/Exploración de variables.ipynb`). Las reglas de las seis pruebas están en el protocolo, sección 7.
+Las dos últimas salieron de la exploración (`notebooks/3_mejora_auroc/06 - Exploración de variables.ipynb`). Las reglas de las seis pruebas están en el protocolo, sección 7.
 
 **Paso 6, redes en PyTorch.** Las conectamos con **skorch**, una librería que hace que una red de PyTorch funcione como un modelo de scikit-learn, para medirlas con las mismas reglas.
 

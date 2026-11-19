@@ -99,7 +99,7 @@ Así planeamos hacer también los tramos en pesos de la app.
 
 **10. Tabla final.** Juntamos todo en una tabla con 15 de las 17 variables de Japón, con los mismos nombres y en el mismo orden, más `sold`: 1.825 personas, de las que vendieron 84. Faltan `urban` y `short_term_view`, que la NFCS no pregunta. La tabla se guarda en `data/processed/nfcs_table.parquet`, solo en el computador de cada uno.
 
-Los resultados de la comparación con Japón están en el notebook `notebooks/NFCS frente a Japón.ipynb`.
+Los resultados de la comparación con Japón están en el notebook `notebooks/1_datos/01 - NFCS frente a Japón.ipynb`.
 
 ## Lo que hay que tener en cuenta
 

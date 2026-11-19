@@ -168,7 +168,7 @@ Un experimento puede reemplazar al ganador de la comparación oficial, con la mi
 
 El código está en `bolsalab/modeling/optuna_search.py`.
 
-**Variables nuevas (registrado el 12 de noviembre de 2026, antes de medirlas).** El ajuste ya no mejora el modelo, así que probamos si le ayuda recibir algunas respuestas ya combinadas. Las ideas salieron del artículo y de mirar, solo con el entrenamiento, qué porcentaje vendió según cada respuesta (`notebooks/Exploración de variables.ipynb`).
+**Variables nuevas (registrado el 12 de noviembre de 2026, antes de medirlas).** El ajuste ya no mejora el modelo, así que probamos si le ayuda recibir algunas respuestas ya combinadas. Las ideas salieron del artículo y de mirar, solo con el entrenamiento, qué porcentaje vendió según cada respuesta (`notebooks/3_mejora_auroc/06 - Exploración de variables.ipynb`).
 
 - **Cómo se mide.** Cada prueba usa el XGBoost con poda del ajuste por familias, con su misma rejilla, partición y validación 5 × 3. Solo cambian las columnas. Se compara con ese mismo modelo sin cambios (AUROC 0,6595). No toca el conjunto de prueba.
 - **Regla.** Una variable se adopta solo si sube el AUROC más de 0,004 y la brecha de sobreajuste no pasa de 0,03. Menos que eso lo contamos como ruido.
@@ -186,6 +186,28 @@ El código está en `bolsalab/modeling/optuna_search.py`.
 *Decisión nuestra:* "confiado" es confianza 4 o 5 (el artículo no da el número), "pocos aciertos" es 0 o 1, y "tramo bajo" son los tramos 1 y 2. Los dos últimos cortes los elegimos después de mirar el entrenamiento, y por eso esas dos pruebas tienen más riesgo de acertar por casualidad.
 
 El código está en `bolsalab/modeling/transformers.py` y las pruebas en `bolsalab/modeling/tuning.py` (paso 5).
+
+**Ideas de la literatura (registrado el 17 de noviembre de 2026, antes de correrlas).** Ni el ajuste ni las variables movieron el AUROC. Buscamos qué recomiendan los benchmarks recientes de datos en tabla y encontramos dos ideas que no habíamos probado. Las dos están pensadas para no aumentar el sobreajuste.
+
+- **Aleatoriedad en XGBoost.** Cada árbol ve solo una parte de las personas (`subsample`, de 0,5 a 1) y de las preguntas (`colsample_bytree`, de 0,5 a 1), y cada hoja necesita un mínimo de personas (`min_child_weight`, de 1 a 100). La guía de XGBoost los pone como el segundo grupo de controles contra el sobreajuste. Se buscan con Optuna, junto con los cuatro rangos del paso 8 y los mismos 50 intentos, así la única diferencia son estos tres. *Decisión nuestra:* los rangos.
+- **Promedio de modelos.** Promediamos las probabilidades de XGBoost, CatBoost y regresión logística, con el mismo peso para cada uno y sin ajustar los pesos. TabArena (2025) encontró que combinar modelos ya ajustados es lo que más rinde en datos en tabla, y Shwartz-Ziv y Armon (2021) que una mezcla con XGBoost supera a XGBoost solo.
+- **Hiperparámetros del promedio.** Cada modelo va con los valores que eligió la mayoría de las 5 particiones en su paso, el mismo criterio que usamos para la profundidad 3 del paso 2. XGBoost de la poda: velocidad 0,03, profundidad 3, `gamma` 0,5 y `reg_lambda` 10. CatBoost de la parada temprana: velocidad 0,03 y profundidad 4. Regresión logística: `C` = 1, porque con `C` entre 0,01 y 10 el AUROC da 0,6456 en todos. *Limitación:* esos valores salieron de mirar todo el entrenamiento, así que pueden favorecer un poco al promedio.
+- **Regla.** La misma del ganador: debe pasar de 0,6636 y su brecha no puede pasar de 0,03. El promedio es más complejo que XGBoost solo, así que si queda por debajo de 0,6636 gana XGBoost.
+- **Qué esperamos.** Poco. Nuestros modelos se parecen mucho entre sí (todos dan cerca de 0,660), y un promedio rinde más cuando los modelos se equivocan en personas distintas.
+
+Fuentes: guía de XGBoost, "Notes on Parameter Tuning" (https://xgboost.readthedocs.io/en/latest/tutorials/param_tuning.html); "TabArena: A Living Benchmark for Machine Learning on Tabular Data" (2025, NeurIPS) (https://arxiv.org/abs/2506.16791); Shwartz-Ziv y Armon (2021), "Tabular Data: Deep Learning is Not All You Need" (https://arxiv.org/abs/2106.03253). De los dos artículos leímos el resumen, no el texto completo.
+
+El código está en `bolsalab/modeling/tuning.py` (paso 9).
+
+**Etiqueta de tres clases (registrado el 17 de noviembre de 2026, antes de correrla).** `sold` junta en un solo grupo a quien vendió todo (2.379 personas) y a quien vendió parte (8.490). Queremos saber si el modelo aprende mejor cuando ve esa diferencia.
+
+- **Qué se prueba.** El mismo XGBoost con poda del paso 2, con su rejilla, partición y validación 5 × 3. Lo único que cambia es la etiqueta con la que aprende: tres clases (mantuvo, vendió parte, vendió todo) en vez de dos. Para calificarlo, la probabilidad de vender es la suma de "vendió parte" y "vendió todo", y se mide contra `sold`, igual que todas las pruebas. Las particiones se siguen armando con `sold`, así que son las mismas de siempre.
+- **Por qué.** Hay evidencia de que entrenar con clases más finas ayuda a separar las gruesas ("The Advantage of Fine-Grained Training", 2025, https://arxiv.org/abs/2509.05130), pero es en redes neuronales, no en boosting. Leímos el resumen. Además, Bawalle et al. (2025) analizan las dos ventas por separado.
+- **Sin fuga.** El tipo de venta solo se usa para entrenar, nunca como variable de entrada, y sale de las mismas columnas que `sold` (sección 3).
+- **Regla.** Se compara con el XGBoost con poda (0,6595). Se adopta solo si sube más de 0,004 y la brecha no pasa de 0,03. Para reemplazar al ganador tiene que pasar de 0,6636.
+- **Qué esperamos.** Poco. No agrega información sobre las personas, solo sobre la respuesta.
+
+El código está en `bolsalab/modeling/tuning.py` (paso 10).
 
 **Alarmas.** Revisamos si hay fuga ante un AUROC de 0,82 o más (Elkind lo logró con historial de portafolio, no con un cuestionario), ante un intervalo que incluya 0,5 o ante una variable que domine la explicación SHAP.
 
