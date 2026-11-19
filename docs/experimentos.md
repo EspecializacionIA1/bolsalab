@@ -1,6 +1,6 @@
 # Comparación de modelos y experimentos
 
-Código en `bolsalab/modeling/train.py` y `bolsalab/modeling/experiments.py`. Resultados en `reports/benchmark.csv` y `reports/experiments.csv`. Las reglas están en `docs/protocolo-evaluacion.md`, secciones 4 a 7. Los resultados con gráficas están en `notebooks/Comparación de modelos.ipynb`.
+Código en `bolsalab/modeling/train.py` y `bolsalab/modeling/experiments.py`. Resultados en `reports/benchmark.csv` y `reports/experiments.csv`. Las reglas están en `docs/protocolo-evaluacion.md`, secciones 4 a 7. Los resultados con gráficas están en `notebooks/2_modelado/02 - Comparación de modelos.ipynb`.
 
 Todo se midió con el 80 % de entrenamiento de Japón (43.763 personas), con validación cruzada anidada 5 × 3. El 20 % de prueba no se ha tocado.
 
@@ -92,7 +92,7 @@ En vez de listas cortas de valores, Optuna buscó en rangos completos: 50 combin
 
 ### Paso 5. Variables (12 de noviembre de 2026)
 
-Después de tres formas de ajuste sin mejora, probamos si al modelo le ayuda recibir algunas respuestas ya combinadas. Las ideas salieron del artículo y de mirar, solo con el entrenamiento, qué porcentaje vendió según cada respuesta (`notebooks/Exploración de variables.ipynb`). Las seis pruebas usan el XGBoost con poda del paso 2; solo cambian las columnas.
+Después de tres formas de ajuste sin mejora, probamos si al modelo le ayuda recibir algunas respuestas ya combinadas. Las ideas salieron del artículo y de mirar, solo con el entrenamiento, qué porcentaje vendió según cada respuesta (`notebooks/3_mejora_auroc/06 - Exploración de variables.ipynb`). Las seis pruebas usan el XGBoost con poda del paso 2; solo cambian las columnas.
 
 | Prueba | AUROC | Diferencia | Brecha | Decisión |
 |---|---|---|---|---|
@@ -108,6 +108,36 @@ Después de tres formas de ajuste sin mejora, probamos si al modelo le ayuda rec
 - **El modelo ya lo sabía.** Los valores SHAP de interacción (`reports/shap_interacciones.csv`) muestran que el modelo ya usaba juntas las preguntas de finanzas y el sexo. Dárselas combinadas no le enseñó nada nuevo.
 - **Las dos preguntas que la app no hace sí aportan.** Sin aversión al riesgo ni visión de corto plazo, el AUROC baja 0,0075, casi el doble del umbral. Se quedan en el modelo, y la app debería preguntarlas.
 - **Conclusión:** el modelo conserva las 17 variables. Lo que se ve en una tabla no siempre le sirve al modelo: los hombres con pocos aciertos venden 42 %, pero eso ya estaba aprendido.
+
+### Paso 9. Ideas de la literatura (17 de noviembre de 2026)
+
+Probamos las dos ideas de los benchmarks recientes de datos en tabla que no habíamos usado: que cada árbol aprenda con una parte de los datos, y promediar modelos distintos. Las reglas se registraron antes de correrlas (protocolo, sección 7).
+
+| Prueba | AUROC | Brecha | Pendiente | Decisión |
+|---|---|---|---|---|
+| XGBoost oficial | 0,6601 ± 0,0035 | | 1,056 | Referencia |
+| Paso 8, Optuna | 0,6595 ± 0,0032 | 0,016 | 1,015 | |
+| **Aleatoriedad en XGBoost** | 0,6611 ± 0,0033 | 0,022 | 1,030 | No pasa 0,6636 |
+| **Promedio de XGBoost, CatBoost y logística** | 0,6597 ± 0,0031 | 0,014 | 1,084 | No pasa 0,6636 |
+
+- **La aleatoriedad subió 0,0015 frente a Optuna, pero es ruido.** La regla pedía pasar de 0,6636. Las 5 particiones usaron la aleatoriedad (cada árbol vio entre el 53 % y el 82 % de las personas). Con ella, Optuna eligió árboles más profundos (3 a 6; en el paso 8 fueron 2 o 3) y más lentos (velocidad de 0,012 a 0,036), y la brecha subió de 0,016 a 0,022. Esperábamos lo contrario: que bajara.
+- **El promedio no subió el AUROC, pero tiene la brecha más baja de todas las pruebas (0,014).** Promediar suaviza las predicciones y el modelo memoriza menos. A cambio, la calibración empeora: la pendiente pasa a 1,084, porque el promedio acerca todas las probabilidades al centro.
+- **Por qué el promedio no ayudó.** Un promedio rinde cuando los modelos se equivocan con personas distintas. Los nuestros aprenden de las mismas 17 respuestas y se equivocan casi igual.
+- **Conclusión:** el XGBoost oficial sigue siendo el ganador. Con estas dos ya van 14 pruebas, y las que no quitan información quedan entre 0,6573 y 0,6612. El límite sigue estando en la información del cuestionario.
+
+### Paso 10. Etiqueta de tres clases (17 de noviembre de 2026)
+
+`sold` junta a quien vendió todo (2.379 personas) y a quien vendió parte (8.490). Probamos si el modelo aprende mejor viendo esa diferencia. Usamos el mismo XGBoost con poda del paso 2, con su rejilla, pero aprendiendo tres clases: mantuvo, vendió parte y vendió todo. Para calificarlo sumamos la probabilidad de las dos ventas y la medimos contra `sold`, con las mismas particiones de siempre.
+
+| Prueba | AUROC | Brecha | Pendiente | Decisión |
+|---|---|---|---|---|
+| XGBoost con poda (paso 2) | 0,6595 ± 0,0037 | 0,019 | 1,010 | Referencia |
+| **Etiqueta de tres clases** | 0,6593 ± 0,0031 | 0,016 | 1,058 | No se adopta |
+
+- **No cambió nada.** Bajó 0,0003, muy lejos de los 0,004 que pedía la regla.
+- **La brecha bajó un poco (de 0,019 a 0,016), pero la calibración empeoró** (de 1,010 a 1,058).
+- **Por qué no ayudó.** Separar la respuesta no agrega información sobre las personas. Si las mismas respuestas del cuestionario empujan a vender parte y a vender todo, el modelo no aprende nada nuevo al verlas por separado.
+- **Conclusión:** el XGBoost oficial sigue siendo el ganador. Ya son 15 pruebas, y las 14 que no quitan información quedan entre 0,6573 y 0,6612.
 
 ## Lo que sigue
 

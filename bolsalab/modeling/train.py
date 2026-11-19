@@ -141,7 +141,7 @@ def split_data(table: pd.DataFrame):
 def evaluate_model(pipeline: Pipeline, grid: dict,
                    X_train: pd.DataFrame, y_train: pd.Series,
                    overfit_gap: bool = False, fold_detail=None,
-                   n_trials: int | None = None) -> dict:
+                   n_trials: int | None = None, fit_params: dict | None = None) -> dict:
     """Mide un modelo con validación cruzada anidada y devuelve sus métricas.
 
     3 particiones internas eligen los hiperparámetros y 5 externas miden el
@@ -162,7 +162,14 @@ def evaluate_model(pipeline: Pipeline, grid: dict,
     grid trae rangos (mínimo y máximo) en lugar de listas, y Optuna prueba
     n_trials combinaciones en cada partición externa (optuna_search.py). La
     validación 5 x 3 y las métricas son las mismas.
+
+    fit_params son datos extra que el modelo recibe solo al entrenar, una fila
+    por persona y en el mismo orden que X_train. scikit-learn los recorta en
+    cada partición. Lo usa la prueba de tres clases (tuning.py, paso 10).
+    Solo funcionan con la rejilla: OptunaSearch no los recibe.
     """
+    if fit_params and n_trials is not None:
+        raise ValueError("fit_params solo funciona con la rejilla, no con Optuna")
     outer = StratifiedKFold(5, shuffle=True, random_state=RANDOM_STATE)
     inner = StratifiedKFold(3, shuffle=True, random_state=RANDOM_STATE)
     if n_trials is None:
@@ -170,7 +177,8 @@ def evaluate_model(pipeline: Pipeline, grid: dict,
     else:
         search = OptunaSearch(pipeline, grid, n_trials=n_trials, cv=inner)
     scores = cross_validate(search, X_train, y_train, cv=outer, scoring=SCORERS,
-                            return_estimator=True, return_train_score=overfit_gap)
+                            return_estimator=True, return_train_score=overfit_gap,
+                            params=fit_params)
     metrics = {}
     for metric in SCORERS:
         metrics[metric] = scores[f"test_{metric}"].mean()
