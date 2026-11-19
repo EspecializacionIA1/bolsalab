@@ -139,6 +139,14 @@ Probamos las dos ideas de los benchmarks recientes de datos en tabla que no hab�
 - **Por qué no ayudó.** Separar la respuesta no agrega información sobre las personas. Si las mismas respuestas del cuestionario empujan a vender parte y a vender todo, el modelo no aprende nada nuevo al verlas por separado.
 - **Conclusión:** el XGBoost oficial sigue siendo el ganador. Ya son 15 pruebas, y las 14 que no quitan información quedan entre 0,6573 y 0,6612.
 
+### Decisión: configuración final (18 de noviembre de 2026)
+
+Con el visto bueno y apoyo de nuestro tutor cerramos las pruebas. El modelo final es el **XGBoost con parada temprana y poda del paso 2** (AUROC 0,6595, pendiente de calibración 1,010, brecha 0,019).
+
+- Todas las versiones empatan en AUROC: ninguna pasó de 0,6636.
+- En el empate gana la familia más simple, XGBoost, y entre sus versiones la mejor calbrada.
+- El detalle y la tabla de candidatos están en el protocolo, sección 7, "Configuración final".
+
 ## Lo que sigue
 
 - Pasos 3, 4 y 6 del plan de ajuste por familias.
