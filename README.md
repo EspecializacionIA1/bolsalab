@@ -8,8 +8,8 @@ BolsaLAB estima **qué tan propensa es una persona a vender sus inversiones dura
 
 ## Qué hace la app
 
-1. **Pregunta.** La persona responde unas 14 preguntas: edad, educación, situación familiar, ingreso, tres preguntas de conocimiento financiero y cómo se ve a sí misma frente al riesgo. Cada pregunta corresponde a una columna del dataset de entrenamiento.
-2. **Consulta el modelo.** El frontend envía las respuestas a la API, que llama al modelo y devuelve el resultado.
+1. **Pregunta.** La persona responde 13 preguntas: edad, sexo, educación, situación familiar, empleo, ingreso, ahorros, tres preguntas de conocimiento financiero y qué tan segura se siente de lo que sabe. Cada pregunta corresponde a una columna del dataset de entrenamiento.
+2. **Consulta el modelo.** Las respuestas pasan al modelo congelado, que devuelve el resultado.
 3. **Muestra el resultado.** La persona ve si es más, igual o menos propensa a vender que el promedio, y las respuestas que más pesaron. La app no muestra un porcentaje personal: el modelo se entrenó en Japón y ese número no sería confiable en Colombia.
 
 ## El modelo
@@ -20,7 +20,7 @@ BolsaLAB estima **qué tan propensa es una persona a vender sus inversiones dura
 | Población | Personas que en marzo de 2020 vendieron todo, vendieron parte o mantuvieron sus inversiones (54.704) |
 | Variable objetivo | `sold`: 1 si vendió todo o parte (19,87 %), 0 si mantuvo |
 | Modelos que comparamos | Trivial, regresión logística, Random Forest, XGBoost, LightGBM, CatBoost y una red neuronal pequeña |
-| Contraste fuera de Japón | Panel de la Survey of Consumer Finances 2007-2009 (Reserva Federal de EE. UU.) |
+| Contraste fuera de Japón | Preparamos la tabla del panel de la Survey of Consumer Finances 2007-2009 (Reserva Federal de EE. UU.), pero el modelo no se evaluó ahí |
 | Modelo final | XGBoost con parada temprana y poda, con 17 variables |
 | Resultado en la prueba final | AUROC 0,670 (0,658 a 0,682) con 10.941 personas que el modelo nunca vio. En el 10 % de mayor riesgo vendió el 40,8 %, el doble del promedio |
 
@@ -45,29 +45,29 @@ uv run --group app streamlit run app/app.py
 
 ## La API
 
-El backend expone un endpoint. Los nombres de la ruta y de los campos son una propuesta del equipo.
+La API usa `bolsalab/modeling/predict.py`, el mismo código de la app de Streamlit. La ruta es una propuesta del equipo:
 
 ```
 POST /api/v1/crash-reaction/predict
 ```
 
-Recibe las respuestas del cuestionario:
+Recibe las respuestas del cuestionario. Los niveles van de 1 a 5 frente a la gente del país, y la confianza de 1 a 5:
 
 ```json
 {
   "age": 27,
-  "gender": "female",
-  "university": false,
+  "male": false,
+  "university": true,
   "married": false,
   "has_children": false,
   "urban": true,
   "employed": true,
-  "income_bracket": 3,
-  "assets_bracket": 1,
-  "knowledge": { "interest": "correct", "inflation": "dont_know", "diversification": "correct" },
-  "knowledge_confidence": 4,
-  "risk_aversion": 3,
-  "short_term_view": 4
+  "income_level": 3,
+  "assets_level": 1,
+  "interest": "more",
+  "inflation": "dont_know",
+  "diversification": "false",
+  "knowledge_confidence": 4
 }
 ```
 
@@ -76,19 +76,18 @@ Devuelve la categoría y lo que la explica:
 ```json
 {
   "model_version": "crash_reaction_v1",
-  "probability": 0.231,
-  "base_rate": 0.1987,
-  "relative_to_average": 1.16,
   "category": "similar",
   "top_factors": [
-    { "feature": "financial_literacy", "direction": "increases", "label": "Acertó 2 de 3 preguntas de conocimiento" }
+    { "feature": "knows_inflation", "label": "...", "direction": "increases", "impact": 0.21, "actionable": true }
   ],
-  "in_training_range": true,
-  "warnings": ["assets_at_lowest_training_bracket"]
+  "failed_questions": ["inflation"],
+  "overconfident": false,
+  "not_asked": ["risk_aversion", "short_term_view"],
+  "warnings": []
 }
 ```
 
-`probability` es de uso interno; la pantalla muestra `category` (`more_likely`, `similar` o `less_likely`), los factores y los avisos.
+`predict()` también devuelve `probability` y `base_rate`, que son de uso interno. La pantalla muestra `category` (`more_likely`, `similar` o `less_likely`), los factores y los avisos. Nunca muestra la probabilidad.
 
 ## Cómo está organizado el repositorio
 

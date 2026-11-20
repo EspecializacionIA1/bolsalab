@@ -165,9 +165,9 @@ with ask:
                 arrow = "sube" if f["direction"] == "increases" else "baja"
                 st.markdown(f"- {f['label']}: {arrow} tu propensión a vender.")
         st.caption("Esto explica lo que hace el modelo, calculado con SHAP. No dice que esa "
-                   "respuesta sea la causa de que alguien venda. Todavía no preguntamos por tu "
-                   "actitud ante el riesgo ni por tu visión de corto plazo: usamos la respuesta "
-                   "más común en Japón.")
+                   "respuesta sea la causa de que alguien venda. No preguntamos por tu actitud "
+                   "ante el riesgo ni por tu visión de corto plazo: usamos la respuesta más "
+                   "común en Japón.")
         if result["warnings"]:
             st.info("Tu edad está fuera de las edades de la encuesta japonesa "
                     f"({meta['age_range'][0]} a {meta['age_range'][1]} años). "
@@ -232,9 +232,10 @@ with how:
     st.markdown(
         "- Aprendió en Japón y lo usarán colombianos. Por eso mostramos tercios y no "
         "porcentajes.\n"
-        "- Dos preguntas del modelo, actitud ante el riesgo y visión de corto plazo, todavía no "
-        "se hacen: no conocemos su redacción original.\n"
+        "- Dos preguntas del modelo, actitud ante el riesgo y visión de corto plazo, no se "
+        "hacen: usamos la respuesta más común en Japón.\n"
         "- El ingreso y los ahorros se preguntan por nivel frente a la gente del país, de forma "
         "provisional.\n"
         "- En EE. UU. (NFCS 2018) las preguntas de finanzas y el exceso de confianza van en la "
-        "misma dirección que en Japón; la prueba completa del modelo allá está pendiente.")
+        "misma dirección que en Japón. No medimos el modelo allá: la encuesta tiene muy "
+        "pocos casos de venta.")
