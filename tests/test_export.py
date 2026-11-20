@@ -80,6 +80,7 @@ def test_metadata_records_data_split_versions_and_code(exported, data):
     assert metadata["cv_estimate"]["auroc"] == pytest.approx(0.6595, abs=0.001)
     trained_at = datetime.fromisoformat(metadata["trained_at"])
     assert trained_at.date().isoformat() == metadata["trained_on"]
+    assert trained_at.tzinfo is not None  # con zona horaria, para no correrse al subirla a AWS
 
 
 def test_predict_loads_the_package(exported, data):

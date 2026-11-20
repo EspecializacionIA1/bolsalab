@@ -17,12 +17,18 @@ from pathlib import Path
 import pandas as pd
 from mlflow.tracking import MlflowClient
 
-from bolsalab.config import MLFLOW_EXPERIMENTS, MLFLOW_TRACKING_URI
+from bolsalab.config import MLFLOW_EXPERIMENTS, MLFLOW_TRACKING_URI, PROJ_ROOT
 from bolsalab.modeling.train import BENCHMARK_FILE
 from bolsalab.modeling.tuning import TUNING_FILE
 
 # Columnas que van como parámetros. Las demás columnas numéricas van como métricas.
 PARAMS = ["step", "grid", "best_params", "fold_detail"]
+
+
+def source_name(path) -> str:
+    """Nombre del CSV para la etiqueta "fuente": relativo al proyecto si está dentro."""
+    path = Path(path)
+    return path.relative_to(PROJ_ROOT).as_posix() if path.is_relative_to(PROJ_ROOT) else path.name
 
 
 def artifact_location(tracking_uri: str) -> str | None:
@@ -96,9 +102,9 @@ def backfill(tracking_uri: str = MLFLOW_TRACKING_URI, benchmark_file=BENCHMARK_F
     tuning = pd.read_csv(tuning_file).drop_duplicates("experiment", keep="last")
     return {
         "comparacion": load_csv(client, tracking_uri, MLFLOW_EXPERIMENTS["comparacion"],
-                                pd.read_csv(benchmark_file), "model", "reports/benchmark.csv"),
+                                pd.read_csv(benchmark_file), "model", source_name(benchmark_file)),
         "ajuste": load_csv(client, tracking_uri, MLFLOW_EXPERIMENTS["ajuste"],
-                           tuning, "experiment", "reports/tuning.csv"),
+                           tuning, "experiment", source_name(tuning_file)),
     }
 
 
@@ -106,7 +112,7 @@ def main() -> None:
     added = backfill()
     print(f"Corridas nuevas: {added['comparacion']} de la comparación y {added['ajuste']} del ajuste.")
     print(f"Registradas en {MLFLOW_TRACKING_URI}")
-    print("Para verlas: uv run mlflow ui --backend-store-uri sqlite:///mlflow.db")
+    print(f"Para verlas: uv run mlflow ui --backend-store-uri {MLFLOW_TRACKING_URI}")
 
 
 if __name__ == "__main__":

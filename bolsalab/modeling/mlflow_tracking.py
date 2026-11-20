@@ -27,10 +27,9 @@ import mlflow
 from mlflow.tracking import MlflowClient
 
 from bolsalab.config import (MLFLOW_EXPERIMENTS, MLFLOW_REGISTERED_MODEL, MLFLOW_TRACKING_URI,
-                             MODELS_DIR)
+                             MODEL_ARTIFACT_NAME, MODELS_DIR)
 from bolsalab.modeling.mlflow_backfill import experiment_id
 
-ARTIFACT_NAME = "crash_reaction_v1"
 # MLflow guarda los modelos con skops, que solo acepta las clases que se declaran
 # confiables. Estas son las que usa el modelo final: la nuestra y las de XGBoost.
 TRUSTED_TYPES = ["bolsalab.modeling.early_stopping.EarlyStoppingBooster",
@@ -63,8 +62,8 @@ def run_metrics(meta: dict) -> dict:
 def log_exported_model(models_dir: Path = MODELS_DIR,
                        tracking_uri: str = MLFLOW_TRACKING_URI) -> str:
     """Registra el modelo exportado y devuelve el id de su corrida."""
-    package = models_dir / f"{ARTIFACT_NAME}.joblib"
-    metadata = models_dir / f"{ARTIFACT_NAME}.json"
+    package = models_dir / f"{MODEL_ARTIFACT_NAME}.joblib"
+    metadata = models_dir / f"{MODEL_ARTIFACT_NAME}.json"
     meta = json.loads(metadata.read_text(encoding="utf-8"))
     if "trained_at" not in meta:
         raise ValueError("Este modelo se exportó antes de guardar la hora del entrenamiento; "
@@ -85,6 +84,8 @@ def log_exported_model(models_dir: Path = MODELS_DIR,
             "uncommitted_changes": str(meta["git"]["uncommitted_changes"]),
             "dataset_sha256": meta["dataset_sha256"]}
     run_id = client.create_run(exp_id, start_time=start, tags=tags, run_name=kind).info.run_id
+    # MLflow guarda su dirección como algo global del programa; al final se deja como estaba.
+    previous_uri = mlflow.get_tracking_uri()
     # Si algo falla a mitad de camino, la corrida se borra: así el reintento
     # empieza limpio y no deja una corrida "final" sin su versión del modelo.
     try:
@@ -101,8 +102,10 @@ def log_exported_model(models_dir: Path = MODELS_DIR,
             # El registro de modelos necesita el modelo en el formato de MLflow.
             mlflow.set_tracking_uri(tracking_uri)
             with mlflow.start_run(run_id=run_id):
+                # pyfunc_predict_fn: quien lo cargue desde el registro recibe probabilidades, no 0 o 1.
                 info = mlflow.sklearn.log_model(joblib.load(package)["model"], name="modelo",
-                                                skops_trusted_types=TRUSTED_TYPES)
+                                                skops_trusted_types=TRUSTED_TYPES,
+                                                pyfunc_predict_fn="predict_proba")
         client.set_terminated(run_id, end_time=start)
         # La versión del modelo se crea al final, cuando todo lo demás ya quedó.
         if kind == "final":
@@ -110,6 +113,8 @@ def log_exported_model(models_dir: Path = MODELS_DIR,
     except Exception:
         client.delete_run(run_id)
         raise
+    finally:
+        mlflow.set_tracking_uri(previous_uri)
     return run_id
 
 

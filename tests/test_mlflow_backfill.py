@@ -90,3 +90,9 @@ def test_a_row_without_date_does_not_break(files):
     rows.loc[0, "run_at"] = None
     rows.to_csv(tuning, index=False)
     assert backfill(uri, benchmark, tuning) == {"comparacion": 2, "ajuste": 2}
+
+
+def test_source_is_relative_to_the_project():
+    from bolsalab.config import PROJ_ROOT
+    from bolsalab.modeling.mlflow_backfill import source_name
+    assert source_name(PROJ_ROOT / "reports" / "tuning.csv") == "reports/tuning.csv"

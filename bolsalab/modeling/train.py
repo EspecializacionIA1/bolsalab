@@ -51,7 +51,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
-from bolsalab.config import MODELS_DIR, PROJ_ROOT, RANDOM_STATE, REPORTS_DIR
+from bolsalab.config import MODEL_ARTIFACT_NAME, MODELS_DIR, PROJ_ROOT, RANDOM_STATE, REPORTS_DIR
 from bolsalab.features import TRAINING_FILE
 from bolsalab.features import main as build_training_table
 from bolsalab.modeling.optuna_search import OptunaSearch
@@ -342,15 +342,15 @@ def export_model(model, metrics: dict, X_train: pd.DataFrame, y_train: pd.Series
     trees = getattr(model[-1], "estimator_", model[-1])
     artifact = {"model": model, "explainer": shap.TreeExplainer(trees),
                 "features": list(X_train.columns), "classes": [int(c) for c in model.classes_]}
-    joblib.dump(artifact, MODELS_DIR / "crash_reaction_v1.joblib")
+    joblib.dump(artifact, MODELS_DIR / f"{MODEL_ARTIFACT_NAME}.joblib")
     # La hora exacta sirve para registrar la corrida en MLflow con su hora real, aunque se suba después.
     metadata = {**metrics, "trained_on": str(date.today()),
-                "trained_at": datetime.now().isoformat(timespec="seconds"),
+                "trained_at": datetime.now().astimezone().isoformat(timespec="seconds"),
                 "base_rate": float(y_train.mean()),
                 "cutoffs": category_cutoffs(model, X_train, y_train),
                 **traceability(y_train, y_test),
                 **app_reference(X_train)}
-    (MODELS_DIR / "crash_reaction_v1.json").write_text(
+    (MODELS_DIR / f"{MODEL_ARTIFACT_NAME}.json").write_text(
         json.dumps(metadata, indent=2, default=float), encoding="utf-8")
 
 

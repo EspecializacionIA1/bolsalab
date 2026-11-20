@@ -165,3 +165,20 @@ def test_training_does_not_fail_if_mlflow_fails(monkeypatch, capsys):
     output = capsys.readouterr().out
     assert "servidor caído" in output
     assert "uv run python -m bolsalab.modeling.mlflow_tracking" in output
+
+
+def test_leaves_the_global_mlflow_address_as_it_was(final_folder, uri, tmp_path):
+    before = f"sqlite:///{(tmp_path / 'otra.db').as_posix()}"
+    mlflow.set_tracking_uri(before)
+    log_exported_model(final_folder, uri)
+    assert mlflow.get_tracking_uri() == before
+
+
+def test_registered_model_gives_probabilities_to_any_reader(final_folder, uri):
+    """Cargado de forma genérica (como lo haría una API), devuelve probabilidades."""
+    log_exported_model(final_folder, uri)
+    mlflow.set_tracking_uri(uri)
+    generic = mlflow.pyfunc.load_model(f"models:/{MLFLOW_REGISTERED_MODEL}/1")
+    package = mlflow_tracking.joblib.load(final_folder / "crash_reaction_v1.joblib")
+    X = pd.DataFrame(np.zeros((3, len(package["features"]))), columns=package["features"])
+    np.testing.assert_allclose(generic.predict(X), package["model"].predict_proba(X))

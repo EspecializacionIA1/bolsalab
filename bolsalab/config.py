@@ -31,6 +31,7 @@ NFCS_INVESTOR_ZIP = NFCS_DIR / "Inv-Data-and-Data-Info-2018.zip"
 NFCS_STATE_ZIP = NFCS_DIR / "2018-SxS-Data-and-Data-Info.zip"
 
 MODELS_DIR = PROJ_ROOT / "models"
+MODEL_ARTIFACT_NAME = "crash_reaction_v1"  # models/<nombre>.joblib y su .json
 REPORTS_DIR = PROJ_ROOT / "reports"
 FIGURES_DIR = REPORTS_DIR / "figures"
 

@@ -360,7 +360,7 @@ def run_step(step: int, X_train: pd.DataFrame, y_train: pd.Series, rerun: bool =
                              overfit_gap=True, fold_detail=trees_used,
                              n_trials=SEARCHED_WITH_OPTUNA.get(name),
                              fit_params=fit_params),
-            "run_at": datetime.now().isoformat(timespec="seconds"),
+            "run_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         }
         print(f"    AUROC {row['auroc']:.4f} ± {row['auroc_sd']:.4f} · "
               f"brecha {row['overfit_gap']:.4f} · árboles {row['fold_detail']}")

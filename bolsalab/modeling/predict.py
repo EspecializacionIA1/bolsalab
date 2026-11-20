@@ -22,9 +22,9 @@ from pathlib import Path
 import joblib
 import pandas as pd
 
-from bolsalab.config import MODELS_DIR
+from bolsalab.config import MODEL_ARTIFACT_NAME, MODELS_DIR
 
-ARTIFACT = MODELS_DIR / "crash_reaction_v1.joblib"
+ARTIFACT = MODELS_DIR / f"{MODEL_ARTIFACT_NAME}.joblib"
 
 # Respuesta correcta de cada pregunta de conocimiento (Bawalle et al., 2025, sección 2.3).
 CORRECT = {"interest": "more", "inflation": "less", "diversification": "false"}
