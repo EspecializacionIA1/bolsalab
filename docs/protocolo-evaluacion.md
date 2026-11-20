@@ -242,6 +242,8 @@ La prueba final se corre una sola vez con `uv run python -m bolsalab.modeling.tr
 - **Lo que no hacemos:** correrla dos veces ni cambiar nada después de ver el resultado. Los cortes de la app salen del 80 %, nunca de la prueba. Solo si el programa falla antes de mostrar métricas, se corrige y se vuelve a correr.
 - **Beneficio neto:** no lo reportamos, porque la app no decide con un umbral. *Decisión nuestra.*
 
+**Resultado (19 de noviembre de 2026).** AUROC de 0,670, con intervalo de 0,658 a 0,682: incluye 0,6595, así que es consistente, y no hay alarmas. El detalle está en `docs/experimentos.md`, sección 4.
+
 **Alarmas.** Las de esta sección: un AUROC de 0,82 o más (posible fuga) o un intervalo que incluya 0,5.
 - **Qué no se hace.** No se corre dos veces. Después de ver las métricas no se cambian el modelo, los hiperparámetros, las variables ni los cortes de la app. Los cortes de los tercios salen del 80 %, nunca de la prueba. Solo si el programa falla antes de mostrar métricas se corrige y se vuelve a correr.
 

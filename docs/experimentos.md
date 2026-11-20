@@ -147,7 +147,42 @@ Con el visto bueno y apoyo de nuestro tutor cerramos las pruebas. El modelo fina
 - En el empate gana la familia más simple, XGBoost, y entre sus versiones la mejor calbrada.
 - El detalle y la tabla de candidatos están en el protocolo, sección 7, "Configuración final".
 
+## 4. Prueba final (19 de noviembre de 2026)
+
+Medimos una sola vez el modelo final (XGBoost con parada temprana y poda) en el 20 % de prueba: 10.941 personas que no usamos en ningún momento del proyecto. Lo entrenamos con todo el 80 % desde el commit `97b0da1` y quedó registrado en MLflow como `bolsalab-reaccion-caidas`, versión 1. Desde aquí el modelo no se cambia.
+
+| Métrica | Prueba final | Validación cruzada | Lectura |
+|---|---|---|---|
+| AUROC | **0,670** (0,658 a 0,682) | 0,6595 ± 0,0037 | Consistente: el intervalo incluye el valor de la validación |
+| Vendió en el 10 % de mayor riesgo | **40,8 %** | | El doble del 19,9 % general |
+| AUPRC | 0,353 | 0,330 | 1,8 veces el azar (0,199) |
+| Brier | 0,149 | 0,150 | Mejor que decir siempre el promedio (0,159) |
+| Pendiente de calibración | 1,12 | 1,01 | Las probabilidades salen un poco más apretadas que la realidad |
+
+- **Sin alarmas:** el AUROC está lejos de 0,82 (posible fuga) y el intervalo no incluye 0,5.
+- **La prueba sale un poco por encima de la validación** (0,670 frente a 0,660). Está dentro de la variación esperada, y el modelo final aprendió con el 80 % completo.
+- **La calibración más apretada no afecta a la app:** la app ubica a cada persona en un tercio según el orden de las probabilidades, no según su valor.
+
+**Por grupos, en el 20 % de prueba** (`reports/groups_test.csv`):
+
+| Grupo | Personas | Vendió | Predicción media | AUROC | Pendiente de calibración |
+|---|---|---|---|---|---|
+| Hombres | 7.322 | 23,9 % | 23,4 % | 0,625 | 1,09 |
+| Mujeres | 3.619 | 11,7 % | 12,5 % | 0,658 | 1,17 |
+| 18 a 39 años | 3.368 | 18,0 % | 18,2 % | 0,708 | 1,22 |
+| 40 a 59 años | 5.775 | 19,3 % | 18,9 % | 0,657 | 1,12 |
+| 60 años o más | 1.798 | 25,3 % | 25,6 % | 0,594 | 0,89 |
+| Ingreso, tramos 1 a 4 | 4.545 | 22,2 % | 22,0 % | 0,674 | 1,14 |
+| Ingreso, tramos 5 a 7 | 4.982 | 18,1 % | 18,1 % | 0,658 | 1,09 |
+| Ingreso, tramos 8 o más | 1.414 | 18,7 % | 18,9 % | 0,673 | 1,20 |
+| **Principiantes** | 420 | 32,4 % | 28,1 % | **0,781** | 1,39 |
+| Resto | 10.521 | 19,4 % | 19,5 % | 0,661 | 1,08 |
+
+- **Principiantes:** el mejor AUROC (0,781), como en la validación (0,721). Son 420 personas y unas 136 ventas, así que la cifra tiene un margen amplio. El modelo los subestima: predice 28,1 % y vendieron 32,4 %.
+- **Mayores de 60:** el punto débil (0,594), igual que en la validación.
+- **Ningún grupo queda por debajo de 0,59.**
+
 ## Lo que sigue
 
-- Correr una sola vez la prueba final con la configuración elegida y las reglas del protocolo (sección 7).
-- Sumar los resultados de las redes en PyTorch cuando se una su código. Ninguna pasó de 0,66.
+- Sumar los resultados de las redes en PyTorch cuando se una su código. Ninguna pasó de 0,66, así que no cambian el modelo final.
+- Desplegar el modelo congelado: API, app e infraestructura.

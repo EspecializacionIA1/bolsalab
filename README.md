@@ -21,8 +21,18 @@ BolsaLAB estima **qué tan propensa es una persona a vender sus inversiones dura
 | Variable objetivo | `sold`: 1 si vendió todo o parte (19,87 %), 0 si mantuvo |
 | Modelos que comparamos | Trivial, regresión logística, Random Forest, XGBoost, LightGBM, CatBoost y una red neuronal pequeña |
 | Contraste fuera de Japón | Panel de la Survey of Consumer Finances 2007-2009 (Reserva Federal de EE. UU.) |
+| Modelo final | XGBoost con parada temprana y poda, con 17 variables |
+| Resultado en la prueba final | AUROC 0,670 (0,658 a 0,682) con 10.941 personas que el modelo nunca vio. En el 10 % de mayor riesgo vendió el 40,8 %, el doble del promedio |
 
-Las reglas para preparar los datos, partirlos, medir y elegir el modelo están en [`docs/protocolo-evaluacion.md`](docs/protocolo-evaluacion.md). Cada regla cita el artículo que la respalda. Las variables que usa el modelo, y las que no, están en [`docs/variables.md`](docs/variables.md).
+Las reglas para preparar los datos, partirlos, medir y elegir el modelo están en [`docs/protocolo-evaluacion.md`](docs/protocolo-evaluacion.md). Cada regla cita el artículo que la respalda. Las variables que usa el modelo, y las que no, están en [`docs/variables.md`](docs/variables.md). El detalle de la prueba final está en [`docs/experimentos.md`](docs/experimentos.md), sección 4.
+
+Todo el recorrido queda en MLflow. Para verlo en tu computador:
+
+```bash
+uv run python -m bolsalab.modeling.mlflow_backfill   # carga las pruebas de la comparación y del ajuste
+uv run python -m bolsalab.modeling.mlflow_tracking   # registra el modelo final que está en models/
+uv run mlflow ui --backend-store-uri sqlite:///mlflow.db
+```
 
 ## Prototipo en Streamlit
 
