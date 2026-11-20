@@ -10,8 +10,14 @@ servidor (AWS) sin volver a entrenar ni a medir la prueba. Si la corrida ya
 existe en ese servidor, no la duplica.
 
 No registra datos de personas: solo parámetros, métricas y el modelo.
+
+train.py la llama sola al terminar --prototype y --final. Para registrar a mano
+el modelo que está en models/ (por ejemplo, si MLflow falló al entrenar):
+
+    uv run python -m bolsalab.modeling.mlflow_tracking final
 """
 
+import argparse
 import json
 from datetime import datetime
 from pathlib import Path
@@ -98,3 +104,14 @@ def log_exported_model(kind: str, models_dir: Path = MODELS_DIR,
 
     client.set_terminated(run_id, end_time=start)
     return run_id
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Registra en MLflow el modelo de models/.")
+    parser.add_argument("kind", choices=["prototipo", "final"])
+    run_id = log_exported_model(parser.parse_args().kind)
+    print(f"Registrado en MLflow: corrida {run_id} en {MLFLOW_TRACKING_URI}")
+
+
+if __name__ == "__main__":
+    main()
