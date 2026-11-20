@@ -25,10 +25,15 @@ from pathlib import Path
 
 import joblib
 import mlflow
+import numpy as np
+import pyarrow.parquet as pq
+from mlflow.models import ModelSignature
 from mlflow.tracking import MlflowClient
+from mlflow.types import ColSpec, Schema, TensorSpec
 
 from bolsalab.config import (MLFLOW_EXPERIMENTS, MLFLOW_REGISTERED_MODEL, MLFLOW_TRACKING_URI,
                              MODEL_ARTIFACT_NAME, MODELS_DIR)
+from bolsalab.features import TRAINING_FILE
 from bolsalab.modeling.mlflow_backfill import experiment_id
 
 # MLflow guarda los modelos con skops, que solo acepta las clases que se declaran
@@ -60,11 +65,35 @@ def run_metrics(meta: dict) -> dict:
     return metrics
 
 
+# Tipos de columna del archivo parquet y su nombre en MLflow.
+MLFLOW_TYPES = {"int64": "long", "int32": "integer", "double": "double", "float": "float", "bool": "boolean"}
+
+
+def model_signature(features: list[str], table: Path = TRAINING_FILE) -> ModelSignature | None:
+    """Ficha de entradas y salidas del modelo, sin usar ninguna fila de datos.
+
+    Toma solo los tipos de las columnas del encabezado de la tabla de
+    entrenamiento. Si la tabla no está en este computador, el modelo se
+    registra sin ficha.
+    """
+    if not table.exists():
+        return None
+    types = {field.name: str(field.type) for field in pq.read_schema(table)}
+    if not set(features) <= set(types):
+        return None
+    inputs = Schema([ColSpec(MLFLOW_TYPES[types[name]], name) for name in features])
+    # Dos columnas por persona: [P(mantuvo), P(vendió)]
+    outputs = Schema([TensorSpec(np.dtype("float64"), (-1, 2), "probabilidades")])
+    return ModelSignature(inputs, outputs)
+
+
 def log_mlflow_model(client: MlflowClient, run_id: str, package: Path) -> None:
     """Sube el modelo en el formato de MLflow, que es el que usa el registro de modelos."""
+    artifact = joblib.load(package)
     with tempfile.TemporaryDirectory() as folder:
         # pyfunc_predict_fn: quien lo cargue desde el registro recibe probabilidades, no 0 o 1.
-        mlflow.sklearn.save_model(joblib.load(package)["model"], f"{folder}/modelo",
+        mlflow.sklearn.save_model(artifact["model"], f"{folder}/modelo",
+                                  signature=model_signature(artifact["features"]),
                                   skops_trusted_types=TRUSTED_TYPES, pyfunc_predict_fn="predict_proba")
         client.log_artifacts(run_id, f"{folder}/modelo", "modelo")
 
