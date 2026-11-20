@@ -23,6 +23,7 @@ dependencies = [
     "matplotlib>=3.8",
     "python-dotenv>=1.0",
     "optuna>=5.0.0",
+    "mlflow>=3.18.0",
 ]
 
 [dependency-groups]

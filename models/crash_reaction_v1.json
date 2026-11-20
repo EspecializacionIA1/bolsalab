@@ -7,7 +7,8 @@
     "model__estimator__reg_lambda": 10
   },
   "test": null,
-  "trained_on": "2026-11-18",
+  "trained_on": "2026-11-19",
+  "trained_at": "2026-11-19T22:55:08-05:00",
   "base_rate": 0.19868381966501383,
   "cutoffs": [
     0.15725082159042358,
@@ -31,7 +32,7 @@
     "pandas": "3.0.6"
   },
   "git": {
-    "commit": "bc659bd5da2c5ef7c41e619f5e4663d1e92cdea3",
+    "commit": "04d661e5531587c5167862d04013f3192ef0a243",
     "uncommitted_changes": false
   },
   "preprocessing": "Ninguno: XGBoost no necesita escalado y la tabla no tiene datos faltantes",

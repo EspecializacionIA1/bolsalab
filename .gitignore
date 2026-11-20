@@ -29,3 +29,8 @@ dist/
 .idea/
 .DS_Store
 Thumbs.db
+
+# --- MLflow (corridas registradas en el computador de cada uno) ---
+mlflow.db
+mlruns/
+mlartifacts/

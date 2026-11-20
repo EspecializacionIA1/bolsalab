@@ -24,7 +24,7 @@ import hashlib
 import json
 import platform
 import subprocess
-from datetime import date
+from datetime import datetime
 
 import joblib
 import numpy as np
@@ -51,7 +51,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
-from bolsalab.config import MODELS_DIR, PROJ_ROOT, RANDOM_STATE, REPORTS_DIR
+from bolsalab.config import MODEL_ARTIFACT_NAME, MODELS_DIR, PROJ_ROOT, RANDOM_STATE, REPORTS_DIR
 from bolsalab.features import TRAINING_FILE
 from bolsalab.features import main as build_training_table
 from bolsalab.modeling.optuna_search import OptunaSearch
@@ -342,13 +342,16 @@ def export_model(model, metrics: dict, X_train: pd.DataFrame, y_train: pd.Series
     trees = getattr(model[-1], "estimator_", model[-1])
     artifact = {"model": model, "explainer": shap.TreeExplainer(trees),
                 "features": list(X_train.columns), "classes": [int(c) for c in model.classes_]}
-    joblib.dump(artifact, MODELS_DIR / "crash_reaction_v1.joblib")
-    metadata = {**metrics, "trained_on": str(date.today()),
+    joblib.dump(artifact, MODELS_DIR / f"{MODEL_ARTIFACT_NAME}.joblib")
+    # La hora exacta sirve para registrar la corrida en MLflow con su hora real, aunque se suba después.
+    now = datetime.now().astimezone()
+    metadata = {**metrics, "trained_on": now.date().isoformat(),
+                "trained_at": now.isoformat(timespec="seconds"),
                 "base_rate": float(y_train.mean()),
                 "cutoffs": category_cutoffs(model, X_train, y_train),
                 **traceability(y_train, y_test),
                 **app_reference(X_train)}
-    (MODELS_DIR / "crash_reaction_v1.json").write_text(
+    (MODELS_DIR / f"{MODEL_ARTIFACT_NAME}.json").write_text(
         json.dumps(metadata, indent=2, default=float), encoding="utf-8")
 
 
@@ -361,6 +364,21 @@ def run_benchmark(X_train: pd.DataFrame, y_train: pd.Series) -> None:
     benchmark.to_csv(BENCHMARK_FILE, index=False)
     print(f"Ganador según la regla del protocolo: {choose_winner(benchmark)}")
     print(f"Comparación guardada en {BENCHMARK_FILE}")
+
+
+def register_in_mlflow() -> None:
+    """Registra en MLflow el modelo recién exportado.
+
+    Si MLflow falla, el entrenamiento no se cae: el modelo y sus métricas ya
+    quedaron en models/ y se registran después con el comando que se muestra.
+    """
+    try:
+        # mlflow_tracking importa este módulo; por eso se importa aquí y no arriba.
+        from bolsalab.modeling.mlflow_tracking import log_exported_model
+        print(f"Registrado en MLflow: corrida {log_exported_model()}")
+    except Exception as error:
+        print(f"No se pudo registrar en MLflow ({error}). El modelo ya quedó en models/.")
+        print("Para registrarlo después: uv run python -m bolsalab.modeling.mlflow_tracking")
 
 
 def run_final(X_train, X_test, y_train, y_test) -> None:
@@ -377,6 +395,7 @@ def run_final(X_train, X_test, y_train, y_test) -> None:
     print(groups.round(3).to_string(index=False))
     groups.to_csv(GROUPS_TEST_FILE, index=False)
     export_model(model, metrics, X_train, y_train, y_test)
+    register_in_mlflow()
 
 
 def run_prototype(X_train, y_train, y_test) -> None:
@@ -388,6 +407,7 @@ def run_prototype(X_train, y_train, y_test) -> None:
     metrics = {"winner": winner, "params": search.best_params_, "test": None}
     print(f"Ganador: {winner} {search.best_params_} | exportado sin medir en la prueba")
     export_model(search.best_estimator_, metrics, X_train, y_train, y_test)
+    register_in_mlflow()
 
 
 def main() -> None:
