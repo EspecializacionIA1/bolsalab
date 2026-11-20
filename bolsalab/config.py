@@ -4,6 +4,7 @@ Todo módulo del pipeline importa sus rutas y parámetros desde aquí para que
 ningún valor quede repetido o escrito a mano en notebooks o scripts.
 """
 
+import os
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -39,3 +40,15 @@ RANDOM_STATE = 42
 # --- Reglas de decisión (docs/protocolo-evaluacion.md) ---
 AUROC_NOISE = 0.004      # diferencia de AUROC que no se distingue del ruido entre particiones
 MAX_OVERFIT_GAP = 0.03   # brecha máxima entre el AUROC de entrenamiento y el de validación
+
+# --- MLflow: dónde se registran las corridas ---
+# Por defecto, un archivo en el proyecto. Para registrar en otro servidor (AWS)
+# se define MLFLOW_TRACKING_URI en el entorno o en el archivo .env.
+MLFLOW_TRACKING_URI = os.environ.get(
+    "MLFLOW_TRACKING_URI", f"sqlite:///{(PROJ_ROOT / 'mlflow.db').as_posix()}")
+MLFLOW_ARTIFACTS_DIR = PROJ_ROOT / "mlruns"
+MLFLOW_EXPERIMENTS = {
+    "comparacion": "bolsalab-comparacion",    # los 7 modelos del Ciclo 3A
+    "ajuste": "bolsalab-ajuste",              # las pruebas del ajuste por familias
+    "final": "bolsalab-modelo-final",         # --prototype y --final
+}
