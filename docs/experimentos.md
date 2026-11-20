@@ -84,7 +84,7 @@ En vez de listas cortas de valores, Optuna buscó en rangos completos: 50 combin
 | XGBoost con poda (paso 2) | 0,6595 ± 0,004 | 1,010 | 0,019 |
 | XGBoost con Optuna | 0,6595 ± 0,003 | 1,015 | 0,016 |
 
-- **El AUROC no cambió.** Quedó a 0,0006 del oficial, muy por debajo del 0,004 que contamos como ruido, y lejos de 0,6636. XGBoost oficial sigue siendo el ganador.
+- **El AUROC no cambió.** Quedó a 0,0006 del oficial, muy por debajo del 0,004 que contamos como ruido, y lejos de 0,6636. Ninguna versión supera al XGBoost oficial.
 - **Ninguna partición quiso árboles profundos.** Podían llegar a profundidad 6 y eligieron 2 o 3.
 - **No hay una combinación mejor que las demás.** La velocidad elegida fue de 0,03 a 0,15 y `reg_lambda` de 0,3 a 13,6, según la partición. Cuando valores tan distintos dan el mismo resultado, el ajuste no es lo que limita al modelo.
 - **`reg_lambda` alto no era una pista.** En el paso 2 las 5 particiones eligieron el tope de la rejilla (10). Con el rango abierto hasta 20, solo una pasó de 10.
@@ -123,7 +123,7 @@ Probamos las dos ideas de los benchmarks recientes de datos en tabla que no hab�
 - **La aleatoriedad subió 0,0015 frente a Optuna, pero es ruido.** La regla pedía pasar de 0,6636. Las 5 particiones usaron la aleatoriedad (cada árbol vio entre el 53 % y el 82 % de las personas). Con ella, Optuna eligió árboles más profundos (3 a 6; en el paso 8 fueron 2 o 3) y más lentos (velocidad de 0,012 a 0,036), y la brecha subió de 0,016 a 0,022. Esperábamos lo contrario: que bajara.
 - **El promedio no subió el AUROC, pero tiene la brecha más baja de todas las pruebas (0,014).** Promediar suaviza las predicciones y el modelo memoriza menos. A cambio, la calibración empeora: la pendiente pasa a 1,084, porque el promedio acerca todas las probabilidades al centro.
 - **Por qué el promedio no ayudó.** Un promedio rinde cuando los modelos se equivocan con personas distintas. Los nuestros aprenden de las mismas 17 respuestas y se equivocan casi igual.
-- **Conclusión:** el XGBoost oficial sigue siendo el ganador. Con estas dos ya van 14 pruebas, y las que no quitan información quedan entre 0,6573 y 0,6612. El límite sigue estando en la información del cuestionario.
+- **Conclusión:** ninguna prueba supera al XGBoost oficial. Con estas dos ya van 14 pruebas, y las que no quitan información quedan entre 0,6573 y 0,6612. El límite sigue estando en la información del cuestionario.
 
 ### Paso 10. Etiqueta de tres clases (17 de noviembre de 2026)
 
@@ -137,15 +137,29 @@ Probamos las dos ideas de los benchmarks recientes de datos en tabla que no hab�
 - **No cambió nada.** Bajó 0,0003, muy lejos de los 0,004 que pedía la regla.
 - **La brecha bajó un poco (de 0,019 a 0,016), pero la calibración empeoró** (de 1,010 a 1,058).
 - **Por qué no ayudó.** Separar la respuesta no agrega información sobre las personas. Si las mismas respuestas del cuestionario empujan a vender parte y a vender todo, el modelo no aprende nada nuevo al verlas por separado.
-- **Conclusión:** el XGBoost oficial sigue siendo el ganador. Ya son 15 pruebas, y las 14 que no quitan información quedan entre 0,6573 y 0,6612.
+- **Conclusión:** ninguna prueba supera al XGBoost oficial. Ya son 15 pruebas, y las 14 que no quitan información quedan entre 0,6573 y 0,6612.
 
 ### Decisión: configuración final (18 de noviembre de 2026)
 
 Con el visto bueno y apoyo de nuestro tutor cerramos las pruebas. El modelo final es el **XGBoost con parada temprana y poda del paso 2** (AUROC 0,6595, pendiente de calibración 1,010, brecha 0,019).
 
 - Todas las versiones empatan en AUROC: ninguna pasó de 0,6636.
-- En el empate gana la familia más simple, XGBoost, y entre sus versiones la mejor calbrada.
+- En el empate gana la familia más simple, XGBoost, y entre sus versiones la mejor calibrada.
 - El detalle y la tabla de candidatos están en el protocolo, sección 7, "Configuración final".
+
+### Paso 6. Redes en PyTorch (19 de noviembre de 2026)
+
+Probamos redes neuronales en PyTorch en 72 corridas: 4 arquitecturas, 32 cambiando un ajuste a la vez, 30 de búsqueda y 6 con validación cruzada. Código y resultados en `notebooks/3_mejora_auroc/08 - Redes neuronales con PyTorch paso a paso.ipynb` y `reports/pytorch_experiments.csv`. No usamos el 20 % de prueba.
+
+| Prueba | AUROC | Validación |
+|---|---|---|
+| Mejor red, validación anidada | 0,6537 ± 0,0036 | 5 particiones externas; por dentro, una sola partición y 15 configuraciones al azar |
+| Mejor red, configuración elegida antes | 0,6544 ± 0,0035 | 5 particiones con una configuración ya elegida: es optimista |
+| Mejor red, una sola partición | 0,6557 | Una partición de validación dentro del 80 % |
+
+- **Ninguna red llega al modelo final** (0,6595), y quedan lejos de 0,6636.
+- **La validación no es la 5 × 3 del protocolo:** por dentro usa una sola partición. Sirve para comparar, pero el número es menos preciso que el de los modelos de árboles.
+- **Confirma lo que dice la literatura** (Grinsztajn et al., 2022): en tablas como la nuestra, los árboles ganan a las redes.
 
 ## 4. Prueba final (19 de noviembre de 2026)
 
@@ -184,5 +198,4 @@ Medimos una sola vez el modelo final (XGBoost con parada temprana y poda) en el 
 
 ## Lo que sigue
 
-- Sumar los resultados de las redes en PyTorch cuando se una su código. Ninguna pasó de 0,66, así que no cambian el modelo final.
 - Desplegar el modelo congelado: API, app e infraestructura.

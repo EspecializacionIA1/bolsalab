@@ -28,8 +28,8 @@ La app no carga datos de ninguna encuesta. Usa el modelo de `models/` y los resu
 
 Las reglas están en la sección 8 del protocolo, registradas antes de calcular.
 
-- **Tercios.** Con validación cruzada de 5 particiones sobre el entrenamiento, los cortes quedaron en 15,9 % y 22,1 % de probabilidad. La app nunca muestra ese número.
-- **Dos preguntas que no se hacen.** No conocemos la redacción japonesa de `risk_aversion` ni de `short_term_view`. La app usa el valor más común (0,5 y 2), lo dice en pantalla y no las muestra como factor.
+- **Tercios.** Con validación cruzada de 5 particiones sobre el entrenamiento, los cortes quedaron en 15,7 % y 22,2 % de probabilidad. La app nunca muestra ese número.
+- **Dos preguntas que no se hacen.** Conocemos su redacción (Lal et al., 2024): la probabilidad de lluvia con la que la persona lleva paraguas (`risk_aversion`) y qué tan de acuerdo está con "como el futuro es incierto, es una pérdida de tiempo pensar en él" (`short_term_view`). Decidimos no preguntarlas en la app. Usa el valor más común del entrenamiento (0,5 y 2), lo dice en pantalla y no las muestra como factor.
 - **Ingreso y ahorros por nivel.** Cinco niveles frente a la gente del país, llevados al tramo japonés en la misma posición: ingreso 1→3, 2→4, 3→5, 4→6, 5→8; ahorros 1→1, 2→3, 3→5, 4→7, 5→9. Es provisional hasta tener los tramos de la IEFIC.
 - **Las preguntas de finanzas y la de confianza** son las del artículo (Bawalle et al., 2025, sección 2.3), con $ en vez de ¥.
 - **Los factores se separan** en "lo que puedes trabajar" (las preguntas de finanzas y la confianza) y "tu situación" (edad, sexo, ingreso y demás), para que el resultado lleve a una acción sin culpar a nadie por lo que no depende de él.
@@ -38,22 +38,22 @@ Las reglas están en la sección 8 del protocolo, registradas antes de calcular.
 
 ## Lo que encontramos con SHAP
 
-Peso medio de cada respuesta en 5.000 personas del entrenamiento (`reports/shap_global.csv`):
+Peso medio de cada respuesta en 5.000 personas del entrenamiento, con el modelo final (`reports/shap_global.csv`):
 
 | Respuesta | Parte del peso total | Dirección |
 |---|---|---|
-| Sexo (hombre) | 28 % | Los hombres venden más |
-| Acierta diversificación | 15 % | Acertar baja la venta |
+| Sexo (hombre) | 27 % | Los hombres venden más |
+| Acierta diversificación | 14 % | Acertar baja la venta |
 | Confianza en lo que sabe | 9 % | Más confianza sube la venta |
 | Acierta inflación | 7 % | Acertar baja la venta |
-| Edad | 7 % | Sube en las edades altas |
-| Aversión al riesgo y visión de corto plazo | 13 % entre las dos | La app no las pregunta todavía |
+| Edad | 8 % | Sube en las edades altas |
+| Aversión al riesgo y visión de corto plazo | 14 % entre las dos | La app no las pregunta |
 | Acierta interés compuesto | 5 % | Acertar baja la venta |
 
-- **Las tres preguntas de finanzas suman 27 % y siempre bajan la venta.** Va en la dirección de la hipótesis y de Bawalle et al. (2025).
+- **Las tres preguntas de finanzas suman 26 % y siempre bajan la venta.** Va en la dirección de la hipótesis y de Bawalle et al. (2025).
 - **El sexo es lo que más pesa.** En el entrenamiento vendió el 23,6 % de los hombres y el 12,2 % de las mujeres, así que no es un error. Es el resultado que más hay que cuidar al mostrar y lo revisamos en la actividad de desempeño por grupos.
 - **La variable de exceso de confianza casi no pesa (1 %), aunque quienes la tienen vendieron más** (28,4 % contra 19,2 %). Se construye con la confianza y las preguntas de finanzas, y SHAP le da su peso a esas dos. Es la advertencia de SHAP con variables relacionadas.
-- **Ninguna variable domina sola** (la mayor tiene el 28 %), así que no se activa la alarma del protocolo.
+- **Ninguna variable domina sola** (la mayor tiene el 27 %), así que no se activa la alarma del protocolo.
 - **SHAP explica lo que hace el modelo, no la causa de la venta.**
 
 ## Desempeño por grupos

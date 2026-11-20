@@ -59,9 +59,9 @@ Para `overconfidence` usamos la misma regla del archivo japonés: 1 si marcó 5,
 
 Aun así, la relación va en la misma dirección que en Japón: entre quienes tienen exceso de confianza vendió el 6,9 %, y entre los demás, el 2,5 %.
 
-**7. Disposición al riesgo.** La NFCS pregunta "al pensar en sus inversiones, ¿qué tan dispuesto está a asumir riesgos?", de 1 (nada) a 10 (muy dispuesto) (J2). En Japón `risk_aversion` va de 0 a 1 y al revés: más alto es evitar más el riesgo. La convertimos con `(10 − J2) / 9`, sin redondear: quien marcó 1 queda en 1 y quien marcó 10, en 0. Sacamos a 10 personas que respondieron "no sabe" o "prefiere no decir".
+**7. Disposición al riesgo.** La NFCS pregunta "al pensar en sus inversiones, ¿qué tan dispuesto está a asumir riesgos?", de 1 (nada) a 10 (muy dispuesto) (J2). En Japón `risk_aversion` va de 0 a 1; supusimos que un valor alto es evitar más el riesgo, algo que no pudimos confirmar. La convertimos con `(10 − J2) / 9`, sin redondear: quien marcó 1 queda en 1 y quien marcó 10, en 0. Sacamos a 10 personas que respondieron "no sabe" o "prefiere no decir".
 
-**Hallazgo y duda:** la relación con vender no se parece entre los dos países. En la NFCS vende más quien más acepta riesgo (13,3 % con 10 contra 1,6 % con 1). En Japón la relación tiene forma de U: venden más los dos extremos (24,5 % en 0 y 31,7 % en 0,9) que el medio (16 % a 19 %). No sabemos la redacción de la pregunta japonesa, así que no podemos saber si miden lo mismo.
+**Hallazgo y duda:** la relación con vender no se parece entre los dos países. En la NFCS vende más quien más acepta riesgo (13,3 % con 10 contra 1,6 % con 1). En Japón la relación tiene forma de U: venden más los dos extremos (24,5 % en 0 y 31,7 % en 0,9) que el medio (16 % a 19 %). En Japón es la pregunta del paraguas (Lal et al., 2024), que no mide lo mismo que la de la NFCS.
 
 **8. Ingreso.** Japón tiene 12 tramos en yenes y la NFCS 8 en dólares (A8), con cortes distintos. Decidimos no convertir con la tasa de cambio, porque el costo de vida no cuesta lo mismo en cada país: con 110 yenes por dólar, muchos estadounidenses quedarían arriba solo por la moneda. Comparamos por posición: quien está en el 20 % que más gana en EE. UU. queda en el tramo japonés del 20 % que más gana en Japón. Para cada tramo tomamos la mitad de su franja en la fila de ingresos y buscamos el tramo japonés que contiene ese punto:
 
@@ -108,7 +108,7 @@ Los resultados de la comparación con Japón están en el notebook `notebooks/1_
 - Algunas personas quizás solo tenían bonos. Como mucho son 96 (5,3 %).
 - La edad es aproximada: todos los de un rango quedan con la misma edad, y el 70 de "65 o más" es una decisión nuestra.
 - La conversión de la confianza de 1-7 a 1-5 es nuestra. Pasar de 5 a 6 en la NFCS no cambia nada (los dos quedan en 4), y eso afecta quién queda con exceso de confianza.
-- No sabemos qué pregunta usó Japón para el riesgo. Puede que no mida lo mismo que la NFCS.
+- Japón mide el riesgo con la pregunta del paraguas (Lal et al., 2024) y la NFCS lo pregunta directamente: no miden lo mismo.
 - El ingreso compara posiciones, no montos. La tabla depende de cómo se reparten los ingresos de los inversionistas en cada encuesta.
 - El valor de las inversiones de la NFCS no incluye cuentas de retiro. No es igual a los activos financieros de Japón.
 

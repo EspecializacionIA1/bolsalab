@@ -54,7 +54,7 @@ La NFCS tiene 15 de las 17 variables. Las pasamos a los nombres y escalas de Jap
 | `employed` | `Employment` | A9 | Independiente, tiempo completo o medio tiempo |
 | `income_bracket` | 12 tramos en yenes | A8, 8 tramos en dólares | Por posición dentro de cada país |
 | `assets_bracket` | 10 tramos de activos en yenes | B4, valor de las inversiones fuera de retiro, 10 tramos en dólares | Por posición dentro de cada país. No incluye cuentas de retiro |
-| `risk_aversion` | 0 a 1; más alto evita más el riesgo | J2, disposición al riesgo de 1 a 10 | Invertida: (10 − J2) / 9. No sabemos la pregunta japonesa |
+| `risk_aversion` | 0 a 1: el porcentaje de la pregunta del paraguas dividido por 100 | J2, disposición al riesgo de 1 a 10 | Invertida: (10 − J2) / 9, suponiendo que en Japón un valor alto es evitar más el riesgo, algo que no pudimos confirmar. Las dos preguntas no miden lo mismo |
 | `short_term_view` | `Myopic_View` | No existe | No hay una pregunta parecida |
 
 ## Decisiones
@@ -62,7 +62,7 @@ La NFCS tiene 15 de las 17 variables. Las pasamos a los nombres y escalas de Jap
 - **Las tres preguntas de conocimiento van por separado y no sumadas.** Así el modelo aprende cuál pesa más, y la app sabe qué pregunta falló cada persona. El conocimiento financiero es el único predictor con dirección estable en los estudios leídos (Bucher-Koenen y Ziegelmeyer, 2011; Bawalle et al., 2025).
 - **La edad entra también al cuadrado.** La venta no cambia en línea recta con la edad: vendió el 28,1 % de quienes tienen 18 a 24 años, entre 17 y 19 % de las edades medias y el 25,5 % desde los 60. La regresión logística solo capta esa forma en U con la edad al cuadrado. Bawalle et al. (2025) también la usan.
 - **`overconfidence` usa la columna del archivo,** la misma que usaron los autores, para comparar con su resultado (hipótesis H2). Ver el protocolo, sección 3.
-- **`risk_aversion` y `short_term_view` entran** porque la hipótesis H5 necesita la tolerancia al riesgo y Bawalle et al. (2025) asocian la visión de corto plazo con más venta. Falta confirmar la redacción original de esas dos preguntas.
+- **`risk_aversion` y `short_term_view` entran** porque la hipótesis H5 necesita la tolerancia al riesgo y Bawalle et al. (2025) asocian la visión de corto plazo con más venta. Su redacción está en Lal et al. (2024): la probabilidad de lluvia con la que la persona lleva paraguas, y qué tan de acuerdo está con "como el futuro es incierto, es una pérdida de tiempo pensar en él". La app no las pregunta, por decisión del equipo: usa el valor más común del entrenamiento.
 - **Ingreso y activos entran como número de tramo** (1, 2, 3…), que es como los preguntaría la app.
 
 ## Columnas que no entran
