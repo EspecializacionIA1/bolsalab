@@ -46,7 +46,6 @@ MAX_OVERFIT_GAP = 0.03   # brecha máxima entre el AUROC de entrenamiento y el d
 # se define MLFLOW_TRACKING_URI en el entorno o en el archivo .env.
 MLFLOW_TRACKING_URI = os.environ.get(
     "MLFLOW_TRACKING_URI", f"sqlite:///{(PROJ_ROOT / 'mlflow.db').as_posix()}")
-MLFLOW_ARTIFACTS_DIR = PROJ_ROOT / "mlruns"
 MLFLOW_EXPERIMENTS = {
     "comparacion": "bolsalab-comparacion",    # los 7 modelos del Ciclo 3A
     "ajuste": "bolsalab-ajuste",              # las pruebas del ajuste por familias

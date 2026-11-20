@@ -73,7 +73,7 @@ def log_exported_model(kind: str, models_dir: Path = MODELS_DIR,
     meta = json.loads(metadata.read_text(encoding="utf-8"))
 
     client = MlflowClient(tracking_uri)
-    exp_id = experiment_id(client, MLFLOW_EXPERIMENTS["final"])
+    exp_id = experiment_id(client, MLFLOW_EXPERIMENTS["final"], tracking_uri)
     # Si esta corrida ya está en el servidor (mismo tipo y misma hora), no se duplica.
     found = client.search_runs([exp_id], filter_string=(
         f"tags.tipo = '{kind}' and tags.trained_at = '{meta['trained_at']}'"))
@@ -85,24 +85,30 @@ def log_exported_model(kind: str, models_dir: Path = MODELS_DIR,
             "uncommitted_changes": str(meta["git"]["uncommitted_changes"]),
             "dataset_sha256": meta["dataset_sha256"]}
     run_id = client.create_run(exp_id, start_time=start, tags=tags, run_name=kind).info.run_id
-    for name, value in run_params(meta).items():
-        client.log_param(run_id, name, value)
-    for name, value in run_metrics(meta).items():
-        client.log_metric(run_id, name, float(value))
-    client.log_artifact(run_id, str(package))
-    client.log_artifact(run_id, str(metadata))
-    if kind == "final" and groups_file.exists():
-        client.log_artifact(run_id, str(groups_file))
-
-    if kind == "final":
-        # El registro de modelos necesita el modelo en el formato de MLflow.
-        mlflow.set_tracking_uri(tracking_uri)
-        with mlflow.start_run(run_id=run_id):
-            info = mlflow.sklearn.log_model(joblib.load(package)["model"], name="modelo",
-                                            skops_trusted_types=TRUSTED_TYPES)
-        mlflow.register_model(info.model_uri, MLFLOW_REGISTERED_MODEL)
-
-    client.set_terminated(run_id, end_time=start)
+    # Si algo falla a mitad de camino, la corrida se borra: así el reintento
+    # empieza limpio y no deja una corrida "final" sin su versión del modelo.
+    try:
+        for name, value in run_params(meta).items():
+            client.log_param(run_id, name, value)
+        for name, value in run_metrics(meta).items():
+            client.log_metric(run_id, name, float(value))
+        client.log_artifact(run_id, str(package))
+        client.log_artifact(run_id, str(metadata))
+        if kind == "final" and groups_file.exists():
+            client.log_artifact(run_id, str(groups_file))
+        if kind == "final":
+            # El registro de modelos necesita el modelo en el formato de MLflow.
+            mlflow.set_tracking_uri(tracking_uri)
+            with mlflow.start_run(run_id=run_id):
+                info = mlflow.sklearn.log_model(joblib.load(package)["model"], name="modelo",
+                                                skops_trusted_types=TRUSTED_TYPES)
+        client.set_terminated(run_id, end_time=start)
+        # La versión del modelo se crea al final, cuando todo lo demás ya quedó.
+        if kind == "final":
+            mlflow.register_model(info.model_uri, MLFLOW_REGISTERED_MODEL)
+    except Exception:
+        client.delete_run(run_id)
+        raise
     return run_id
 
 

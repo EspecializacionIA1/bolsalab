@@ -118,3 +118,28 @@ def test_training_does_not_fail_if_mlflow_fails(monkeypatch, capsys):
     output = capsys.readouterr().out
     assert "servidor caído" in output
     assert "uv run python -m bolsalab.modeling.mlflow_tracking final" in output
+
+
+def test_files_go_next_to_the_database_in_use(exported, uri, tmp_path):
+    """Con una base local, los archivos van a mlruns/ junto a esa base, no al proyecto."""
+    run_id = log_exported_model("prototipo", exported, uri, tmp_path / "sin_grupos.csv")
+    artifact_uri = MlflowClient(uri).get_run(run_id).info.artifact_uri
+    assert artifact_uri.startswith((tmp_path / "mlruns").as_uri())
+
+
+def test_failed_registration_leaves_no_half_run_and_retry_works(final_folder, uri, tmp_path, monkeypatch):
+    """Si el registro de la versión falla, la corrida se borra y el reintento queda completo."""
+    import mlflow
+
+    def broken(*args, **kwargs):
+        raise ConnectionError("registro caído")
+    with monkeypatch.context() as patch:
+        patch.setattr(mlflow, "register_model", broken)
+        with pytest.raises(ConnectionError):
+            log_exported_model("final", final_folder, uri, tmp_path / "sin_grupos.csv")
+    client = MlflowClient(uri)
+    experiment = client.get_experiment_by_name(MLFLOW_EXPERIMENTS["final"])
+    assert client.search_runs([experiment.experiment_id]) == []
+    log_exported_model("final", final_folder, uri, tmp_path / "sin_grupos.csv")
+    assert len(client.search_runs([experiment.experiment_id])) == 1
+    assert [int(v.version) for v in versions(uri)] == [1]

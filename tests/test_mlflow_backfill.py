@@ -62,3 +62,10 @@ def test_keeps_the_original_date_of_each_test(files):
     early = runs(uri, "ajuste")["xgboost|parada_temprana"]
     expected = int(datetime.fromisoformat("2026-11-05T20:55:43").timestamp() * 1000)
     assert early.info.start_time == expected
+
+
+def test_files_go_next_to_the_database_in_use(files, tmp_path):
+    uri, benchmark, tuning = files
+    backfill(uri, benchmark, tuning)
+    experiment = MlflowClient(uri).get_experiment_by_name(MLFLOW_EXPERIMENTS["ajuste"])
+    assert experiment.artifact_location.startswith((tmp_path / "mlruns").as_uri())
