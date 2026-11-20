@@ -59,18 +59,30 @@ def log_row(client: MlflowClient, exp_id: str, name: str, row: pd.Series,
     client.set_terminated(run_id, end_time=start)
 
 
+def start_time(row: pd.Series) -> int | None:
+    """La fecha original de la prueba en milisegundos, o None si el CSV no la tiene."""
+    if pd.isna(row.get("run_at")):
+        return None
+    return int(datetime.fromisoformat(row["run_at"]).timestamp() * 1000)
+
+
 def load_csv(client: MlflowClient, tracking_uri: str, experiment: str, rows: pd.DataFrame,
              name_column: str, source: str) -> int:
-    """Carga las filas que todavía no están en el experimento y dice cuántas cargó."""
+    """Carga las filas nuevas o repetidas después y dice cuántas cargó.
+
+    Una prueba se reconoce por su nombre y su fecha: si se volvió a correr, la
+    corrida vieja se reemplaza por la nueva.
+    """
     exp_id = experiment_id(client, experiment, tracking_uri)
-    done = {run.info.run_name for run in client.search_runs([exp_id], max_results=1000)}
+    runs = {run.info.run_name: run for run in client.search_runs([exp_id], max_results=1000)}
     added = 0
     for _, row in rows.iterrows():
-        name = row[name_column]
-        if name in done:
+        name, start = row[name_column], start_time(row)
+        old = runs.get(name)
+        if old and (start is None or old.info.start_time == start):
             continue
-        # La fecha original de la prueba, en milisegundos, si el CSV la tiene.
-        start = int(datetime.fromisoformat(row["run_at"]).timestamp() * 1000) if "run_at" in row else None
+        if old:
+            client.delete_run(old.info.run_id)
         log_row(client, exp_id, name, row.drop([name_column, "run_at"], errors="ignore"), source, start)
         added += 1
     return added

@@ -2,8 +2,9 @@
 
 Lee los archivos que dejó el entrenamiento en models/ (el paquete .joblib y su
 .json) y crea una corrida en el experimento del modelo final, con la hora real
-del entrenamiento. Con "final", además registra el modelo en el registro de
-MLflow como una versión nueva.
+del entrenamiento. El tipo de corrida sale del .json: si trae resultados de
+la prueba es "final" y además registra el modelo en el registro de MLflow como
+una versión nueva; si no, es "prototipo".
 
 Como lee de los archivos, sirve también para subir después una corrida a otro
 servidor (AWS) sin volver a entrenar ni a medir la prueba. Si la corrida ya
@@ -14,10 +15,9 @@ No registra datos de personas: solo parámetros, métricas y el modelo.
 train.py la llama sola al terminar --prototype y --final. Para registrar a mano
 el modelo que está en models/ (por ejemplo, si MLflow falló al entrenar):
 
-    uv run python -m bolsalab.modeling.mlflow_tracking final
+    uv run python -m bolsalab.modeling.mlflow_tracking
 """
 
-import argparse
 import json
 from datetime import datetime
 from pathlib import Path
@@ -28,7 +28,6 @@ from mlflow.tracking import MlflowClient
 
 from bolsalab.config import (MLFLOW_EXPERIMENTS, MLFLOW_REGISTERED_MODEL, MLFLOW_TRACKING_URI,
                              MODELS_DIR)
-from bolsalab.modeling.groups import GROUPS_TEST_FILE
 from bolsalab.modeling.mlflow_backfill import experiment_id
 
 ARTIFACT_NAME = "crash_reaction_v1"
@@ -61,16 +60,17 @@ def run_metrics(meta: dict) -> dict:
     return metrics
 
 
-def log_exported_model(kind: str, models_dir: Path = MODELS_DIR,
-                       tracking_uri: str = MLFLOW_TRACKING_URI,
-                       groups_file: Path = GROUPS_TEST_FILE) -> str:
-    """Registra el modelo exportado y devuelve el id de su corrida.
-
-    kind es "prototipo" o "final". Solo "final" crea una versión en el registro.
-    """
+def log_exported_model(models_dir: Path = MODELS_DIR,
+                       tracking_uri: str = MLFLOW_TRACKING_URI) -> str:
+    """Registra el modelo exportado y devuelve el id de su corrida."""
     package = models_dir / f"{ARTIFACT_NAME}.joblib"
     metadata = models_dir / f"{ARTIFACT_NAME}.json"
     meta = json.loads(metadata.read_text(encoding="utf-8"))
+    if "trained_at" not in meta:
+        raise ValueError("Este modelo se exportó antes de guardar la hora del entrenamiento; "
+                         "vuelve a exportarlo con: uv run python -m bolsalab.modeling.train --prototype")
+    # Solo --final mide la prueba, así que un prototipo nunca puede quedar como versión del modelo.
+    kind = "final" if meta.get("test") else "prototipo"
 
     client = MlflowClient(tracking_uri)
     exp_id = experiment_id(client, MLFLOW_EXPERIMENTS["final"], tracking_uri)
@@ -94,8 +94,9 @@ def log_exported_model(kind: str, models_dir: Path = MODELS_DIR,
             client.log_metric(run_id, name, float(value))
         client.log_artifact(run_id, str(package))
         client.log_artifact(run_id, str(metadata))
-        if kind == "final" and groups_file.exists():
-            client.log_artifact(run_id, str(groups_file))
+        if kind == "final":
+            # Los grupos de la prueba salen del mismo .json, así que son de este entrenamiento.
+            client.log_dict(run_id, meta["test_groups"], "groups_test.json")
         if kind == "final":
             # El registro de modelos necesita el modelo en el formato de MLflow.
             mlflow.set_tracking_uri(tracking_uri)
@@ -113,9 +114,7 @@ def log_exported_model(kind: str, models_dir: Path = MODELS_DIR,
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Registra en MLflow el modelo de models/.")
-    parser.add_argument("kind", choices=["prototipo", "final"])
-    run_id = log_exported_model(parser.parse_args().kind)
+    run_id = log_exported_model()
     print(f"Registrado en MLflow: corrida {run_id} en {MLFLOW_TRACKING_URI}")
 
 

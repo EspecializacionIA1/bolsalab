@@ -69,3 +69,24 @@ def test_files_go_next_to_the_database_in_use(files, tmp_path):
     backfill(uri, benchmark, tuning)
     experiment = MlflowClient(uri).get_experiment_by_name(MLFLOW_EXPERIMENTS["ajuste"])
     assert experiment.artifact_location.startswith((tmp_path / "mlruns").as_uri())
+
+
+def test_a_test_run_again_later_replaces_the_old_run(files):
+    """Si una prueba se vuelve a correr (otra fecha), MLflow queda con el resultado nuevo."""
+    uri, benchmark, tuning = files
+    backfill(uri, benchmark, tuning)
+    rows = pd.read_csv(tuning)
+    rerun = rows.iloc[[0]].assign(auroc=0.7, run_at="2026-11-20T10:00:00")
+    pd.concat([rows, rerun]).to_csv(tuning, index=False)
+    assert backfill(uri, benchmark, tuning) == {"comparacion": 0, "ajuste": 1}
+    early = runs(uri, "ajuste")["xgboost|parada_temprana"]
+    assert early.data.metrics["auroc"] == pytest.approx(0.7)
+    assert len(runs(uri, "ajuste")) == 2
+
+
+def test_a_row_without_date_does_not_break(files):
+    uri, benchmark, tuning = files
+    rows = pd.read_csv(tuning)
+    rows.loc[0, "run_at"] = None
+    rows.to_csv(tuning, index=False)
+    assert backfill(uri, benchmark, tuning) == {"comparacion": 2, "ajuste": 2}

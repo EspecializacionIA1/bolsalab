@@ -365,7 +365,7 @@ def run_benchmark(X_train: pd.DataFrame, y_train: pd.Series) -> None:
     print(f"Comparación guardada en {BENCHMARK_FILE}")
 
 
-def register_in_mlflow(kind: str) -> None:
+def register_in_mlflow() -> None:
     """Registra en MLflow el modelo recién exportado.
 
     Si MLflow falla, el entrenamiento no se cae: el modelo y sus métricas ya
@@ -374,10 +374,10 @@ def register_in_mlflow(kind: str) -> None:
     try:
         # mlflow_tracking importa este módulo; por eso se importa aquí y no arriba.
         from bolsalab.modeling.mlflow_tracking import log_exported_model
-        print(f"Registrado en MLflow: corrida {log_exported_model(kind)}")
+        print(f"Registrado en MLflow: corrida {log_exported_model()}")
     except Exception as error:
         print(f"No se pudo registrar en MLflow ({error}). El modelo ya quedó en models/.")
-        print(f"Para registrarlo después: uv run python -m bolsalab.modeling.mlflow_tracking {kind}")
+        print("Para registrarlo después: uv run python -m bolsalab.modeling.mlflow_tracking")
 
 
 def run_final(X_train, X_test, y_train, y_test) -> None:
@@ -394,7 +394,7 @@ def run_final(X_train, X_test, y_train, y_test) -> None:
     print(groups.round(3).to_string(index=False))
     groups.to_csv(GROUPS_TEST_FILE, index=False)
     export_model(model, metrics, X_train, y_train, y_test)
-    register_in_mlflow("final")
+    register_in_mlflow()
 
 
 def run_prototype(X_train, y_train, y_test) -> None:
@@ -406,7 +406,7 @@ def run_prototype(X_train, y_train, y_test) -> None:
     metrics = {"winner": winner, "params": search.best_params_, "test": None}
     print(f"Ganador: {winner} {search.best_params_} | exportado sin medir en la prueba")
     export_model(search.best_estimator_, metrics, X_train, y_train, y_test)
-    register_in_mlflow("prototipo")
+    register_in_mlflow()
 
 
 def main() -> None:
