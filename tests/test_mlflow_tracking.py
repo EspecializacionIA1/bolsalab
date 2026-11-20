@@ -201,3 +201,13 @@ def test_registered_model_gives_probabilities_to_any_reader(final_folder, uri):
     package = mlflow_tracking.joblib.load(final_folder / f"{MODEL_ARTIFACT_NAME}.joblib")
     X = pd.DataFrame(np.zeros((3, len(package["features"]))), columns=package["features"])
     np.testing.assert_allclose(generic.predict(X), package["model"].predict_proba(X))
+
+
+def test_signature_uses_column_types_without_any_rows(exported):
+    """La ficha sale de los tipos del encabezado de la tabla; sin la tabla, no hay ficha."""
+    from bolsalab.modeling.mlflow_tracking import model_signature
+    table = exported / "tabla.parquet"
+    signature = model_signature(["signal", "age"], table)
+    assert [(c.name, c.type.to_numpy().kind) for c in signature.inputs.inputs] == [("signal", "f"), ("age", "i")]
+    assert signature.outputs.inputs[0].shape == (-1, 2)
+    assert model_signature(["signal"], exported / "no_existe.parquet") is None

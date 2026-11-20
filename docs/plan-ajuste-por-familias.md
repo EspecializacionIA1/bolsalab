@@ -26,7 +26,7 @@ Hasta ahora corrimos 32 experimentos y ninguno superó a XGBoost. Con este plan 
 | 4 | **Random Forest con poda**: `ccp_alpha` corta las ramas que aportan poco y `max_features` limita cuántas variables mira cada corte | Es la poda clásica que mencionó el tutor | No se hizo: con el visto bueno nuestro tutor cerramos las pruebas el 18 de noviembre, porque el límite está en la información y no en el modelo |
 | 5 | **Variables** (ver abajo) | Una variable nueva solo ayuda si trae información que el modelo no tenía | Ninguna variable nueva mejoró (todas a menos de 0,001). Quitar las dos preguntas que la app no hace cuesta 0,0075: se quedan. El modelo conserva las 17 variables |
 | 6 | **Redes en PyTorch** (ver abajo) | Lo pidió el tutor | Hecho. Ninguna red pasó de 0,66, así que la configuración final no cambia. El código y los números exactos se suman al unir su rama |
-| 7 | **Cierre**: congelar el modelo y medirlo una sola vez en el 20 % de prueba, con las reglas del protocolo (sección 7). La NFCS no la usamos para validar porque tiene muy pocos casos (documento del Ciclo 3B, sección 3) | | Configuración elegida: XGBoost con parada temprana y poda. Falta la prueba final |
+| 7 | **Cierre**: congelar el modelo y medirlo una sola vez en el 20 % de prueba, con las reglas del protocolo (sección 7). La NFCS no la usamos para validar porque tiene muy pocos casos (documento del Ciclo 3B, sección 3) | | Hecho el 19 de noviembre: AUROC 0,670 (0,658 a 0,682), consistente con la validación. Modelo congelado |
 | 8 | **Búsqueda con Optuna** en XGBoost: busca en rangos completos en vez de listas cortas (se corre antes del cierre; el 8 es solo el siguiente número libre) | Queremos descartar que una combinación mejor se nos esté escapando entre los valores de la rejilla | El AUROC no cambió (0,6595). Brecha de 0,016. Cada partición eligió valores distintos: no hay una combinación mejor que las demás |
 | 9 | **Ideas de la literatura**: aleatoriedad en XGBoost (`subsample`, `colsample_bytree`, `min_child_weight`) y promedio de XGBoost, CatBoost y regresión logística | Son las dos ideas de los benchmarks recientes que no habíamos probado; las dos buscan no aumentar el sobreajuste | Ninguna pasó 0,6636. Aleatoriedad 0,6611 (brecha 0,022) y promedio 0,6597 (brecha 0,014, la más baja). El XGBoost oficial sigue ganando |
 | 10 | **Etiqueta de tres clases**: el modelo aprende "mantuvo", "vendió parte" y "vendió todo", y la probabilidad de vender es la suma de las dos ventas | `sold` junta dos comportamientos distintos; verlos por separado podría ayudar a separar a quien vende | No cambió: 0,6593 frente a 0,6595. Brecha 0,016, calibración peor (1,058) |
@@ -45,7 +45,7 @@ El detalle de cada resultado está en `docs/experimentos.md`, sección 3, y los 
 
 - **Hicimos** los pasos 1, 2, 5, 6, 8, 9 y 10. Ninguna prueba pasó de 0,6636.
 - **No hicimos** los pasos 3 y 4. Con el visto bueno del tutor cerramos las pruebas, porque más ajuste no iba a subir el AUROC.
-- **Configuración final:** XGBoost con parada temprana y poda (protocolo, sección 7). La mediremos una sola vez en el 20 % de prueba.
+- **Configuración final:** XGBoost con parada temprana y poda (protocolo, sección 7). La medimos una sola vez en el 20 % de prueba: AUROC 0,670.
 
 **Diseño de las redes en PyTorch (paso 6).** Las conectamos con **skorch**, una librería que hace que una red de PyTorch funcione como un modelo de scikit-learn, para medirlas con las mismas reglas.
 

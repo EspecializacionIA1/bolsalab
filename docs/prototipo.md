@@ -79,6 +79,23 @@ Código en `bolsalab/modeling/groups.py`, tabla en `reports/groups.csv`. Medido 
 - **Frente al modelo anterior**, el AUROC casi no cambia y la calibración mejora, salvo en los mayores de 60 y en los tramos de ingreso 1 a 4.
 - **Dentro de cada sexo el AUROC baja** porque parte de lo que distingue el modelo es el sexo mismo. Los cortes de edad e ingreso son decisión nuestra, para tener grupos grandes.
 
+**En la prueba final** (el 20 % que el modelo nunca vio, `reports/groups_test.csv`):
+
+| Grupo | Personas | Vendió | Predicción media | AUROC | Pendiente de calibración |
+|---|---|---|---|---|---|
+| Hombres | 7.322 | 23,9 % | 23,4 % | 0,625 | 1,09 |
+| Mujeres | 3.619 | 11,7 % | 12,5 % | 0,658 | 1,17 |
+| 18 a 39 años | 3.368 | 18,0 % | 18,2 % | 0,708 | 1,22 |
+| 40 a 59 años | 5.775 | 19,3 % | 18,9 % | 0,657 | 1,12 |
+| 60 años o más | 1.798 | 25,3 % | 25,6 % | 0,594 | 0,89 |
+| Ingreso, tramos 1 a 4 | 4.545 | 22,2 % | 22,0 % | 0,674 | 1,14 |
+| Ingreso, tramos 5 a 7 | 4.982 | 18,1 % | 18,1 % | 0,658 | 1,09 |
+| Ingreso, tramos 8 o más | 1.414 | 18,7 % | 18,9 % | 0,673 | 1,20 |
+| **Principiantes** | 420 | 32,4 % | 28,1 % | **0,781** | 1,39 |
+| Resto | 10.521 | 19,4 % | 19,5 % | 0,661 | 1,08 |
+
+Los grupos se comportan igual que en la validación: los principiantes siguen siendo el mejor grupo (0,781) y los mayores de 60, el más débil (0,594). El detalle está en `docs/experimentos.md`, sección 4.
+
 ## Publicarlo en Streamlit Community Cloud
 
 1. El repositorio debe tener `models/crash_reaction_v1.joblib`, su `.json` y las gráficas de `reports/figures/`.

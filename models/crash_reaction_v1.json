@@ -6,9 +6,123 @@
     "model__estimator__max_depth": 3,
     "model__estimator__reg_lambda": 10
   },
-  "test": null,
+  "test": {
+    "auroc": 0.670077422978135,
+    "auroc_ci95": [
+      0.6582744024240678,
+      0.6821774746542051
+    ],
+    "auprc": 0.3525589188079442,
+    "brier": 0.1485399603843689,
+    "calibration_intercept": 0.16619648039340973,
+    "calibration_slope": 1.1229535341262817,
+    "sold_rate": 0.19870212960424094,
+    "sold_rate_top10": 0.40821917808219177
+  },
+  "test_groups": [
+    {
+      "grupo": "Sexo",
+      "valor": "Hombres",
+      "personas": 7322,
+      "vendio": 0.23927888555039606,
+      "prediccion_media": 0.23405015468597412,
+      "auroc": 0.6248055056852184,
+      "calibration_intercept": 0.13172157108783722,
+      "calibration_slope": 1.088486671447754
+    },
+    {
+      "grupo": "Sexo",
+      "valor": "Mujeres",
+      "personas": 3619,
+      "vendio": 0.11660679745786129,
+      "prediccion_media": 0.12461113929748535,
+      "auroc": 0.6580980836595919,
+      "calibration_intercept": 0.2368292361497879,
+      "calibration_slope": 1.1708025932312012
+    },
+    {
+      "grupo": "Edad",
+      "valor": "18 a 39",
+      "personas": 3368,
+      "vendio": 0.17992874109263657,
+      "prediccion_media": 0.1823781579732895,
+      "auroc": 0.7082655224247987,
+      "calibration_intercept": 0.2899373471736908,
+      "calibration_slope": 1.2243177890777588
+    },
+    {
+      "grupo": "Edad",
+      "valor": "40 a 59",
+      "personas": 5775,
+      "vendio": 0.1929004329004329,
+      "prediccion_media": 0.1888962686061859,
+      "auroc": 0.6570297402680942,
+      "calibration_intercept": 0.1868622899055481,
+      "calibration_slope": 1.1160428524017334
+    },
+    {
+      "grupo": "Edad",
+      "valor": "60 o m\u00e1s",
+      "personas": 1798,
+      "vendio": 0.2525027808676307,
+      "prediccion_media": 0.2555936574935913,
+      "auroc": 0.5944784783406755,
+      "calibration_intercept": -0.13350926339626312,
+      "calibration_slope": 0.8875216841697693
+    },
+    {
+      "grupo": "Ingreso",
+      "valor": "Tramos 1 a 4",
+      "personas": 4545,
+      "vendio": 0.22156215621562156,
+      "prediccion_media": 0.21957388520240784,
+      "auroc": 0.6738792275439924,
+      "calibration_intercept": 0.18287977576255798,
+      "calibration_slope": 1.1447514295578003
+    },
+    {
+      "grupo": "Ingreso",
+      "valor": "Tramos 5 a 7",
+      "personas": 4982,
+      "vendio": 0.18125250903251705,
+      "prediccion_media": 0.18067394196987152,
+      "auroc": 0.6582300234814246,
+      "calibration_intercept": 0.12625448405742645,
+      "calibration_slope": 1.0861965417861938
+    },
+    {
+      "grupo": "Ingreso",
+      "valor": "Tramos 8 o m\u00e1s",
+      "personas": 1414,
+      "vendio": 0.1867043847241867,
+      "prediccion_media": 0.1885446161031723,
+      "auroc": 0.6733036890645586,
+      "calibration_intercept": 0.2649133801460266,
+      "calibration_slope": 1.2017500400543213
+    },
+    {
+      "grupo": "Principiantes",
+      "valor": "No",
+      "personas": 10521,
+      "vendio": 0.1937078224503374,
+      "prediccion_media": 0.19452035427093506,
+      "auroc": 0.6614389952912811,
+      "calibration_intercept": 0.10341288894414902,
+      "calibration_slope": 1.0818148851394653
+    },
+    {
+      "grupo": "Principiantes",
+      "valor": "S\u00ed",
+      "personas": 420,
+      "vendio": 0.3238095238095238,
+      "prediccion_media": 0.28127211332321167,
+      "auroc": 0.7805768434134217,
+      "calibration_intercept": 0.5846388339996338,
+      "calibration_slope": 1.3948496580123901
+    }
+  ],
   "trained_on": "2026-11-19",
-  "trained_at": "2026-11-19T22:55:08-05:00",
+  "trained_at": "2026-11-19T23:28:39-05:00",
   "base_rate": 0.19868381966501383,
   "cutoffs": [
     0.15725082159042358,
@@ -32,7 +146,7 @@
     "pandas": "3.0.6"
   },
   "git": {
-    "commit": "04d661e5531587c5167862d04013f3192ef0a243",
+    "commit": "97b0da1fadc5194af99682f6d07cd080cfd50371",
     "uncommitted_changes": false
   },
   "preprocessing": "Ninguno: XGBoost no necesita escalado y la tabla no tiene datos faltantes",
