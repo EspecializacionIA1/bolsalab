@@ -52,3 +52,5 @@ MLFLOW_EXPERIMENTS = {
     "ajuste": "bolsalab-ajuste",              # las pruebas del ajuste por familias
     "final": "bolsalab-modelo-final",         # --prototype y --final
 }
+# Nombre del modelo en el registro de MLflow; cada --final crea una versión nueva.
+MLFLOW_REGISTERED_MODEL = "bolsalab-reaccion-caidas"
