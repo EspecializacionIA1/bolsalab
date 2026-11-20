@@ -24,7 +24,7 @@ import hashlib
 import json
 import platform
 import subprocess
-from datetime import date
+from datetime import date, datetime
 
 import joblib
 import numpy as np
@@ -343,7 +343,9 @@ def export_model(model, metrics: dict, X_train: pd.DataFrame, y_train: pd.Series
     artifact = {"model": model, "explainer": shap.TreeExplainer(trees),
                 "features": list(X_train.columns), "classes": [int(c) for c in model.classes_]}
     joblib.dump(artifact, MODELS_DIR / "crash_reaction_v1.joblib")
+    # La hora exacta sirve para registrar la corrida en MLflow con su hora real, aunque se suba después.
     metadata = {**metrics, "trained_on": str(date.today()),
+                "trained_at": datetime.now().isoformat(timespec="seconds"),
                 "base_rate": float(y_train.mean()),
                 "cutoffs": category_cutoffs(model, X_train, y_train),
                 **traceability(y_train, y_test),
