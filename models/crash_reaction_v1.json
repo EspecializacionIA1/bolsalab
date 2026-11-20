@@ -31,8 +31,8 @@
     "pandas": "3.0.6"
   },
   "git": {
-    "commit": "83ebc4738f9af6255b8babef0eb970fdcf5b4041",
-    "uncommitted_changes": true
+    "commit": "bc659bd5da2c5ef7c41e619f5e4663d1e92cdea3",
+    "uncommitted_changes": false
   },
   "preprocessing": "Ninguno: XGBoost no necesita escalado y la tabla no tiene datos faltantes",
   "cv_estimate": {
