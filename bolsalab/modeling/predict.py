@@ -21,7 +21,6 @@ from pathlib import Path
 
 import joblib
 import pandas as pd
-import shap
 
 from bolsalab.config import MODELS_DIR
 
@@ -128,12 +127,12 @@ def factor_label(feature: str, answers: dict) -> str:
 class CrashReactionModel:
     def __init__(self, artifact_path: str | Path = ARTIFACT):
         artifact_path = Path(artifact_path)
-        self.pipeline = joblib.load(artifact_path)
-        self.metadata = json.loads(artifact_path.with_suffix(".json").read_text(encoding="utf-8"))
+        artifact = joblib.load(artifact_path)
+        self.pipeline = artifact["model"]
         # Explicación exacta para árboles, en la escala interna del modelo (log-odds).
-        # Con parada temprana, el XGBoost va dentro del envoltorio (estimator_).
-        model = self.pipeline[-1]
-        self.explainer = shap.TreeExplainer(getattr(model, "estimator_", model))
+        # Viene armada en el paquete; aquí no se rehace nada.
+        self.explainer = artifact["explainer"]
+        self.metadata = json.loads(artifact_path.with_suffix(".json").read_text(encoding="utf-8"))
 
     def explain(self, X: pd.DataFrame) -> pd.Series:
         """Aporte SHAP de cada variable para una persona. Edad y edad² van juntas."""

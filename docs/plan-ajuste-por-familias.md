@@ -22,18 +22,18 @@ Hasta ahora corrimos 32 experimentos y ninguno superó a XGBoost. Con este plan 
 |---|---|---|---|
 | 1 | **Parada temprana** en XGBoost, LightGBM y CatBoost: el modelo agrega árboles hasta que deja de mejorar | Antes usaban 300 árboles fijos, sin razón | El AUROC no cambió (0,659). La calibración mejoró: la pendiente pasó de 1,06 a 0,99. Brecha de 0,022 |
 | 2 | **Poda**: `gamma` exige que cada corte valga la pena y `reg_lambda` castiga las hojas con riesgos extremos | Los modelos siempre eligen la profundidad mínima, señal de mucho ruido | El AUROC no cambió (0,660). La brecha bajó a 0,019. Lo que pesó fue `reg_lambda` |
-| 3 | **Restricciones monótonas**: acertar las preguntas de finanzas nunca puede subir el riesgo | SHAP y Bawalle et al. (2025) muestran esa dirección, y la app enseña eso | Por correr |
-| 4 | **Random Forest con poda**: `ccp_alpha` corta las ramas que aportan poco y `max_features` limita cuántas variables mira cada corte | Es la poda clásica que mencionó el tutor | Por correr |
+| 3 | **Restricciones monótonas**: acertar las preguntas de finanzas nunca puede subir el riesgo | SHAP y Bawalle et al. (2025) muestran esa dirección, y la app enseña eso | No se hizo: con el visto bueno de nuestro tutor cerramos las pruebas el 18 de noviembre, porque el límite está en la información y no en el modelo |
+| 4 | **Random Forest con poda**: `ccp_alpha` corta las ramas que aportan poco y `max_features` limita cuántas variables mira cada corte | Es la poda clásica que mencionó el tutor | No se hizo: con el visto bueno nuestro tutor cerramos las pruebas el 18 de noviembre, porque el límite está en la información y no en el modelo |
 | 5 | **Variables** (ver abajo) | Una variable nueva solo ayuda si trae información que el modelo no tenía | Ninguna variable nueva mejoró (todas a menos de 0,001). Quitar las dos preguntas que la app no hace cuesta 0,0075: se quedan. El modelo conserva las 17 variables |
-| 6 | **Redes en PyTorch** (ver abajo) | Lo pidió el tutor | Por correr |
-| 7 | **Cierre**: congelar el modelo y medirlo una vez en el 20 % de prueba y en la NFCS | | Al final |
+| 6 | **Redes en PyTorch** (ver abajo) | Lo pidió el tutor | Hecho. Ninguna red pasó de 0,66, así que la configuración final no cambia. El código y los números exactos se suman al unir su rama |
+| 7 | **Cierre**: congelar el modelo y medirlo una sola vez en el 20 % de prueba, con las reglas del protocolo (sección 7). La NFCS no la usamos para validar porque tiene muy pocos casos (documento del Ciclo 3B, sección 3) | | Configuración elegida: XGBoost con parada temprana y poda. Falta la prueba final |
 | 8 | **Búsqueda con Optuna** en XGBoost: busca en rangos completos en vez de listas cortas (se corre antes del cierre; el 8 es solo el siguiente número libre) | Queremos descartar que una combinación mejor se nos esté escapando entre los valores de la rejilla | El AUROC no cambió (0,6595). Brecha de 0,016. Cada partición eligió valores distintos: no hay una combinación mejor que las demás |
 | 9 | **Ideas de la literatura**: aleatoriedad en XGBoost (`subsample`, `colsample_bytree`, `min_child_weight`) y promedio de XGBoost, CatBoost y regresión logística | Son las dos ideas de los benchmarks recientes que no habíamos probado; las dos buscan no aumentar el sobreajuste | Ninguna pasó 0,6636. Aleatoriedad 0,6611 (brecha 0,022) y promedio 0,6597 (brecha 0,014, la más baja). El XGBoost oficial sigue ganando |
 | 10 | **Etiqueta de tres clases**: el modelo aprende "mantuvo", "vendió parte" y "vendió todo", y la probabilidad de vender es la suma de las dos ventas | `sold` junta dos comportamientos distintos; verlos por separado podría ayudar a separar a quien vende | No cambió: 0,6593 frente a 0,6595. Brecha 0,016, calibración peor (1,058) |
 
 El detalle de cada resultado está en `docs/experimentos.md`, sección 3, y los números en `reports/tuning.csv`.
 
-**Lo que llevamos:** después de dos pasos y de la búsqueda con Optuna, el límite parece estar en la información del cuestionario y no en el ajuste del modelo.
+**Lo que llevamos:** quince pruebas y ninguna pasó de 0,6636; las que no quitan información quedan entre 0,6573 y 0,6612, una franja del tamaño del ruido. El límite está en la información del cuestionario, no en el ajuste del modelo.
 
 ## Decisiones tomadas
 
@@ -41,22 +41,13 @@ El detalle de cada resultado está en `docs/experimentos.md`, sección 3, y los 
 - **Pesos por clase.** No probamos la pérdida ponderada, que le da más peso a quien vendió, porque el protocolo (sección 5) prohíbe los pesos por clase. La pérdida focal va sin su parte de peso por clase.
 - **Parada temprana en todos los pasos que siguen.** Mejoró la calibración sin costo.
 
-## Lo que falta, en concreto
+## Cierre del plan
 
-**Paso 5, variables**
+- **Hicimos** los pasos 1, 2, 5, 6, 8, 9 y 10. Ninguna prueba pasó de 0,6636.
+- **No hicimos** los pasos 3 y 4. Con el visto bueno del tutor cerramos las pruebas, porque más ajuste no iba a subir el AUROC.
+- **Configuración final:** XGBoost con parada temprana y poda (protocolo, sección 7). La mediremos una sola vez en el 20 % de prueba.
 
-| Prueba | Por qué |
-|---|---|
-| Exceso de confianza con la definición del artículo | La columna que usamos no la sigue en 992 personas: las de confianza 5 y los 3 aciertos (protocolo, sección 3) |
-| Modelo solo con lo que pregunta la app | La app no pregunta `risk_aversion` ni `short_term_view`. Queremos saber cuánto AUROC perdemos sin ellas |
-| Ingreso y activos como categorías | El tramo 6 no es "el doble" del tramo 3 |
-| Agregar la suma de aciertos (0 a 3) | Con profundidad 3, a un árbol le cuesta sumar tres preguntas |
-| Marca de hombre con 0 o 1 aciertos (exploratoria) | En el entrenamiento, fallar las preguntas pesa casi el doble en los hombres |
-| Marca de poco colchón financiero (ingreso y activos en los dos tramos más bajos) | Quien gana poco y tiene pocos ahorros no puede aguantar una pérdida |
-
-Las dos últimas salieron de la exploración (`notebooks/3_mejora_auroc/06 - Exploración de variables.ipynb`). Las reglas de las seis pruebas están en el protocolo, sección 7.
-
-**Paso 6, redes en PyTorch.** Las conectamos con **skorch**, una librería que hace que una red de PyTorch funcione como un modelo de scikit-learn, para medirlas con las mismas reglas.
+**Diseño de las redes en PyTorch (paso 6).** Las conectamos con **skorch**, una librería que hace que una red de PyTorch funcione como un modelo de scikit-learn, para medirlas con las mismas reglas.
 
 | Red | Cómo es | Por qué |
 |---|---|---|
@@ -66,11 +57,7 @@ Las dos últimas salieron de la exploración (`notebooks/3_mejora_auroc/06 - Exp
 
 Cada red se prueba con dos funciones de pérdida, es decir, la fórmula del error que la red intenta bajar: la estándar (entropía cruzada) y la focal (Lin et al., 2017). La focal se concentra en los casos difíciles. No esperamos que superen al boosting: en tablas como la nuestra suele ganar el boosting (Grinsztajn et al., 2022).
 
-## Pendientes del equipo
-
-- Preguntarle al tutor si "otra función de evaluación" es la función de pérdida o la métrica con que se eligen los hiperparámetros.
-- Fijar la fecha de cierre de esta ronda.
-- Responsables propuestos: Dilan el boosting (pasos 1 a 3), Luis Random Forest y variables (pasos 4 y 5), y las redes (paso 6) entre Juan y Dilan.
+**Reparto original del plan:** Dilan el boosting (pasos 1 a 3), Luis Random Forest y variables (pasos 4 y 5), y las redes (paso 6) entre Juan y Dilan.
 
 ## Referencias
 

@@ -1,17 +1,46 @@
 {
-  "winner": "xgboost",
+  "winner": "xgboost|poda",
   "params": {
-    "model__learning_rate": 0.03,
-    "model__max_depth": 3
+    "model__estimator__gamma": 0.5,
+    "model__estimator__learning_rate": 0.03,
+    "model__estimator__max_depth": 3,
+    "model__estimator__reg_lambda": 10
   },
   "test": null,
-  "trained_on": "2026-10-23",
-  "sklearn": "1.9.1",
+  "trained_on": "2026-11-18",
   "base_rate": 0.19868381966501383,
   "cutoffs": [
-    0.15899366140365598,
-    0.22089140613873795
+    0.15725082159042358,
+    0.2215720663468043
   ],
+  "dataset_sha256": "e020dd974781c7b6b74b7c93a6e5e45a43e30fdf893e1509874e26fa4283235c",
+  "split": {
+    "test_size": 0.2,
+    "random_state": 42,
+    "train_rows": 43763,
+    "test_rows": 10941,
+    "train_sold_rate": 0.19868381966501383,
+    "test_sold_rate": 0.19870212960424094
+  },
+  "versions": {
+    "python": "3.12.12",
+    "sklearn": "1.9.1",
+    "xgboost": "3.4.1",
+    "shap": "0.52.0",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6"
+  },
+  "git": {
+    "commit": "bc659bd5da2c5ef7c41e619f5e4663d1e92cdea3",
+    "uncommitted_changes": false
+  },
+  "preprocessing": "Ninguno: XGBoost no necesita escalado y la tabla no tiene datos faltantes",
+  "cv_estimate": {
+    "auroc": 0.6595230502543509,
+    "auroc_sd": 0.0036680864805852,
+    "calibration_slope": 1.009590220451355,
+    "overfit_gap": 0.0193688137948233
+  },
   "not_asked": {
     "risk_aversion": 0.5,
     "short_term_view": 2.0

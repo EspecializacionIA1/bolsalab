@@ -20,13 +20,18 @@ app, sin medirla en la prueba; --final la reemplaza después con las métricas.
 """
 
 import argparse
+import hashlib
 import json
+import platform
+import subprocess
 from datetime import date
 
 import joblib
 import numpy as np
 import pandas as pd
+import shap
 import sklearn
+import xgboost
 from catboost import CatBoostClassifier
 from lightgbm import LGBMClassifier
 from sklearn.base import clone
@@ -46,7 +51,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
-from bolsalab.config import MODELS_DIR, RANDOM_STATE, REPORTS_DIR
+from bolsalab.config import MODELS_DIR, PROJ_ROOT, RANDOM_STATE, REPORTS_DIR
 from bolsalab.features import TRAINING_FILE
 from bolsalab.features import main as build_training_table
 from bolsalab.modeling.optuna_search import OptunaSearch
@@ -224,6 +229,8 @@ def evaluate_on_test(model, X_test: pd.DataFrame, y_test: pd.Series) -> dict:
     samples = (rng.integers(0, len(p), len(p)) for _ in range(1000))
     boot = [roc_auc_score(y_test.iloc[i], p[i]) for i in samples]
     intercept, slope = calibration_line(y_test, p)
+    # El 10 % de personas con la probabilidad más alta: qué parte de ellas vendió.
+    top = np.argsort(-p)[: int(np.ceil(len(p) / 10))]
     return {
         "auroc": roc_auc_score(y_test, p),
         "auroc_ci95": list(np.percentile(boot, [2.5, 97.5])),
@@ -231,6 +238,8 @@ def evaluate_on_test(model, X_test: pd.DataFrame, y_test: pd.Series) -> dict:
         "brier": brier_score_loss(y_test, p),
         "calibration_intercept": intercept,
         "calibration_slope": slope,
+        "sold_rate": float(y_test.mean()),
+        "sold_rate_top10": float(y_test.iloc[top].mean()),
     }
 
 
@@ -279,13 +288,65 @@ def fit_winner(X_train: pd.DataFrame, y_train: pd.Series):
     return FINAL_MODEL, final_search().fit(X_train, y_train)
 
 
-def export_model(model, metrics: dict, X_train: pd.DataFrame, y_train: pd.Series) -> None:
-    """Guarda el Pipeline ganador en models/ como .joblib y su metadata en .json."""
+def git_state() -> dict:
+    """Commit con el que se entrenó y si había cambios sin guardar en el código.
+
+    No cuenta models/ ni reports/, que los escribe el mismo entrenamiento, ni
+    los archivos que no están en git.
+    """
+    def git(*args):
+        return subprocess.run(["git", *args], cwd=PROJ_ROOT, capture_output=True,
+                              text=True, check=True).stdout.strip()
+    try:
+        changes = git("status", "--porcelain", "--untracked-files=no", "--",
+                      ".", ":!models", ":!reports")
+        return {"commit": git("rev-parse", "HEAD"), "uncommitted_changes": bool(changes)}
+    except (OSError, subprocess.CalledProcessError):
+        return {"commit": None, "uncommitted_changes": None}
+
+
+def cv_estimate() -> dict:
+    """Lo que dio la configuración final en la validación cruzada, para compararlo con la prueba."""
+    # tuning.py importa este módulo; por eso se importa aquí y no arriba.
+    from bolsalab.modeling.tuning import TUNING_FILE
+    results = pd.read_csv(TUNING_FILE).drop_duplicates("experiment", keep="last")
+    row = results.set_index("experiment").loc[FINAL_MODEL]
+    return {k: float(row[k]) for k in ["auroc", "auroc_sd", "calibration_slope", "overfit_gap"]}
+
+
+def traceability(y_train: pd.Series, y_test: pd.Series) -> dict:
+    """Con qué datos, partición, código y versiones se entrenó el modelo."""
+    return {
+        "dataset_sha256": hashlib.sha256(TRAINING_FILE.read_bytes()).hexdigest(),
+        "split": {"test_size": 0.2, "random_state": RANDOM_STATE,
+                  "train_rows": len(y_train), "test_rows": len(y_test),
+                  "train_sold_rate": float(y_train.mean()), "test_sold_rate": float(y_test.mean())},
+        "versions": {"python": platform.python_version(), "sklearn": sklearn.__version__,
+                     "xgboost": xgboost.__version__, "shap": shap.__version__,
+                     "numpy": np.__version__, "pandas": pd.__version__},
+        "git": git_state(),
+        "preprocessing": "Ninguno: XGBoost no necesita escalado y la tabla no tiene datos faltantes",
+        "cv_estimate": cv_estimate(),
+    }
+
+
+def export_model(model, metrics: dict, X_train: pd.DataFrame, y_train: pd.Series,
+                 y_test: pd.Series) -> None:
+    """Guarda el modelo en models/: el paquete en .joblib y su metadata en .json.
+
+    El paquete trae todo lo que necesita quien lo cargue: el Pipeline, el
+    explicador SHAP ya armado, las variables en orden y las clases.
+    """
     MODELS_DIR.mkdir(exist_ok=True)
-    joblib.dump(model, MODELS_DIR / "crash_reaction_v1.joblib")
-    metadata = {**metrics, "trained_on": str(date.today()), "sklearn": sklearn.__version__,
+    # Con parada temprana, el XGBoost va dentro del envoltorio (estimator_).
+    trees = getattr(model[-1], "estimator_", model[-1])
+    artifact = {"model": model, "explainer": shap.TreeExplainer(trees),
+                "features": list(X_train.columns), "classes": [int(c) for c in model.classes_]}
+    joblib.dump(artifact, MODELS_DIR / "crash_reaction_v1.joblib")
+    metadata = {**metrics, "trained_on": str(date.today()),
                 "base_rate": float(y_train.mean()),
                 "cutoffs": category_cutoffs(model, X_train, y_train),
+                **traceability(y_train, y_test),
                 **app_reference(X_train)}
     (MODELS_DIR / "crash_reaction_v1.json").write_text(
         json.dumps(metadata, indent=2, default=float), encoding="utf-8")
@@ -303,20 +364,30 @@ def run_benchmark(X_train: pd.DataFrame, y_train: pd.Series) -> None:
 
 
 def run_final(X_train, X_test, y_train, y_test) -> None:
-    """Etapa 2: entrena al ganador, lo mide una vez en la prueba y lo exporta."""
+    """Etapa 2: entrena la configuración final, la mide una vez en la prueba y la exporta."""
+    # groups.py importa este módulo; por eso se importa aquí y no arriba.
+    from bolsalab.modeling.groups import GROUPS_TEST_FILE, table_by_group
     winner, final = fit_winner(X_train, y_train)
+    model = final.best_estimator_
+    groups = table_by_group(X_test, y_test, model.predict_proba(X_test)[:, 1])
     metrics = {"winner": winner, "params": final.best_params_,
-               "test": evaluate_on_test(final.best_estimator_, X_test, y_test)}
+               "test": evaluate_on_test(model, X_test, y_test),
+               "test_groups": groups.to_dict("records")}
     print(f"Ganador: {winner} | prueba final: {metrics['test']}")
-    export_model(final.best_estimator_, metrics, X_train, y_train)
+    print(groups.round(3).to_string(index=False))
+    groups.to_csv(GROUPS_TEST_FILE, index=False)
+    export_model(model, metrics, X_train, y_train, y_test)
 
 
-def run_prototype(X_train: pd.DataFrame, y_train: pd.Series) -> None:
-    """Entrena al ganador y lo exporta para la app sin mirar la prueba."""
+def run_prototype(X_train, y_train, y_test) -> None:
+    """Entrena la configuración final y la exporta para la app sin mirar la prueba.
+
+    y_test solo se usa para anotar el tamaño de la partición en la metadata.
+    """
     winner, search = fit_winner(X_train, y_train)
     metrics = {"winner": winner, "params": search.best_params_, "test": None}
     print(f"Ganador: {winner} {search.best_params_} | exportado sin medir en la prueba")
-    export_model(search.best_estimator_, metrics, X_train, y_train)
+    export_model(search.best_estimator_, metrics, X_train, y_train, y_test)
 
 
 def main() -> None:
@@ -336,7 +407,7 @@ def main() -> None:
     if args.final:
         run_final(X_train, X_test, y_train, y_test)
     elif args.prototype:
-        run_prototype(X_train, y_train)
+        run_prototype(X_train, y_train, y_test)
     else:
         run_benchmark(X_train, y_train)
 
