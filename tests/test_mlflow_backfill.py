@@ -96,3 +96,11 @@ def test_source_is_relative_to_the_project():
     from bolsalab.config import PROJ_ROOT
     from bolsalab.modeling.mlflow_backfill import source_name
     assert source_name(PROJ_ROOT / "reports" / "tuning.csv") == "reports/tuning.csv"
+
+
+def test_short_relative_sqlite_address_works(tmp_path, monkeypatch):
+    """La forma corta de la documentación de MLflow (sqlite:///mlflow.db) no rompe."""
+    from bolsalab.modeling.mlflow_backfill import artifact_location
+    monkeypatch.chdir(tmp_path)
+    assert artifact_location("sqlite:///mlflow.db") == (tmp_path / "mlruns").as_uri()
+    assert artifact_location("http://servidor:5000") is None

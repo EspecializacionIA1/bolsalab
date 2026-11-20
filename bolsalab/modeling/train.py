@@ -24,7 +24,7 @@ import hashlib
 import json
 import platform
 import subprocess
-from datetime import date, datetime
+from datetime import datetime
 
 import joblib
 import numpy as np
@@ -344,8 +344,9 @@ def export_model(model, metrics: dict, X_train: pd.DataFrame, y_train: pd.Series
                 "features": list(X_train.columns), "classes": [int(c) for c in model.classes_]}
     joblib.dump(artifact, MODELS_DIR / f"{MODEL_ARTIFACT_NAME}.joblib")
     # La hora exacta sirve para registrar la corrida en MLflow con su hora real, aunque se suba después.
-    metadata = {**metrics, "trained_on": str(date.today()),
-                "trained_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+    now = datetime.now().astimezone()
+    metadata = {**metrics, "trained_on": now.date().isoformat(),
+                "trained_at": now.isoformat(timespec="seconds"),
                 "base_rate": float(y_train.mean()),
                 "cutoffs": category_cutoffs(model, X_train, y_train),
                 **traceability(y_train, y_test),

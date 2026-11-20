@@ -39,7 +39,7 @@ def artifact_location(tracking_uri: str) -> str | None:
     """
     if not tracking_uri.startswith("sqlite:///"):
         return None
-    return (Path(tracking_uri.removeprefix("sqlite:///")).parent / "mlruns").as_uri()
+    return (Path(tracking_uri.removeprefix("sqlite:///")).resolve().parent / "mlruns").as_uri()
 
 
 def experiment_id(client: MlflowClient, name: str, tracking_uri: str) -> str:

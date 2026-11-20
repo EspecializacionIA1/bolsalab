@@ -16,7 +16,7 @@ from mlflow.tracking import MlflowClient
 from sklearn.pipeline import Pipeline
 from xgboost import XGBClassifier
 
-from bolsalab.config import MLFLOW_EXPERIMENTS, MLFLOW_REGISTERED_MODEL
+from bolsalab.config import MLFLOW_EXPERIMENTS, MLFLOW_REGISTERED_MODEL, MODEL_ARTIFACT_NAME
 from bolsalab.modeling import mlflow_tracking, train
 from bolsalab.modeling.early_stopping import EarlyStoppingBooster
 from bolsalab.modeling.mlflow_tracking import log_exported_model
@@ -54,7 +54,7 @@ def copy_with(folder, tmp_path, name, **changes):
     """Copia del modelo exportado con cambios en su .json."""
     copy = tmp_path / name
     shutil.copytree(folder, copy)
-    path = copy / "crash_reaction_v1.json"
+    path = copy / f"{MODEL_ARTIFACT_NAME}.json"
     meta = {**json.loads(path.read_text(encoding="utf-8")), **changes}
     path.write_text(json.dumps({k: v for k, v in meta.items() if v is not ...}), encoding="utf-8")
     return copy
@@ -101,7 +101,7 @@ def test_final_logs_test_metrics_groups_and_version_one(final_folder, uri):
     assert run.data.metrics["test_auroc"] == pytest.approx(0.66)
     assert run.data.metrics["test_auroc_ci95_bajo"] == pytest.approx(0.65)
     files = {artifact.path for artifact in client.list_artifacts(run_id)}
-    assert {"crash_reaction_v1.joblib", "crash_reaction_v1.json", "groups_test.json"} <= files
+    assert {f"{MODEL_ARTIFACT_NAME}.joblib", f"{MODEL_ARTIFACT_NAME}.json", "groups_test.json"} <= files
     assert [int(v.version) for v in versions(uri)] == [1]
 
 
@@ -110,7 +110,7 @@ def test_registered_model_predicts_like_the_package(final_folder, uri):
     log_exported_model(final_folder, uri)
     mlflow.set_tracking_uri(uri)
     registered = mlflow.sklearn.load_model(f"models:/{MLFLOW_REGISTERED_MODEL}/1")
-    package = mlflow_tracking.joblib.load(final_folder / "crash_reaction_v1.joblib")
+    package = mlflow_tracking.joblib.load(final_folder / f"{MODEL_ARTIFACT_NAME}.joblib")
     X = pd.DataFrame(np.zeros((3, len(package["features"]))), columns=package["features"])
     np.testing.assert_allclose(registered.predict_proba(X), package["model"].predict_proba(X))
 
@@ -124,7 +124,7 @@ def test_logging_twice_does_not_duplicate(final_folder, uri):
 
 
 def test_keeps_the_real_training_time(exported, uri):
-    meta = json.loads((exported / "crash_reaction_v1.json").read_text(encoding="utf-8"))
+    meta = json.loads((exported / f"{MODEL_ARTIFACT_NAME}.json").read_text(encoding="utf-8"))
     run_id = log_exported_model(exported, uri)
     expected = int(datetime.fromisoformat(meta["trained_at"]).timestamp() * 1000)
     assert MlflowClient(uri).get_run(run_id).info.start_time == expected
@@ -142,17 +142,34 @@ def test_files_go_next_to_the_database_in_use(exported, uri, tmp_path):
     assert artifact_uri.startswith((tmp_path / "mlruns").as_uri())
 
 
+def broken(*args, **kwargs):
+    raise ConnectionError("servidor caído")
+
+
 def test_failed_registration_leaves_no_half_run_and_retry_works(final_folder, uri, monkeypatch):
     """Si el registro de la versión falla, la corrida se borra y el reintento queda completo."""
-    def broken(*args, **kwargs):
-        raise ConnectionError("registro caído")
     with monkeypatch.context() as patch:
-        patch.setattr(mlflow, "register_model", broken)
+        patch.setattr(MlflowClient, "create_model_version", broken)
         with pytest.raises(ConnectionError):
             log_exported_model(final_folder, uri)
     assert final_runs(uri) == []
     log_exported_model(final_folder, uri)
     assert len(final_runs(uri)) == 1
+    assert [int(v.version) for v in versions(uri)] == [1]
+
+
+def test_half_run_left_behind_is_redone_on_retry(final_folder, uri, monkeypatch):
+    """Si falla el registro y también el borrado, el reintento no da por buena la corrida a medias."""
+    with monkeypatch.context() as patch:
+        patch.setattr(MlflowClient, "create_model_version", broken)
+        patch.setattr(MlflowClient, "delete_run", broken)
+        with pytest.raises(ConnectionError):
+            log_exported_model(final_folder, uri)
+    assert len(final_runs(uri)) == 1  # quedó a medias
+    run_id = log_exported_model(final_folder, uri)
+    runs = final_runs(uri)
+    assert [run.info.run_id for run in runs] == [run_id]
+    assert runs[0].data.tags["completa"] == "si"
     assert [int(v.version) for v in versions(uri)] == [1]
 
 
@@ -167,11 +184,13 @@ def test_training_does_not_fail_if_mlflow_fails(monkeypatch, capsys):
     assert "uv run python -m bolsalab.modeling.mlflow_tracking" in output
 
 
-def test_leaves_the_global_mlflow_address_as_it_was(final_folder, uri, tmp_path):
-    before = f"sqlite:///{(tmp_path / 'otra.db').as_posix()}"
-    mlflow.set_tracking_uri(before)
+def test_does_not_change_global_mlflow_settings(final_folder, uri, monkeypatch):
+    """Registrar no cambia la dirección global de MLflow ni deja variables de entorno."""
+    monkeypatch.delenv("MLFLOW_TRACKING_URI", raising=False)
+    before = mlflow.get_tracking_uri()
     log_exported_model(final_folder, uri)
     assert mlflow.get_tracking_uri() == before
+    assert "MLFLOW_TRACKING_URI" not in __import__("os").environ
 
 
 def test_registered_model_gives_probabilities_to_any_reader(final_folder, uri):
@@ -179,6 +198,6 @@ def test_registered_model_gives_probabilities_to_any_reader(final_folder, uri):
     log_exported_model(final_folder, uri)
     mlflow.set_tracking_uri(uri)
     generic = mlflow.pyfunc.load_model(f"models:/{MLFLOW_REGISTERED_MODEL}/1")
-    package = mlflow_tracking.joblib.load(final_folder / "crash_reaction_v1.joblib")
+    package = mlflow_tracking.joblib.load(final_folder / f"{MODEL_ARTIFACT_NAME}.joblib")
     X = pd.DataFrame(np.zeros((3, len(package["features"]))), columns=package["features"])
     np.testing.assert_allclose(generic.predict(X), package["model"].predict_proba(X))

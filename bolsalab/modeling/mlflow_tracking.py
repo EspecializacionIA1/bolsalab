@@ -19,6 +19,7 @@ el modelo que está en models/ (por ejemplo, si MLflow falló al entrenar):
 """
 
 import json
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -59,6 +60,23 @@ def run_metrics(meta: dict) -> dict:
     return metrics
 
 
+def log_mlflow_model(client: MlflowClient, run_id: str, package: Path) -> None:
+    """Sube el modelo en el formato de MLflow, que es el que usa el registro de modelos."""
+    with tempfile.TemporaryDirectory() as folder:
+        # pyfunc_predict_fn: quien lo cargue desde el registro recibe probabilidades, no 0 o 1.
+        mlflow.sklearn.save_model(joblib.load(package)["model"], f"{folder}/modelo",
+                                  skops_trusted_types=TRUSTED_TYPES, pyfunc_predict_fn="predict_proba")
+        client.log_artifacts(run_id, f"{folder}/modelo", "modelo")
+
+
+def register_version(client: MlflowClient, run_id: str) -> None:
+    """Crea una versión nueva del modelo en el registro, con el modelo de la corrida."""
+    if not client.search_registered_models(f"name = '{MLFLOW_REGISTERED_MODEL}'"):
+        client.create_registered_model(MLFLOW_REGISTERED_MODEL)
+    source = f"{client.get_run(run_id).info.artifact_uri}/modelo"
+    client.create_model_version(MLFLOW_REGISTERED_MODEL, source, run_id)
+
+
 def log_exported_model(models_dir: Path = MODELS_DIR,
                        tracking_uri: str = MLFLOW_TRACKING_URI) -> str:
     """Registra el modelo exportado y devuelve el id de su corrida."""
@@ -73,21 +91,24 @@ def log_exported_model(models_dir: Path = MODELS_DIR,
 
     client = MlflowClient(tracking_uri)
     exp_id = experiment_id(client, MLFLOW_EXPERIMENTS["final"], tracking_uri)
-    # Si esta corrida ya está en el servidor (mismo tipo y misma hora), no se duplica.
+    # Si esta corrida ya está completa en el servidor (mismo tipo y misma hora), no se duplica.
+    # Las que quedaron a medias de un intento anterior se borran y se hace de nuevo.
     found = client.search_runs([exp_id], filter_string=(
         f"tags.tipo = '{kind}' and tags.trained_at = '{meta['trained_at']}'"))
-    if found:
-        return found[0].info.run_id
+    complete = [run for run in found if run.data.tags.get("completa") == "si"]
+    if complete:
+        return complete[0].info.run_id
+    for run in found:
+        client.delete_run(run.info.run_id)
 
     start = int(datetime.fromisoformat(meta["trained_at"]).timestamp() * 1000)
     tags = {"tipo": kind, "trained_at": meta["trained_at"], "git_commit": str(meta["git"]["commit"]),
             "uncommitted_changes": str(meta["git"]["uncommitted_changes"]),
             "dataset_sha256": meta["dataset_sha256"]}
     run_id = client.create_run(exp_id, start_time=start, tags=tags, run_name=kind).info.run_id
-    # MLflow guarda su dirección como algo global del programa; al final se deja como estaba.
-    previous_uri = mlflow.get_tracking_uri()
-    # Si algo falla a mitad de camino, la corrida se borra: así el reintento
-    # empieza limpio y no deja una corrida "final" sin su versión del modelo.
+    # Si algo falla a mitad de camino (también con Ctrl+C), la corrida se borra
+    # para que el reintento empiece limpio. La etiqueta "completa" se pone al
+    # final: una corrida sin ella nunca cuenta como hecha.
     try:
         for name, value in run_params(meta).items():
             client.log_param(run_id, name, value)
@@ -98,23 +119,15 @@ def log_exported_model(models_dir: Path = MODELS_DIR,
         if kind == "final":
             # Los grupos de la prueba salen del mismo .json, así que son de este entrenamiento.
             client.log_dict(run_id, meta["test_groups"], "groups_test.json")
-        if kind == "final":
-            # El registro de modelos necesita el modelo en el formato de MLflow.
-            mlflow.set_tracking_uri(tracking_uri)
-            with mlflow.start_run(run_id=run_id):
-                # pyfunc_predict_fn: quien lo cargue desde el registro recibe probabilidades, no 0 o 1.
-                info = mlflow.sklearn.log_model(joblib.load(package)["model"], name="modelo",
-                                                skops_trusted_types=TRUSTED_TYPES,
-                                                pyfunc_predict_fn="predict_proba")
+            log_mlflow_model(client, run_id, package)
         client.set_terminated(run_id, end_time=start)
-        # La versión del modelo se crea al final, cuando todo lo demás ya quedó.
         if kind == "final":
-            mlflow.register_model(info.model_uri, MLFLOW_REGISTERED_MODEL)
-    except Exception:
+            # La versión del modelo se crea al final, cuando todo lo demás ya quedó.
+            register_version(client, run_id)
+        client.set_tag(run_id, "completa", "si")
+    except BaseException:
         client.delete_run(run_id)
         raise
-    finally:
-        mlflow.set_tracking_uri(previous_uri)
     return run_id
 
 
