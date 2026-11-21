@@ -1,0 +1,80 @@
+# Revisiones automáticas de cada PR hacia main. No toca AWS ni el servidor.
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Solo lectura del repo: este pipeline no publica nada.
+permissions:
+  contents: read
+
+# Si llega un commit nuevo al mismo PR, se cancela la revisión anterior.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Pruebas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.9.27"
+          enable-cache: true
+
+      # --locked: falla si uv.lock no coincide con pyproject.toml.
+      - name: Instalar dependencias
+        run: uv sync --locked --group api
+
+      - name: Lint del backend
+        run: uv run ruff check backend
+
+      # Las pruebas que necesitan los datos de Japón se saltan solas: los datos no están en git.
+      - name: Pruebas
+        run: uv run pytest -q
+
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.14.4"
+
+      - name: Formato
+        run: terraform fmt -check -recursive infra
+
+      # -backend=false: no se conecta al bucket del estado ni a AWS.
+      - name: Validar bootstrap
+        working-directory: infra/bootstrap
+        run: terraform init -backend=false -input=false && terraform validate
+
+      - name: Validar main
+        working-directory: infra/main
+        run: terraform init -backend=false -input=false && terraform validate
+
+  docker:
+    name: Imagen de la API
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      # Solo construye para comprobar que el Dockerfile funciona; no publica la imagen.
+      - name: Construir
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: backend/Dockerfile
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
