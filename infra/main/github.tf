@@ -19,7 +19,12 @@ resource "aws_iam_role" "github_deploy" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          "token.actions.githubusercontent.com:sub" = "repo:${var.github_repo}:ref:refs/heads/main"
+          # GitHub usa el formato "inmutable" (nombre@id), que impide reusar el permiso si
+          # alguien recrea un repo con el mismo nombre. Se acepta también el formato clásico.
+          "token.actions.githubusercontent.com:sub" = [
+            "repo:${var.github_repo_immutable}:ref:refs/heads/main",
+            "repo:${var.github_repo}:ref:refs/heads/main",
+          ]
         }
       }
     }]
