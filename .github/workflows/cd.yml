@@ -1,0 +1,76 @@
+# Despliegue en el servidor después de cada merge a main, solo si la CI pasó.
+# Hace lo mismo que se hacía a mano por SSM: git pull y deploy/start.sh.
+name: CD
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write   # para pedir credenciales temporales a AWS con OIDC
+
+# Un despliegue a la vez; si llega otro merge, espera a que termine el anterior.
+concurrency:
+  group: cd-production
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  SERVER_ID: ${{ vars.SERVER_ID }}
+
+jobs:
+  deploy:
+    name: Desplegar en el servidor
+    # Solo si la CI pasó sobre un push a main (no sobre un PR).
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Credenciales de AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Actualizar el servidor
+        run: |
+          command_id=$(aws ssm send-command \
+            --instance-ids "$SERVER_ID" \
+            --document-name AWS-RunShellScript \
+            --comment "CD ${{ github.event.workflow_run.head_sha }}" \
+            --timeout-seconds 600 \
+            --parameters 'commands=["set -e","cd /opt/bolsalab/repo","git pull --ff-only","bash deploy/start.sh"]' \
+            --query Command.CommandId --output text)
+          echo "Comando SSM: $command_id"
+
+          # Espera hasta 10 minutos a que el servidor termine.
+          status=Pending
+          for _ in $(seq 1 60); do
+            sleep 10
+            status=$(aws ssm get-command-invocation --command-id "$command_id" \
+              --instance-id "$SERVER_ID" --query Status --output text 2>/dev/null || echo Pending)
+            case "$status" in
+              Pending|InProgress|Delayed) echo "Estado: $status" ;;
+              *) break ;;
+            esac
+          done
+
+          echo "----- Salida del servidor -----"
+          aws ssm get-command-invocation --command-id "$command_id" --instance-id "$SERVER_ID" \
+            --query StandardOutputContent --output text
+          echo "----- Errores del servidor -----"
+          aws ssm get-command-invocation --command-id "$command_id" --instance-id "$SERVER_ID" \
+            --query StandardErrorContent --output text
+          echo "Estado final: $status"
+          test "$status" = Success
+
+      - name: Comprobar la API
+        run: |
+          for _ in $(seq 1 12); do
+            curl -fsS https://bolsa-lab.site/api/health && exit 0
+            sleep 10
+          done
+          echo "La API no respondió después del despliegue"
+          exit 1

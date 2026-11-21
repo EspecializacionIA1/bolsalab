@@ -3,6 +3,11 @@ output "server_id" {
   value       = aws_instance.server.id
 }
 
+output "deploy_role_arn" {
+  description = "Rol que usa el CD de GitHub Actions (variable AWS_DEPLOY_ROLE_ARN del repo)"
+  value       = aws_iam_role.github_deploy.arn
+}
+
 output "server_ip" {
   description = "IP fija del servidor"
   value       = aws_eip.server.public_ip

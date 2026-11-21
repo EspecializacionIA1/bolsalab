@@ -16,6 +16,12 @@ variable "domain" {
   default     = "bolsa-lab.site"
 }
 
+variable "github_repo" {
+  description = "Repo de GitHub que puede desplegar (dueño/nombre)"
+  type        = string
+  default     = "EspecializacionIA1/bolsalab"
+}
+
 variable "instance_type" {
   description = "Tamaño del servidor"
   type        = string
