@@ -33,10 +33,26 @@ app = [
 # Redes neuronales en PyTorch (notebooks/3_mejora_auroc/08 - Redes neuronales con PyTorch paso a paso.ipynb)
 nn = ["torch>=2.5"]
 # Herramientas de desarrollo: uv sync las instala por defecto
-dev = ["pytest>=8.0", "jupyterlab>=4.1", "ipykernel>=6.29", "ruff>=0.4"]
+dev = [
+    "pytest>=8.0",
+    "jupyterlab>=4.1",
+    "ipykernel>=6.29",
+    "ruff>=0.4",
+    "httpx>=0.28.1",
+]
+# API en FastAPI (backend/)
+api = [
+    "fastapi>=0.165.0",
+    "slowapi>=0.1.10",
+    "uvicorn[standard]>=0.54.0",
+]
 
 [tool.setuptools.packages.find]
 include = ["bolsalab*"]
+
+[tool.pytest.ini_options]
+# Para que las pruebas encuentren backend/, que no es parte del paquete
+pythonpath = ["."]
 
 [tool.ruff]
 line-length = 100

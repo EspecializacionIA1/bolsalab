@@ -42,6 +42,9 @@ RANDOM_STATE = 42
 AUROC_NOISE = 0.004      # diferencia de AUROC que no se distingue del ruido entre particiones
 MAX_OVERFIT_GAP = 0.03   # brecha máxima entre el AUROC de entrenamiento y el de validación
 
+# --- API: predicciones permitidas por IP (formato de slowapi) ---
+API_RATE_LIMIT = "30/minute"
+
 # --- MLflow: dónde se registran las corridas ---
 # Por defecto, un archivo en el proyecto. Para registrar en otro servidor (AWS)
 # se define MLFLOW_TRACKING_URI en el entorno o en el archivo .env.
