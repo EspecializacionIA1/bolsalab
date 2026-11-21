@@ -1,0 +1,41 @@
+# Servicios del servidor. Los valores de ${...} los escribe start.sh en .env.
+
+services:
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+      MLFLOW_USER: ${MLFLOW_USER}
+      MLFLOW_PASSWORD_HASH: ${MLFLOW_PASSWORD_HASH}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./site:/srv/site:ro
+      # Certificados HTTPS: se guardan para no pedirlos de nuevo en cada reinicio.
+      - /opt/bolsalab/data/caddy:/data
+    depends_on:
+      - mlflow
+
+  # Sin puertos publicados: solo se llega a MLflow a través de Caddy.
+  mlflow:
+    build: ./mlflow
+    restart: unless-stopped
+    command:
+      - mlflow
+      - server
+      - --host=0.0.0.0
+      - --port=5000
+      - --workers=1
+      - --backend-store-uri=sqlite:////mlflow/mlflow.db
+      - --artifacts-destination=s3://${ARTIFACTS_BUCKET}
+      - --serve-artifacts
+      - --allowed-hosts=mlflow.${DOMAIN}
+      # La interfaz web llama a la API desde este origen; sin esto MLflow la bloquea (403).
+      - --cors-allowed-origins=https://mlflow.${DOMAIN}
+    environment:
+      AWS_DEFAULT_REGION: ${AWS_REGION}
+    volumes:
+      - /opt/bolsalab/data/mlflow:/mlflow

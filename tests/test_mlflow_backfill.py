@@ -10,7 +10,7 @@ import pytest
 from mlflow.tracking import MlflowClient
 
 from bolsalab.config import MLFLOW_EXPERIMENTS
-from bolsalab.modeling.mlflow_backfill import backfill
+from bolsalab.modeling.mlflow_backfill import backfill, how_to_see
 
 
 @pytest.fixture
@@ -104,3 +104,9 @@ def test_short_relative_sqlite_address_works(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     assert artifact_location("sqlite:///mlflow.db") == (tmp_path / "mlruns").as_uri()
     assert artifact_location("http://servidor:5000") is None
+
+
+def test_how_to_see_depends_on_where_runs_are():
+    """Con base local se levanta la interfaz; con servidor se abre la dirección."""
+    assert how_to_see("sqlite:///C:/x/mlflow.db").startswith("uv run mlflow ui")
+    assert how_to_see("https://mlflow.ejemplo.com") == "abre https://mlflow.ejemplo.com en el navegador"

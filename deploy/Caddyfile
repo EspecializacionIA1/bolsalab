@@ -1,0 +1,19 @@
+# Caddy recibe todo el tráfico, saca los certificados HTTPS y reparte.
+
+{$DOMAIN} {
+	encode gzip
+	root * /srv/site
+	file_server
+}
+
+www.{$DOMAIN} {
+	redir https://{$DOMAIN}{uri} permanent
+}
+
+# MLflow solo con usuario y contraseña. El hash viene de Parameter Store.
+mlflow.{$DOMAIN} {
+	basic_auth {
+		{$MLFLOW_USER} {$MLFLOW_PASSWORD_HASH}
+	}
+	reverse_proxy mlflow:5000
+}

@@ -34,6 +34,17 @@ uv run python -m bolsalab.modeling.mlflow_tracking   # registra el modelo final 
 uv run mlflow ui --backend-store-uri sqlite:///mlflow.db
 ```
 
+El MLflow del equipo está publicado en https://mlflow.bolsa-lab.site (con usuario y contraseña). Para registrar ahí en vez de en tu computador, define `MLFLOW_TRACKING_URI`, `MLFLOW_TRACKING_USERNAME` y `MLFLOW_TRACKING_PASSWORD` en tu `.env`.
+
+## En línea
+
+| Dirección | Qué es |
+|---|---|
+| https://bolsa-lab.site | La app (por ahora, una página temporal) |
+| https://mlflow.bolsa-lab.site | Experimentos y modelo registrado |
+
+Todo corre en AWS y está escrito en Terraform (`infra/`) y Docker Compose (`deploy/`). Cómo está armado, cómo se despliega y cómo se apaga está en [`docs/infraestructura.md`](docs/infraestructura.md).
+
 ## Prototipo en Streamlit
 
 `app/app.py` es la app del prototipo: cuestionario, resultado explicado con SHAP y qué aprender. Cómo correrla, las decisiones y lo que encontramos con SHAP están en [`docs/prototipo.md`](docs/prototipo.md).
@@ -118,7 +129,9 @@ bolsalab/
 ├── tests/                 ← Pruebas del paquete
 ├── app/                   ← Prototipo en Streamlit
 ├── backend/               ← API en FastAPI que expone el modelo
-└── frontend/prototypes/   ← Prototipos HTML validados con usuarios
+├── frontend/prototypes/   ← Prototipos HTML validados con usuarios
+├── infra/                 ← Terraform: servidor, red, DNS y presupuesto en AWS
+└── deploy/                ← Docker Compose y Caddy: lo que corre en el servidor
 ```
 
 ## Cómo fluye el trabajo

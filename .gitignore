@@ -34,3 +34,13 @@ Thumbs.db
 mlflow.db
 mlruns/
 mlartifacts/
+
+# --- Terraform (el estado vive en S3 o en el computador de quien aplica) ---
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+plan.out
+crash.log
+*.tfvars
+!*.tfvars.example
