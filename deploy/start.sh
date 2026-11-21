@@ -21,4 +21,7 @@ EOF
 
 mkdir -p /opt/bolsalab/data/caddy /opt/bolsalab/data/mlflow
 docker compose up -d --build
+# Caddy se recrea siempre para que lea el Caddyfile actual: si solo cambió ese archivo,
+# compose no lo nota. Los certificados se conservan en /opt/bolsalab/data/caddy.
+docker compose up -d --force-recreate --no-deps caddy
 docker compose ps

@@ -1,0 +1,18 @@
+# Lo que la API necesita para predecir. Las versiones salen de uv.lock, para que
+# el .joblib cargue con las mismas librerías con las que se entrenó:
+#   uv export --no-hashes --all-groups --no-emit-project > constraints.txt
+#   uv pip compile backend/requirements.in -c constraints.txt --python-version 3.12 \
+#     --python-platform x86_64-manylinux_2_28 -o backend/requirements.txt
+fastapi
+uvicorn[standard]
+slowapi
+pandas
+numpy
+scikit-learn
+# Versión solo CPU de xgboost: mismo código, sin los ~200 MB de librerías de GPU.
+# Va fija porque no está en uv.lock; debe ser la misma versión que xgboost allá.
+xgboost-cpu==3.4.1
+lightgbm
+shap
+joblib
+python-dotenv
