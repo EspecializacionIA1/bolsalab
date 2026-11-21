@@ -17,7 +17,21 @@ services:
       # Certificados HTTPS: se guardan para no pedirlos de nuevo en cada reinicio.
       - /opt/bolsalab/data/caddy:/data
     depends_on:
+      - api
       - mlflow
+
+  # La API con el modelo. Sin puertos publicados: solo se llega a ella a través de Caddy.
+  # Se construye desde la raíz del repo porque necesita bolsalab/ y models/.
+  api:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   # Sin puertos publicados: solo se llega a MLflow a través de Caddy.
   mlflow:
