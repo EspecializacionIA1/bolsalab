@@ -22,6 +22,12 @@ variable "github_repo" {
   default     = "EspecializacionIA1/bolsalab"
 }
 
+variable "github_repo_immutable" {
+  description = "El mismo repo con los ids de GitHub (dueño@id/nombre@id), como viene en el token OIDC"
+  type        = string
+  default     = "EspecializacionIA1@258116174/bolsalab@1354180301"
+}
+
 variable "instance_type" {
   description = "Tamaño del servidor"
   type        = string
