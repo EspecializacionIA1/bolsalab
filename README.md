@@ -169,6 +169,7 @@ Los comandos de uso diario están en [`docs/uv-commands.md`](docs/uv-commands.md
 ## Convenciones del equipo
 
 - **Ramas:** nadie hace push directo a `main`. Cada tarea va en `feature/<descripcion>` y entra por Pull Request con al menos una aprobación.
+- **CI:** cada PR hacia `main` corre las pruebas, el lint del backend, la validación de Terraform y la construcción de la imagen de la API (`.github/workflows/ci.yml`). Las pruebas que necesitan los datos se saltan solas.
 - **Notebooks:** van en la subcarpeta de su tema y se nombran `<orden> - <descripción>.ipynb`, con un número que sigue el orden del proyecto, por ejemplo `2_modelado/02 - Comparación de modelos.ipynb`. Un notebook nuevo toma el siguiente número libre. El código que se reutiliza pasa a `bolsalab/`.
 - **Datos:** no se suben a git. Los de la NFCS tampoco se comparten entre integrantes: sus términos lo prohíben.
 - **Parámetros:** rutas y semillas se leen de `bolsalab/config.py`.
