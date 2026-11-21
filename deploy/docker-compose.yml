@@ -33,6 +33,8 @@ services:
       - --artifacts-destination=s3://${ARTIFACTS_BUCKET}
       - --serve-artifacts
       - --allowed-hosts=mlflow.${DOMAIN}
+      # La interfaz web llama a la API desde este origen; sin esto MLflow la bloquea (403).
+      - --cors-allowed-origins=https://mlflow.${DOMAIN}
     environment:
       AWS_DEFAULT_REGION: ${AWS_REGION}
     volumes:
