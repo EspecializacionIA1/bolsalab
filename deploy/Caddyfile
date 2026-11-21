@@ -2,8 +2,21 @@
 
 {$DOMAIN} {
 	encode gzip
-	root * /srv/site
-	file_server
+
+	# La API. Caddy le pasa la IP real del usuario (X-Forwarded-For) para el límite por IP.
+	handle /api/* {
+		# El cuestionario pesa menos de 1 KB; nada más grande pasa.
+		request_body {
+			max_size 10KB
+		}
+		reverse_proxy api:8000
+	}
+
+	# Todo lo demás: la página del sitio.
+	handle {
+		root * /srv/site
+		file_server
+	}
 }
 
 www.{$DOMAIN} {

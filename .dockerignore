@@ -1,0 +1,9 @@
+# La imagen de la API solo recibe lo que necesita. Todo lo demás, en especial
+# data/, mlflow.db y los .env, nunca entra al contexto de Docker.
+*
+!bolsalab/
+!models/crash_reaction_v1.joblib
+!models/crash_reaction_v1.json
+!backend/app/
+!backend/requirements.txt
+**/__pycache__

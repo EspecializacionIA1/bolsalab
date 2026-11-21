@@ -5,19 +5,20 @@ BolsaLAB corre en un solo servidor de AWS (`us-east-1`), con el dominio `bolsa-l
 | Dirección | Qué es | Acceso |
 |---|---|---|
 | https://bolsa-lab.site | La app. Por ahora, una página temporal | Pública |
-| https://bolsa-lab.site/api/... | La API en FastAPI (en construcción) | Pública |
+| https://bolsa-lab.site/api/docs | La API en FastAPI y su documentación | Pública, con límite de 30 predicciones por minuto por IP |
 | https://mlflow.bolsa-lab.site | Experimentos y modelo registrado | Usuario y contraseña del equipo |
 
 ## Cómo está armado
 
 ```
-Navegador ──443──▶ EC2 t3.small ──▶ Caddy ──┬─▶ página estática (luego el frontend)
+Navegador ──443──▶ EC2 t3.small ──▶ Caddy ──┬─▶ /api/* ──▶ API (FastAPI + modelo crash_reaction_v1)
+                                             ├─▶ página estática (luego el frontend)
                                              └─▶ MLflow ──┬─ corridas: SQLite en el disco
                                                           └─ modelos: S3
 ```
 
 - **Caddy** recibe todo el tráfico, saca y renueva solo los certificados HTTPS (Let's Encrypt) y pide la contraseña antes de dejar pasar a MLflow.
-- **MLflow** no tiene puertos abiertos: solo se llega a él a través de Caddy.
+- **La API y MLflow** no tienen puertos abiertos: solo se llega a ellos a través de Caddy. Caddy le pasa a la API la IP real de cada usuario, para el límite por IP, y corta cualquier petición de más de 10 KB.
 - **Sin SSH:** el servidor solo abre 80 y 443. Se entra con SSM Session Manager.
 - **Sin claves guardadas:** el servidor usa un rol de IAM y nosotros entramos a AWS con IAM Identity Center (SSO).
 
@@ -44,7 +45,7 @@ El dominio está comprado en GoDaddy; allá solo cambiamos los servidores DNS po
 
 | Archivo | Para qué |
 |---|---|
-| `docker-compose.yml` | Los servicios `caddy` y `mlflow` |
+| `docker-compose.yml` | Los servicios `caddy`, `api` y `mlflow`. La imagen de la API se construye con `backend/Dockerfile` |
 | `Caddyfile` | Qué dominio va a dónde y dónde se pide la contraseña |
 | `mlflow/Dockerfile` | MLflow 3.18 con boto3, instalado con uv |
 | `mlflow/requirements.txt` | Versiones exactas, generadas con `uv pip compile requirements.in` |
