@@ -56,11 +56,19 @@ uv run --group app streamlit run app/app.py
 
 ## La API
 
-La API usa `bolsalab/modeling/predict.py`, el mismo código de la app de Streamlit. La ruta es una propuesta del equipo:
+La API está en `backend/app/` y usa `bolsalab/modeling/predict.py`, el mismo código de la app de Streamlit. Carga el modelo una vez al arrancar, valida cada petición con Pydantic y no guarda las respuestas.
 
+```bash
+uv sync --group api
+uv run --group api uvicorn backend.app.main:app --reload
 ```
-POST /api/v1/crash-reaction/predict
-```
+
+| Ruta | Qué hace |
+|---|---|
+| `GET /api/health` | Estado de la API y versión del modelo |
+| `POST /api/v1/crash-reaction/predict` | Resultado de una persona |
+| `/api/docs` | Documentación interactiva (Swagger) |
+
 
 Recibe las respuestas del cuestionario. Los niveles van de 1 a 5 frente a la gente del país, y la confianza de 1 a 5:
 
@@ -98,7 +106,7 @@ Devuelve la categoría y lo que la explica:
 }
 ```
 
-`predict()` también devuelve `probability` y `base_rate`, que son de uso interno. La pantalla muestra `category` (`more_likely`, `similar` o `less_likely`), los factores y los avisos. Nunca muestra la probabilidad.
+`predict()` también calcula `probability` y `base_rate`, pero la API no los devuelve: el contrato de salida (`Result` en `backend/app/schemas.py`) no los incluye. La pantalla muestra `category` (`more_likely`, `similar` o `less_likely`), los factores y los avisos. Nunca muestra la probabilidad.
 
 ## Cómo está organizado el repositorio
 
