@@ -108,11 +108,18 @@ def backfill(tracking_uri: str = MLFLOW_TRACKING_URI, benchmark_file=BENCHMARK_F
     }
 
 
+def how_to_see(tracking_uri: str) -> str:
+    """Cómo abrir las corridas: con una base local hay que levantar la interfaz; con un servidor, basta el navegador."""
+    if tracking_uri.startswith("sqlite:///"):
+        return f"uv run mlflow ui --backend-store-uri {tracking_uri}"
+    return f"abre {tracking_uri} en el navegador"
+
+
 def main() -> None:
     added = backfill()
     print(f"Corridas nuevas: {added['comparacion']} de la comparación y {added['ajuste']} del ajuste.")
     print(f"Registradas en {MLFLOW_TRACKING_URI}")
-    print(f"Para verlas: uv run mlflow ui --backend-store-uri {MLFLOW_TRACKING_URI}")
+    print(f"Para verlas: {how_to_see(MLFLOW_TRACKING_URI)}")
 
 
 if __name__ == "__main__":
