@@ -10,6 +10,12 @@ variable "project" {
   default     = "bolsalab"
 }
 
+variable "domain" {
+  description = "Dominio de la app"
+  type        = string
+  default     = "bolsa-lab.site"
+}
+
 variable "instance_type" {
   description = "Tamaño del servidor"
   type        = string

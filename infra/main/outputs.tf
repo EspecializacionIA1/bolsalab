@@ -13,6 +13,11 @@ output "artifacts_bucket" {
   value       = aws_s3_bucket.artifacts.id
 }
 
+output "name_servers" {
+  description = "Los 4 servidores DNS que van en GoDaddy"
+  value       = aws_route53_zone.main.name_servers
+}
+
 output "connect_command" {
   description = "Comando para abrir una terminal en el servidor"
   value       = "aws ssm start-session --target ${aws_instance.server.id}"
