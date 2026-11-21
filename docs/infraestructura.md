@@ -96,7 +96,9 @@ cd infra/main
 terraform output -raw connect_command
 ```
 
-**Actualizar lo que corre en el servidor:**
+**Actualizar lo que corre en el servidor:** lo hace solo el CD (`.github/workflows/cd.yml`). Después de cada merge a `main`, si la CI pasó, GitHub Actions pide credenciales temporales a AWS con OIDC (rol `bolsalab-github-deploy`, definido en `infra/main/github.tf`), le manda al servidor por SSM `git pull` y `deploy/start.sh`, y comprueba `/api/health`. El rol solo lo puede usar este repo desde `main`, y solo puede mandar comandos a este servidor. El pipeline lee dos variables del repo en GitHub: `AWS_DEPLOY_ROLE_ARN` y `SERVER_ID` (`terraform output deploy_role_arn` y `terraform output server_id`).
+
+A mano, si hace falta revisar algo en el servidor:
 ```bash
 cd /opt/bolsalab/repo/deploy
 sudo git pull && sudo bash start.sh
