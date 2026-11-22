@@ -1,0 +1,786 @@
+<svg width="2150" height="3600" viewBox="0 0 2150 3600" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="C &#194;&#183; Laboratorio de datos">
+<path d="M0 2.00007C0 0.8955 0.895431 0 2 0H2148C2149.1 0 2150 0.895431 2150 2V3598C2150 3599.1 2149.1 3600 2148 3600H2.00004C0.895467 3600 0 3599.1 0 3598V2.00007Z" fill="white"/>
+<path d="M2 0V1H2148V0V-1H2V0ZM2150 2H2149V3598H2150H2151V2H2150ZM2148 3600V3599H2.00004V3600V3601H2148V3600ZM0 3598H1V2.00007H0H-1V3598H0ZM2.00004 3600V3599C1.44773 3599 1 3598.55 1 3598H0H-1C-1 3599.66 0.343207 3601 2.00004 3601V3600ZM2150 3598H2149C2149 3598.55 2148.55 3599 2148 3599V3600V3601C2149.66 3601 2151 3599.66 2151 3598H2150ZM2148 0V1C2148.55 1 2149 1.44774 2149 2H2150H2151C2151 0.343122 2149.66 -1 2148 -1V0ZM2 0V-1C0.343101 -1 -1 0.343261 -1 2.00007H0H1C1 1.44774 1.44776 1 2 1V0Z" fill="black" fill-opacity="0.1"/>
+<g id="C &#194;&#183; Componentes">
+<rect width="252" height="112" transform="translate(60 40)" fill="#07090D"/>
+<g id="Button / Primary">
+<rect x="92" y="73" width="83" height="46" rx="6" fill="#00E0FF"/>
+<text id="BOT&#195;&#147;N" fill="#021014" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0.06em"><tspan x="112" y="100.68">BOT&#xd3;N</tspan></text>
+</g>
+<g id="Button / Ghost">
+<rect x="195.5" y="72.5" width="84" height="47" rx="5.5" stroke="#232C3B"/>
+<text id="BOT&#195;&#147;N_2" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0.06em"><tspan x="216" y="100.68">BOT&#xd3;N</tspan></text>
+</g>
+</g>
+<g id="C &#194;&#183; Home &#226;&#128;&#148; Desktop" clip-path="url(#clip0_6_18)">
+<rect width="1440" height="2860" transform="translate(60 200)" fill="#07090D"/>
+<g id="System bar">
+<rect width="1440" height="33" transform="translate(60 200)" fill="#0E1219"/>
+<text id="&#226;&#151;&#143; MODELO EN L&#195;&#141;NEA &#194;&#183; XGBOOST v1.0 &#194;&#183; 17 FEATURES &#194;&#183; SHAP" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.06em"><tspan x="156" y="220.46">&#x25cf; MODELO EN L&#xcd;NEA &#xb7; XGBOOST v1.0 &#xb7; 17 FEATURES &#xb7; SHAP</tspan></text>
+<text id="LAT 4.71 &#194;&#183; LON &#226;&#136;&#146;74.07 &#194;&#183; BOGOT&#195;&#129;" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.06em"><tspan x="1186" y="220.46">LAT 4.71 &#xb7; LON &#x2212;74.07 &#xb7; BOGOT&#xc1;</tspan></text>
+</g>
+<g id="Nav">
+<g id="Frame" clip-path="url(#clip1_6_18)">
+<g id="Frame_2">
+<path id="Vector" d="M170 264L181 270.5V281.5L170 288L159 281.5V270.5L170 264Z" stroke-width="1.5" stroke="#00E0FF"/>
+<path id="Vector_2" d="M170 271L175 279H165L170 271Z" stroke-width="1.5" stroke="#C6FF3D"/>
+</g>
+<text id="BolsaLAB" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="20" font-weight="500" letter-spacing="-0.01em"><tspan x="194" y="282.92">BolsaLAB</tspan></text>
+<g id="Frame_3">
+<rect x="293.5" y="260.5" width="43" height="31" rx="3.5" fill="#161C27"/>
+<rect x="293.5" y="260.5" width="43" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="LAB" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="304" y="280.32">LAB</tspan></text>
+</g>
+</g>
+<g id="Frame_4" clip-path="url(#clip2_6_18)">
+<text id="/diagn&#195;&#179;stico" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0em"><tspan x="564" y="280.68">/diagn&#xf3;stico</tspan></text>
+<text id="/simulador" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0em"><tspan x="690" y="280.68">/simulador</tspan></text>
+<text id="/aprender" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0em"><tspan x="800" y="280.68">/aprender</tspan></text>
+<text id="/empresas" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0em"><tspan x="903" y="280.68">/empresas</tspan></text>
+</g>
+<g id="Button / Primary_2">
+<rect x="1201" y="253" width="203" height="46" rx="6" fill="#00E0FF"/>
+<text id="BOT&#195;&#147;N_3" fill="#021014" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0.06em"><tspan x="1221" y="280.68">INICIAR DIAGN&#xd3;STICO</tspan></text>
+</g>
+</g>
+<g id="Hero">
+<g id="Frame_5" clip-path="url(#clip3_6_18)">
+<g id="Frame_6">
+<rect x="156.5" y="425" width="251" height="31" rx="3.5" fill="#161C27"/>
+<rect x="156.5" y="425" width="251" height="31" rx="3.5" stroke="#232C3B"/>
+<rect id="Rectangle" x="167" y="437.5" width="6" height="6" fill="#C6FF3D"/>
+<text id="IA EXPLICABLE &#194;&#183; XGBOOST + SHAP" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="181" y="444.82">IA EXPLICABLE &#xb7; XGBOOST + SHAP</tspan></text>
+</g>
+<g id="Modela tu reacci&#195;&#179;n antes de que la bolsa caiga.">
+<text fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="64" font-weight="500" letter-spacing="-0.03em"><tspan x="156" y="539.144">Modela tu reacci&#xf3;n </tspan><tspan x="487.318" y="669.144">.</tspan></text>
+<text fill="url(#paint0_linear_6_18)" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="64" font-weight="500" letter-spacing="-0.03em"><tspan x="156" y="604.144">antes de que la </tspan><tspan x="156" y="669.144">bolsa caiga</tspan></text>
+</g>
+<text id="Responde 17 variables, enfrenta una ca&#195;&#173;da simulada y obt&#195;&#169;n la predicci&#195;&#179;n del modelo con sus factores SHAP. Ciencia de datos aplicada a tus decisiones." fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="18" letter-spacing="0em"><tspan x="156" y="727.728">Responde 17 variables, enfrenta una ca&#xed;da simulada y obt&#xe9;n la </tspan><tspan x="156" y="755.728">predicci&#xf3;n del modelo con sus factores SHAP. Ciencia de </tspan><tspan x="156" y="783.728">datos aplicada a tus decisiones.</tspan></text>
+<g id="Frame_7" clip-path="url(#clip4_6_18)">
+<g id="Button / Primary_3">
+<rect x="156" y="819.5" width="220" height="46" rx="6" fill="#00E0FF"/>
+<text id="BOT&#195;&#147;N_4" fill="#021014" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0.06em"><tspan x="176" y="847.18">INICIAR DIAGN&#xd3;STICO &#x2192;</tspan></text>
+</g>
+<g id="Button / Ghost_2">
+<rect x="388.5" y="820" width="152" height="47" rx="5.5" stroke="#232C3B"/>
+<text id="BOT&#195;&#147;N_5" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0.06em"><tspan x="409" y="848.18">VER SIMULADOR</tspan></text>
+</g>
+</g>
+<g id="Frame_8" clip-path="url(#clip5_6_18)">
+<g id="Frame_9">
+<rect x="156.5" y="896" width="50" height="31" rx="3.5" fill="#161C27"/>
+<rect x="156.5" y="896" width="50" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="n=17" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="167" y="915.82">n=17</tspan></text>
+</g>
+<g id="Frame_10">
+<rect x="219.5" y="896" width="72" height="31" rx="3.5" fill="#161C27"/>
+<rect x="219.5" y="896" width="72" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="t=6 min" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="230" y="915.82">t=6 min</tspan></text>
+</g>
+<g id="Frame_11">
+<rect x="304.5" y="896" width="86" height="31" rx="3.5" fill="#161C27"/>
+<rect x="304.5" y="896" width="86" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="auth=none" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="315" y="915.82">auth=none</tspan></text>
+</g>
+<g id="Frame_12">
+<rect x="403.5" y="896" width="79" height="31" rx="3.5" fill="#161C27"/>
+<rect x="403.5" y="896" width="79" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="costo=$0" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="414" y="915.82">costo=$0</tspan></text>
+</g>
+</g>
+</g>
+<g id="Hero visual &#194;&#183; Objeto 3D">
+<g clip-path="url(#clip6_6_18)">
+<rect id="Rectangle_2" opacity="0.5" x="844" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_3" opacity="0.5" x="804" y="416" width="600" height="1" fill="#232C3B"/>
+<rect id="Rectangle_4" opacity="0.5" x="884" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_5" opacity="0.5" x="804" y="456" width="600" height="1" fill="#232C3B"/>
+<rect id="Rectangle_6" opacity="0.5" x="924" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_7" opacity="0.5" x="804" y="496" width="600" height="1" fill="#232C3B"/>
+<rect id="Rectangle_8" opacity="0.5" x="964" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_9" opacity="0.5" x="804" y="536" width="600" height="1" fill="#232C3B"/>
+<rect id="Rectangle_10" opacity="0.5" x="1004" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_11" opacity="0.5" x="804" y="576" width="600" height="1" fill="#232C3B"/>
+<rect id="Rectangle_12" opacity="0.5" x="1044" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_13" opacity="0.5" x="804" y="616" width="600" height="1" fill="#232C3B"/>
+<rect id="Rectangle_14" opacity="0.5" x="1084" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_15" opacity="0.5" x="804" y="656" width="600" height="1" fill="#232C3B"/>
+<rect id="Rectangle_16" opacity="0.5" x="1124" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_17" opacity="0.5" x="804" y="696" width="600" height="1" fill="#232C3B"/>
+<rect id="Rectangle_18" opacity="0.5" x="1164" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_19" opacity="0.5" x="804" y="736" width="600" height="1" fill="#232C3B"/>
+<rect id="Rectangle_20" opacity="0.5" x="1204" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_21" opacity="0.5" x="804" y="776" width="600" height="1" fill="#232C3B"/>
+<rect id="Rectangle_22" opacity="0.5" x="1244" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_23" opacity="0.5" x="804" y="816" width="600" height="1" fill="#232C3B"/>
+<rect id="Rectangle_24" opacity="0.5" x="1284" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_25" opacity="0.5" x="804" y="856" width="600" height="1" fill="#232C3B"/>
+<rect id="Rectangle_26" opacity="0.5" x="1324" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_27" opacity="0.5" x="804" y="896" width="600" height="1" fill="#232C3B"/>
+<rect id="Rectangle_28" opacity="0.5" x="1364" y="376" width="1" height="600" fill="#232C3B"/>
+<rect id="Rectangle_29" opacity="0.5" x="804" y="936" width="600" height="1" fill="#232C3B"/>
+<g id="Ellipse" opacity="0.16" filter="url(#filter0_f_6_18)">
+<circle cx="1104" cy="676" r="190" fill="#00E0FF"/>
+</g>
+<g id="Poliedro glow" opacity="0.6" filter="url(#filter1_f_6_18)">
+<g id="Group">
+<path id="Vector_3" d="M1104 506L1254 591V761L1104 846L954 761V591L1104 506Z" stroke-width="1.5" stroke-linejoin="round" stroke="#00E0FF"/>
+<path id="Vector_4" d="M1104 616L1199 736H1009L1104 616Z" stroke-width="1.5" stroke-linejoin="round" stroke="#00E0FF"/>
+<path id="Vector_5" d="M1104 506V616M1009 736L954 591L1104 616L1254 591L1199 736M1199 736L1254 761M1199 736L1104 846L1009 736M1009 736L954 761" stroke-width="1.5" stroke-linejoin="round" stroke="#00E0FF"/>
+</g>
+<g id="Group_2">
+<path id="Vector_6" d="M1108 612H1100V620H1108V612Z" fill="#C6FF3D"/>
+<path id="Vector_7" d="M1203 732H1195V740H1203V732Z" fill="#C6FF3D"/>
+<path id="Vector_8" d="M1013 732H1005V740H1013V732Z" fill="#C6FF3D"/>
+</g>
+</g>
+<g id="Poliedro">
+<g id="Group_3">
+<path id="Vector_9" d="M1104 506L1254 591V761L1104 846L954 761V591L1104 506Z" stroke-width="1.5" stroke-linejoin="round" stroke="#00E0FF"/>
+<path id="Vector_10" d="M1104 616L1199 736H1009L1104 616Z" stroke-width="1.5" stroke-linejoin="round" stroke="#00E0FF"/>
+<path id="Vector_11" d="M1104 506V616M1009 736L954 591L1104 616L1254 591L1199 736M1199 736L1254 761M1199 736L1104 846L1009 736M1009 736L954 761" stroke-width="1.5" stroke-linejoin="round" stroke="#00E0FF"/>
+</g>
+<g id="Group_4">
+<path id="Vector_12" d="M1108 612H1100V620H1108V612Z" fill="#C6FF3D"/>
+<path id="Vector_13" d="M1203 732H1195V740H1203V732Z" fill="#C6FF3D"/>
+<path id="Vector_14" d="M1013 732H1005V740H1013V732Z" fill="#C6FF3D"/>
+</g>
+</g>
+<rect id="Rectangle_30" x="804" y="706" width="600" height="2" fill="url(#paint1_linear_6_18)"/>
+<g id="Frame_13">
+<rect x="824.5" y="396.5" width="229" height="88" rx="3.5" fill="#0E1219" fill-opacity="0.9"/>
+<rect x="824.5" y="396.5" width="229" height="88" rx="3.5" stroke="#232C3B"/>
+<text id="PREDICT()" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0em"><tspan x="839" y="421.46">PREDICT()</tspan></text>
+<text id="category: more_likely" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0em"><tspan x="839" y="444.46">category: more_likely</tspan></text>
+<text id="p(sell) = 0.68" fill="#FF5C7A" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0em"><tspan x="839" y="467.46">p(sell) = 0.68</tspan></text>
+</g>
+<g id="Frame_14">
+<rect x="1154.5" y="846.5" width="229" height="88" rx="3.5" fill="#0E1219" fill-opacity="0.9"/>
+<rect x="1154.5" y="846.5" width="229" height="88" rx="3.5" stroke="#232C3B"/>
+<text id="TOP_FACTOR" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0em"><tspan x="1169" y="871.46">TOP_FACTOR</tspan></text>
+<text id="knows_inflation +0.18" fill="#FF5C7A" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0em"><tspan x="1169" y="894.46">knows_inflation  +0.18</tspan></text>
+<text id="savings_level &#226;&#136;&#146;0.07" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0em"><tspan x="1169" y="917.46">savings_level    &#x2212;0.07</tspan></text>
+</g>
+<g id="Frame_15">
+<rect x="1184.5" y="396.5" width="199" height="65" rx="3.5" fill="#0E1219" fill-opacity="0.9"/>
+<rect x="1184.5" y="396.5" width="199" height="65" rx="3.5" stroke="#232C3B"/>
+<text id="SIM &#194;&#183; t=12/40" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0em"><tspan x="1199" y="421.46">SIM &#xb7; t=12/40</tspan></text>
+<text id="&#206;&#148; portafolio &#226;&#136;&#146;25.8%" fill="#FF5C7A" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0em"><tspan x="1199" y="444.46">&#x394; portafolio &#x2212;25.8%</tspan></text>
+</g>
+<text id="OBJ_3D &#194;&#183; R3F &#194;&#183; ROTATE &#226;&#159;&#178;" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.06em"><tspan x="824" y="956.46">OBJ_3D &#xb7; R3F &#xb7; ROTATE &#x27f2;</tspan></text>
+<text id="+ x:0.68 y:0.18" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0em"><tspan x="1104" y="692.46">+ x:0.68 y:0.18</tspan></text>
+</g>
+<rect x="804.5" y="376.5" width="599" height="599" stroke="#232C3B"/>
+</g>
+</g>
+<g id="C&#195;&#179;mo funciona">
+<g id="Frame_16" clip-path="url(#clip7_6_18)">
+<text id="// pipeline" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="156" y="1132.46">// PIPELINE</tspan></text>
+<text id="De tus respuestas a una predicci&#195;&#179;n explicada" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="44" font-weight="500" letter-spacing="-0.02em"><tspan x="156" y="1187.22">De tus respuestas a una predicci&#xf3;n explicada</tspan></text>
+</g>
+<g id="Frame_17" clip-path="url(#clip8_6_18)">
+<g id="Frame_18">
+<rect x="156.5" y="1227.5" width="311" height="166" fill="#0E1219"/>
+<rect x="156.5" y="1227.5" width="311" height="166" stroke="#232C3B"/>
+<g id="Frame_19" clip-path="url(#clip9_6_18)">
+<text id="01" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="181" y="1265.32">01</tspan></text>
+<text id="INPUT" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="406" y="1264.46">INPUT</tspan></text>
+</g>
+<text id="Diagn&#195;&#179;stico" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="22" font-weight="500" letter-spacing="0em"><tspan x="181" y="1306.11">Diagn&#xf3;stico</tspan></text>
+<text id="17 variables: experiencia, ingresos, conocimiento." fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="14" letter-spacing="0em"><tspan x="181" y="1342.34">17 variables: experiencia, ingresos, </tspan><tspan x="181" y="1363.34">conocimiento.</tspan></text>
+</g>
+<g id="Frame_20">
+<rect x="468.5" y="1227.5" width="311" height="166" fill="#0E1219"/>
+<rect x="468.5" y="1227.5" width="311" height="166" stroke="#232C3B"/>
+<g id="Frame_21" clip-path="url(#clip10_6_18)">
+<text id="02" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="493" y="1265.32">02</tspan></text>
+<text id="STRESS" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="711" y="1264.46">STRESS</tspan></text>
+</g>
+<text id="Simulador" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="22" font-weight="500" letter-spacing="0em"><tspan x="493" y="1306.11">Simulador</tspan></text>
+<text id="Ca&#195;&#173;da real d&#195;&#173;a a d&#195;&#173;a: vender, mantener, comprar." fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="14" letter-spacing="0em"><tspan x="493" y="1342.34">Ca&#xed;da real d&#xed;a a d&#xed;a: vender, mantener, </tspan><tspan x="493" y="1363.34">comprar.</tspan></text>
+</g>
+<g id="Frame_22">
+<rect x="780.5" y="1227.5" width="311" height="166" fill="#0E1219"/>
+<rect x="780.5" y="1227.5" width="311" height="166" stroke="#232C3B"/>
+<g id="Frame_23" clip-path="url(#clip11_6_18)">
+<text id="03" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="805" y="1265.32">03</tspan></text>
+<text id="PREDICT" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="1015" y="1264.46">PREDICT</tspan></text>
+</g>
+<text id="Perfil" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="22" font-weight="500" letter-spacing="0em"><tspan x="805" y="1306.11">Perfil</tspan></text>
+<text id="XGBoost estima tu tendencia; SHAP explica por qu&#195;&#169;." fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="14" letter-spacing="0em"><tspan x="805" y="1342.34">XGBoost estima tu tendencia; SHAP </tspan><tspan x="805" y="1363.34">explica por qu&#xe9;.</tspan></text>
+</g>
+<g id="Frame_24">
+<rect x="1092.5" y="1227.5" width="311" height="166" fill="#0E1219"/>
+<rect x="1092.5" y="1227.5" width="311" height="166" stroke="#232C3B"/>
+<g id="Frame_25" clip-path="url(#clip12_6_18)">
+<text id="04" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="1117" y="1265.32">04</tspan></text>
+<text id="ACT" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="1357" y="1264.46">ACT</tspan></text>
+</g>
+<text id="Aprende y planea" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="22" font-weight="500" letter-spacing="0em"><tspan x="1117" y="1306.11">Aprende y planea</tspan></text>
+<text id="Lecciones y un plan para la pr&#195;&#179;xima ca&#195;&#173;da." fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="14" letter-spacing="0em"><tspan x="1117" y="1342.34">Lecciones y un plan para la pr&#xf3;xima </tspan><tspan x="1117" y="1363.34">ca&#xed;da.</tspan></text>
+</g>
+</g>
+</g>
+<g id="Funcionalidades">
+<g id="Frame_26">
+<text id="// m&#195;&#179;dulos" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="156" y="1518.46">// M&#xd3;DULOS</tspan></text>
+<text id="Ocho m&#195;&#179;dulos, un mismo modelo" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="44" font-weight="500" letter-spacing="-0.02em"><tspan x="156" y="1573.22">Ocho m&#xf3;dulos, un mismo modelo</tspan></text>
+</g>
+<g id="Frame_27" clip-path="url(#clip13_6_18)">
+<g id="Frame_28">
+<rect x="156.5" y="1613.5" width="825.667" height="382" rx="5.5" fill="#0E1219"/>
+<rect x="156.5" y="1613.5" width="825.667" height="382" rx="5.5" stroke="#232C3B"/>
+<g id="Frame_29" clip-path="url(#clip14_6_18)">
+<text id="mod.simulador" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="181" y="1650.46">MOD.SIMULADOR</tspan></text>
+<text id="&#226;&#151;&#143;" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="10" letter-spacing="0em"><tspan x="951.667" y="1649.1">&#x25cf;</tspan></text>
+</g>
+<text id="Vive una ca&#195;&#173;da, d&#195;&#173;a a d&#195;&#173;a" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="22" font-weight="500" letter-spacing="0em"><tspan x="181" y="1695.11">Vive una ca&#xed;da, d&#xed;a a d&#xed;a</tspan></text>
+<text id="Sin dinero real. Tu decisi&#195;&#179;n alimenta el modelo." fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="14" letter-spacing="0em"><tspan x="181" y="1735.34">Sin dinero real. Tu decisi&#xf3;n alimenta el modelo.</tspan></text>
+<g id="Chart">
+<rect id="Rectangle_31" opacity="0.6" x="181" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_32" opacity="0.6" x="221" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_33" opacity="0.6" x="261" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_34" opacity="0.6" x="301" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_35" opacity="0.6" x="341" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_36" opacity="0.6" x="381" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_37" opacity="0.6" x="421" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_38" opacity="0.6" x="461" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_39" opacity="0.6" x="501" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_40" opacity="0.6" x="541" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_41" opacity="0.6" x="581" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_42" opacity="0.6" x="621" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_43" opacity="0.6" x="661" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_44" opacity="0.6" x="701" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_45" opacity="0.6" x="741" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_46" opacity="0.6" x="781" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_47" opacity="0.6" x="821" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_48" opacity="0.6" x="861" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_49" opacity="0.6" x="901" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_50" opacity="0.6" x="941" y="1757" width="1" height="150" fill="#232C3B"/>
+<rect id="Rectangle_51" x="181" y="1757" width="779" height="1" fill="#232C3B"/>
+<rect id="Rectangle_52" x="181" y="1807" width="779" height="1" fill="#232C3B"/>
+<rect id="Rectangle_53" x="181" y="1857" width="779" height="1" fill="#232C3B"/>
+<rect id="Rectangle_54" x="181" y="1907" width="779" height="1" fill="#232C3B"/>
+<g id="Rectangle_55">
+<rect x="477.02" y="1757" width="109.06" height="150" fill="#FF5C7A" fill-opacity="0.12"/>
+<mask id="stroke0_6_18" fill="white">
+<path d="M477.02 1757H586.08V1907H477.02V1757Z"/>
+</mask>
+<path d="M477.02 1757V1756.5H476.52V1757H477.02ZM586.08 1757H586.58V1756.5H586.08V1757ZM586.08 1907V1907.5H586.58V1907H586.08ZM477.02 1907H476.52V1907.5H477.02V1907ZM477.02 1757H476.52V1758.97H477.02H477.52V1757H477.02ZM477.02 1762.92H476.52V1766.87H477.02H477.52V1762.92H477.02ZM477.02 1770.82H476.52V1774.76H477.02H477.52V1770.82H477.02ZM477.02 1778.71H476.52V1782.66H477.02H477.52V1778.71H477.02ZM477.02 1786.61H476.52V1790.55H477.02H477.52V1786.61H477.02ZM477.02 1794.5H476.52V1798.45H477.02H477.52V1794.5H477.02ZM477.02 1802.39H476.52V1806.34H477.02H477.52V1802.39H477.02ZM477.02 1810.29H476.52V1814.24H477.02H477.52V1810.29H477.02ZM477.02 1818.18H476.52V1822.13H477.02H477.52V1818.18H477.02ZM477.02 1826.08H476.52V1830.03H477.02H477.52V1826.08H477.02ZM477.02 1833.97H476.52V1837.92H477.02H477.52V1833.97H477.02ZM477.02 1841.87H476.52V1845.82H477.02H477.52V1841.87H477.02ZM477.02 1849.76H476.52V1853.71H477.02H477.52V1849.76H477.02ZM477.02 1857.66H476.52V1861.61H477.02H477.52V1857.66H477.02ZM477.02 1865.55H476.52V1869.5H477.02H477.52V1865.55H477.02ZM477.02 1873.45H476.52V1877.39H477.02H477.52V1873.45H477.02ZM477.02 1881.34H476.52V1885.29H477.02H477.52V1881.34H477.02ZM477.02 1889.24H476.52V1893.18H477.02H477.52V1889.24H477.02ZM477.02 1897.13H476.52V1901.08H477.02H477.52V1897.13H477.02ZM477.02 1905.03H476.52V1907H477.02H477.52V1905.03H477.02ZM477.02 1907V1907.5H478.968V1907V1906.5H477.02V1907ZM482.863 1907V1907.5H486.758V1907V1906.5H482.863V1907ZM490.653 1907V1907.5H494.548V1907V1906.5H490.653V1907ZM498.443 1907V1907.5H502.338V1907V1906.5H498.443V1907ZM506.233 1907V1907.5H510.128V1907V1906.5H506.233V1907ZM514.023 1907V1907.5H517.918V1907V1906.5H514.023V1907ZM521.813 1907V1907.5H525.708V1907V1906.5H521.813V1907ZM529.603 1907V1907.5H533.498V1907V1906.5H529.603V1907ZM537.393 1907V1907.5H541.288V1907V1906.5H537.393V1907ZM545.183 1907V1907.5H549.078V1907V1906.5H545.183V1907ZM552.973 1907V1907.5H556.868V1907V1906.5H552.973V1907ZM560.763 1907V1907.5H564.658V1907V1906.5H560.763V1907ZM568.552 1907V1907.5H572.447V1907V1906.5H568.552V1907ZM576.342 1907V1907.5H580.237V1907V1906.5H576.342V1907ZM584.132 1907V1907.5H586.08V1907V1906.5H584.132V1907ZM586.08 1907H586.58V1905.03H586.08H585.58V1907H586.08ZM586.08 1901.08H586.58V1897.13H586.08H585.58V1901.08H586.08ZM586.08 1893.18H586.58V1889.24H586.08H585.58V1893.18H586.08ZM586.08 1885.29H586.58V1881.34H586.08H585.58V1885.29H586.08ZM586.08 1877.39H586.58V1873.45H586.08H585.58V1877.39H586.08ZM586.08 1869.5H586.58V1865.55H586.08H585.58V1869.5H586.08ZM586.08 1861.61H586.58V1857.66H586.08H585.58V1861.61H586.08ZM586.08 1853.71H586.58V1849.76H586.08H585.58V1853.71H586.08ZM586.08 1845.82H586.58V1841.87H586.08H585.58V1845.82H586.08ZM586.08 1837.92H586.58V1833.97H586.08H585.58V1837.92H586.08ZM586.08 1830.03H586.58V1826.08H586.08H585.58V1830.03H586.08ZM586.08 1822.13H586.58V1818.18H586.08H585.58V1822.13H586.08ZM586.08 1814.24H586.58V1810.29H586.08H585.58V1814.24H586.08ZM586.08 1806.34H586.58V1802.39H586.08H585.58V1806.34H586.08ZM586.08 1798.45H586.58V1794.5H586.08H585.58V1798.45H586.08ZM586.08 1790.55H586.58V1786.61H586.08H585.58V1790.55H586.08ZM586.08 1782.66H586.58V1778.71H586.08H585.58V1782.66H586.08ZM586.08 1774.76H586.58V1770.82H586.08H585.58V1774.76H586.08ZM586.08 1766.87H586.58V1762.92H586.08H585.58V1766.87H586.08ZM586.08 1758.97H586.58V1757H586.08H585.58V1758.97H586.08ZM586.08 1757V1756.5H584.133V1757V1757.5H586.08V1757ZM580.238 1757V1756.5H576.343V1757V1757.5H580.238V1757ZM572.448 1757V1756.5H568.553V1757V1757.5H572.448V1757ZM564.658 1757V1756.5H560.763V1757V1757.5H564.658V1757ZM556.868 1757V1756.5H552.973V1757V1757.5H556.868V1757ZM549.078 1757V1756.5H545.183V1757V1757.5H549.078V1757ZM541.288 1757V1756.5H537.393V1757V1757.5H541.288V1757ZM533.498 1757V1756.5H529.603V1757V1757.5H533.498V1757ZM525.708 1757V1756.5H521.813V1757V1757.5H525.708V1757ZM517.918 1757V1756.5H514.023V1757V1757.5H517.918V1757ZM510.128 1757V1756.5H506.233V1757V1757.5H510.128V1757ZM502.338 1757V1756.5H498.443V1757V1757.5H502.338V1757ZM494.548 1757V1756.5H490.653V1757V1757.5H494.548V1757ZM486.758 1757V1756.5H482.863V1757V1757.5H486.758V1757ZM478.968 1757V1756.5H477.02V1757V1757.5H478.968V1757ZM477.02 1757V1756H476.02V1757H477.02ZM586.08 1757H587.08V1756H586.08V1757ZM586.08 1907V1908H587.08V1907H586.08ZM477.02 1907H476.02V1908H477.02V1907ZM477.02 1757H476.02V1758.97H477.02H478.02V1757H477.02ZM477.02 1762.92H476.02V1766.87H477.02H478.02V1762.92H477.02ZM477.02 1770.82H476.02V1774.76H477.02H478.02V1770.82H477.02ZM477.02 1778.71H476.02V1782.66H477.02H478.02V1778.71H477.02ZM477.02 1786.61H476.02V1790.55H477.02H478.02V1786.61H477.02ZM477.02 1794.5H476.02V1798.45H477.02H478.02V1794.5H477.02ZM477.02 1802.39H476.02V1806.34H477.02H478.02V1802.39H477.02ZM477.02 1810.29H476.02V1814.24H477.02H478.02V1810.29H477.02ZM477.02 1818.18H476.02V1822.13H477.02H478.02V1818.18H477.02ZM477.02 1826.08H476.02V1830.03H477.02H478.02V1826.08H477.02ZM477.02 1833.97H476.02V1837.92H477.02H478.02V1833.97H477.02ZM477.02 1841.87H476.02V1845.82H477.02H478.02V1841.87H477.02ZM477.02 1849.76H476.02V1853.71H477.02H478.02V1849.76H477.02ZM477.02 1857.66H476.02V1861.61H477.02H478.02V1857.66H477.02ZM477.02 1865.55H476.02V1869.5H477.02H478.02V1865.55H477.02ZM477.02 1873.45H476.02V1877.39H477.02H478.02V1873.45H477.02ZM477.02 1881.34H476.02V1885.29H477.02H478.02V1881.34H477.02ZM477.02 1889.24H476.02V1893.18H477.02H478.02V1889.24H477.02ZM477.02 1897.13H476.02V1901.08H477.02H478.02V1897.13H477.02ZM477.02 1905.03H476.02V1907H477.02H478.02V1905.03H477.02ZM477.02 1907V1908H478.968V1907V1906H477.02V1907ZM482.863 1907V1908H486.758V1907V1906H482.863V1907ZM490.653 1907V1908H494.548V1907V1906H490.653V1907ZM498.443 1907V1908H502.338V1907V1906H498.443V1907ZM506.233 1907V1908H510.128V1907V1906H506.233V1907ZM514.023 1907V1908H517.918V1907V1906H514.023V1907ZM521.813 1907V1908H525.708V1907V1906H521.813V1907ZM529.603 1907V1908H533.498V1907V1906H529.603V1907ZM537.393 1907V1908H541.288V1907V1906H537.393V1907ZM545.183 1907V1908H549.078V1907V1906H545.183V1907ZM552.973 1907V1908H556.868V1907V1906H552.973V1907ZM560.763 1907V1908H564.658V1907V1906H560.763V1907ZM568.552 1907V1908H572.447V1907V1906H568.552V1907ZM576.342 1907V1908H580.237V1907V1906H576.342V1907ZM584.132 1907V1908H586.08V1907V1906H584.132V1907ZM586.08 1907H587.08V1905.03H586.08H585.08V1907H586.08ZM586.08 1901.08H587.08V1897.13H586.08H585.08V1901.08H586.08ZM586.08 1893.18H587.08V1889.24H586.08H585.08V1893.18H586.08ZM586.08 1885.29H587.08V1881.34H586.08H585.08V1885.29H586.08ZM586.08 1877.39H587.08V1873.45H586.08H585.08V1877.39H586.08ZM586.08 1869.5H587.08V1865.55H586.08H585.08V1869.5H586.08ZM586.08 1861.61H587.08V1857.66H586.08H585.08V1861.61H586.08ZM586.08 1853.71H587.08V1849.76H586.08H585.08V1853.71H586.08ZM586.08 1845.82H587.08V1841.87H586.08H585.08V1845.82H586.08ZM586.08 1837.92H587.08V1833.97H586.08H585.08V1837.92H586.08ZM586.08 1830.03H587.08V1826.08H586.08H585.08V1830.03H586.08ZM586.08 1822.13H587.08V1818.18H586.08H585.08V1822.13H586.08ZM586.08 1814.24H587.08V1810.29H586.08H585.08V1814.24H586.08ZM586.08 1806.34H587.08V1802.39H586.08H585.08V1806.34H586.08ZM586.08 1798.45H587.08V1794.5H586.08H585.08V1798.45H586.08ZM586.08 1790.55H587.08V1786.61H586.08H585.08V1790.55H586.08ZM586.08 1782.66H587.08V1778.71H586.08H585.08V1782.66H586.08ZM586.08 1774.76H587.08V1770.82H586.08H585.08V1774.76H586.08ZM586.08 1766.87H587.08V1762.92H586.08H585.08V1766.87H586.08ZM586.08 1758.97H587.08V1757H586.08H585.08V1758.97H586.08ZM586.08 1757V1756H584.133V1757V1758H586.08V1757ZM580.238 1757V1756H576.343V1757V1758H580.238V1757ZM572.448 1757V1756H568.553V1757V1758H572.448V1757ZM564.658 1757V1756H560.763V1757V1758H564.658V1757ZM556.868 1757V1756H552.973V1757V1758H556.868V1757ZM549.078 1757V1756H545.183V1757V1758H549.078V1757ZM541.288 1757V1756H537.393V1757V1758H541.288V1757ZM533.498 1757V1756H529.603V1757V1758H533.498V1757ZM525.708 1757V1756H521.813V1757V1758H525.708V1757ZM517.918 1757V1756H514.023V1757V1758H517.918V1757ZM510.128 1757V1756H506.233V1757V1758H510.128V1757ZM502.338 1757V1756H498.443V1757V1758H502.338V1757ZM494.548 1757V1756H490.653V1757V1758H494.548V1757ZM486.758 1757V1756H482.863V1757V1758H486.758V1757ZM478.968 1757V1756H477.02V1757V1758H478.968V1757Z" fill="#FF5C7A" fill-opacity="0.6" mask="url(#stroke0_6_18)"/>
+</g>
+<path id="Vector_15" d="M181 1794.5L235.5 1790L290.1 1799L344.6 1787L399.1 1794.5L453.6 1802L492.6 1839.5L531.6 1877L562.7 1889L593.9 1869.5L632.8 1880L687.4 1850L741.9 1832L804.2 1824.5L882.1 1811L960 1802" stroke-width="1.5" stroke="#00E0FF"/>
+<rect id="Rectangle_56" x="557.71" y="1884" width="10" height="10" fill="#FF5C7A"/>
+<text id="t=12 &#206;&#148;=&#226;&#136;&#146;25,8%" fill="#FF5C7A" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0em"><tspan x="574.71" y="1895.46">t=12  &#x394;=&#x2212;25,8%</tspan></text>
+</g>
+<g id="Frame_30" clip-path="url(#clip15_6_18)">
+<g id="Button / Ghost_3">
+<rect x="181.5" y="1923.5" width="135" height="47" rx="5.5" stroke="#232C3B"/>
+<text id="BOT&#195;&#147;N_6" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0.06em"><tspan x="202" y="1951.68">VENDER TODO</tspan></text>
+</g>
+<g id="Button / Ghost_4">
+<rect x="325.5" y="1923.5" width="109" height="47" rx="5.5" stroke="#232C3B"/>
+<text id="BOT&#195;&#147;N_7" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0.06em"><tspan x="346" y="1951.68">MANTENER</tspan></text>
+</g>
+<g id="Button / Primary_4">
+<rect x="443" y="1923" width="134" height="46" rx="6" fill="#00E0FF"/>
+<text id="BOT&#195;&#147;N_8" fill="#021014" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0.06em"><tspan x="463" y="1950.68">COMPRAR M&#xc1;S</tspan></text>
+</g>
+</g>
+</g>
+<g id="Frame_31">
+<rect x="999.167" y="1613.5" width="404.333" height="382" rx="5.5" fill="#0E1219"/>
+<rect x="999.167" y="1613.5" width="404.333" height="382" rx="5.5" stroke="#232C3B"/>
+<g id="Frame_32" clip-path="url(#clip16_6_18)">
+<text id="mod.perfil" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="1023.67" y="1650.46">MOD.PERFIL</tspan></text>
+<text id="&#226;&#151;&#143;_2" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="10" letter-spacing="0em"><tspan x="1373" y="1649.1">&#x25cf;</tspan></text>
+</g>
+<text id="Resultado explicado" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="22" font-weight="500" letter-spacing="0em"><tspan x="1023.67" y="1695.11">Resultado explicado</tspan></text>
+<g id="Frame_33" clip-path="url(#clip17_6_18)">
+<g id="Gauge" clip-path="url(#clip18_6_18)">
+<path id="Ellipse_2" d="M1123.67 1770C1123.67 1797.61 1101.28 1820 1073.67 1820C1046.05 1820 1023.67 1797.61 1023.67 1770C1023.67 1742.39 1046.05 1720 1073.67 1720C1101.28 1720 1123.67 1742.39 1123.67 1770ZM1028.67 1770C1028.67 1794.85 1048.81 1815 1073.67 1815C1098.52 1815 1118.67 1794.85 1118.67 1770C1118.67 1745.15 1098.52 1725 1073.67 1725C1048.81 1725 1028.67 1745.15 1028.67 1770Z" fill="#161C27"/>
+<path id="Ellipse_3" d="M1073.67 1720C1082.62 1720 1091.41 1722.4 1099.12 1726.96C1106.83 1731.52 1113.17 1738.07 1117.48 1745.91C1121.8 1753.76 1123.92 1762.62 1123.64 1771.57C1123.36 1780.52 1120.68 1789.23 1115.88 1796.79C1111.08 1804.35 1104.34 1810.49 1096.37 1814.55C1088.39 1818.62 1079.46 1820.46 1070.53 1819.9C1061.59 1819.34 1052.97 1816.39 1045.56 1811.35C1038.16 1806.32 1032.24 1799.39 1028.43 1791.29L1032.95 1789.16C1036.38 1796.45 1041.71 1802.69 1048.37 1807.22C1055.04 1811.75 1062.8 1814.41 1070.84 1814.91C1078.88 1815.42 1086.92 1813.75 1094.1 1810.1C1101.28 1806.44 1107.34 1800.92 1111.66 1794.11C1115.98 1787.31 1118.39 1779.47 1118.64 1771.41C1118.9 1763.36 1116.98 1755.38 1113.1 1748.32C1109.22 1741.26 1103.51 1735.37 1096.57 1731.27C1089.64 1727.16 1081.73 1725 1073.67 1725V1720Z" fill="#FF5C7A"/>
+<text id="0.68" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="24" letter-spacing="0em"><tspan x="1044.67" y="1778.64">0.68</tspan></text>
+</g>
+<g id="Frame_34" clip-path="url(#clip19_6_18)">
+<text id="more_likely" fill="#FF5C7A" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="14" letter-spacing="0em"><tspan x="1139.67" y="1752.04">more_likely</tspan></text>
+<text id="M&#195;&#161;s propenso a vender que el promedio." fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="14" letter-spacing="0em"><tspan x="1139.67" y="1776.84">M&#xe1;s propenso a vender que el </tspan><tspan x="1139.67" y="1797.84">promedio.</tspan></text>
+</g>
+</g>
+<g id="Frame_35" clip-path="url(#clip20_6_18)">
+<g id="Frame_36" clip-path="url(#clip21_6_18)">
+<text id="knows_inflation" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="1023.67" y="1849.32">knows_inflation</tspan></text>
+<text id="+0.18" fill="#FF5C7A" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="1343" y="1849.32">+0.18</tspan></text>
+</g>
+<g id="Frame_37" clip-path="url(#clip22_6_18)">
+<rect width="355.333" height="6" transform="translate(1023.67 1862)" fill="#161C27"/>
+<rect id="Rectangle_57" x="1023.67" y="1862" width="321.3" height="6" fill="#FF5C7A"/>
+</g>
+</g>
+<g id="Frame_38" clip-path="url(#clip23_6_18)">
+<g id="Frame_39" clip-path="url(#clip24_6_18)">
+<text id="knowledge_conf" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="1023.67" y="1897.32">knowledge_conf</tspan></text>
+<text id="+0.11" fill="#FF5C7A" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="1343" y="1897.32">+0.11</tspan></text>
+</g>
+<g id="Frame_40" clip-path="url(#clip25_6_18)">
+<rect width="355.333" height="6" transform="translate(1023.67 1910)" fill="#161C27"/>
+<rect id="Rectangle_58" x="1023.67" y="1910" width="196.35" height="6" fill="#FF5C7A"/>
+</g>
+</g>
+<g id="Frame_41" clip-path="url(#clip26_6_18)">
+<g id="Frame_42" clip-path="url(#clip27_6_18)">
+<text id="savings_level" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="1023.67" y="1945.32">savings_level</tspan></text>
+<text id="&#226;&#136;&#146;0.07" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="1343" y="1945.32">&#x2212;0.07</tspan></text>
+</g>
+<g id="Frame_43" clip-path="url(#clip28_6_18)">
+<rect width="355.333" height="6" transform="translate(1023.67 1958)" fill="#161C27"/>
+<rect id="Rectangle_59" x="1023.67" y="1958" width="124.95" height="6" fill="#C6FF3D"/>
+</g>
+</g>
+</g>
+</g>
+<g id="Frame_44" clip-path="url(#clip29_6_18)">
+<g id="Frame_45">
+<rect x="156.5" y="2028.5" width="404.333" height="293" rx="5.5" fill="#0E1219"/>
+<rect x="156.5" y="2028.5" width="404.333" height="293" rx="5.5" stroke="#232C3B"/>
+<g id="Frame_46" clip-path="url(#clip30_6_18)">
+<text id="mod.what_if" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="181" y="2065.46">MOD.WHAT_IF</tspan></text>
+<text id="&#226;&#151;&#143;_3" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="10" letter-spacing="0em"><tspan x="530.333" y="2064.1">&#x25cf;</tspan></text>
+</g>
+<text id="&#194;&#191;Y si&#226;&#128;&#166;?" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="22" font-weight="500" letter-spacing="0em"><tspan x="181" y="2110.11">&#xbf;Y si&#x2026;?</tspan></text>
+<g id="Frame_47" clip-path="url(#clip31_6_18)">
+<g id="Frame_48" clip-path="url(#clip32_6_18)">
+<text id="knows_inflation_2" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="181" y="2148.32">knows_inflation</tspan></text>
+<text id="1" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="528.333" y="2148.32">1</tspan></text>
+</g>
+<g id="Frame_49" clip-path="url(#clip33_6_18)">
+<rect id="Rectangle_60" x="181" y="2170" width="357" height="2" fill="#161C27"/>
+<rect id="Rectangle_61" x="181" y="2170" width="321.3" height="2" fill="#00E0FF"/>
+<rect id="Rectangle_62" x="497.3" y="2163" width="10" height="16" fill="#00E0FF"/>
+</g>
+</g>
+<g id="Frame_50" clip-path="url(#clip34_6_18)">
+<g id="Frame_51" clip-path="url(#clip35_6_18)">
+<text id="emergency_fund" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="181" y="2208.32">emergency_fund</tspan></text>
+<text id="6m" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="521.333" y="2208.32">6m</tspan></text>
+</g>
+<g id="Frame_52" clip-path="url(#clip36_6_18)">
+<rect id="Rectangle_63" x="181" y="2230" width="357" height="2" fill="#161C27"/>
+<rect id="Rectangle_64" x="181" y="2230" width="214.2" height="2" fill="#00E0FF"/>
+<rect id="Rectangle_65" x="390.2" y="2223" width="10" height="16" fill="#00E0FF"/>
+</g>
+</g>
+<g id="Frame_53" clip-path="url(#clip37_6_18)">
+<text id="0.68_2" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="28" letter-spacing="0em"><tspan x="181" y="2286.08">0.68</tspan></text>
+<text id="&#226;&#134;&#146;" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="20" letter-spacing="0em"><tspan x="259" y="2283.2">&#x2192;</tspan></text>
+<text id="0.52" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="28" letter-spacing="0em"><tspan x="281" y="2286.08">0.52</tspan></text>
+</g>
+</g>
+<g id="Frame_54">
+<rect x="577.833" y="2028.5" width="404.333" height="293" rx="5.5" fill="#0E1219"/>
+<rect x="577.833" y="2028.5" width="404.333" height="293" rx="5.5" stroke="#232C3B"/>
+<g id="Frame_55" clip-path="url(#clip38_6_18)">
+<text id="mod.calibraci&#195;&#179;n" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="602.333" y="2065.46">MOD.CALIBRACI&#xd3;N</tspan></text>
+<text id="&#226;&#151;&#143;_4" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="10" letter-spacing="0em"><tspan x="951.667" y="2064.1">&#x25cf;</tspan></text>
+</g>
+<text id="Lo que sabes vs. lo que crees saber" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="22" font-weight="500" letter-spacing="0em"><tspan x="602.333" y="2110.11">Lo que sabes vs. lo que crees </tspan><tspan x="602.333" y="2143.11">saber</tspan></text>
+<g id="Frame_56" clip-path="url(#clip39_6_18)">
+<g id="Frame_57" clip-path="url(#clip40_6_18)">
+<text id="self_rated" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="602.333" y="2181.32">self_rated</tspan></text>
+<text id="8/10" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="928.667" y="2181.32">8/10</tspan></text>
+</g>
+<g id="Frame_58" clip-path="url(#clip41_6_18)">
+<rect width="355.333" height="6" transform="translate(602.333 2194)" fill="#161C27"/>
+<rect id="Rectangle_66" x="602.333" y="2194" width="285.6" height="6" fill="#C6FF3D"/>
+</g>
+</g>
+<g id="Frame_59" clip-path="url(#clip42_6_18)">
+<g id="Frame_60" clip-path="url(#clip43_6_18)">
+<text id="actual" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="602.333" y="2229.32">actual</tspan></text>
+<text id="5/10" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="928.667" y="2229.32">5/10</tspan></text>
+</g>
+<g id="Frame_61" clip-path="url(#clip44_6_18)">
+<rect width="355.333" height="6" transform="translate(602.333 2242)" fill="#161C27"/>
+<rect id="Rectangle_67" x="602.333" y="2242" width="178.5" height="6" fill="#00E0FF"/>
+</g>
+</g>
+<g id="Frame_62">
+<rect x="602.833" y="2264.5" width="179" height="31" rx="3.5" fill="#161C27"/>
+<rect x="602.833" y="2264.5" width="179" height="31" rx="3.5" stroke="#232C3B"/>
+<rect id="Rectangle_68" x="613.333" y="2277" width="6" height="6" fill="#FF5C7A"/>
+<text id="overconfident = true" fill="#FF5C7A" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="627.333" y="2284.32">overconfident = true</tspan></text>
+</g>
+</g>
+<g id="Frame_63">
+<rect x="999.167" y="2028.5" width="404.333" height="293" rx="5.5" fill="#0E1219"/>
+<rect x="999.167" y="2028.5" width="404.333" height="293" rx="5.5" stroke="#232C3B"/>
+<g id="Frame_64" clip-path="url(#clip45_6_18)">
+<text id="mod.lecciones" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="1023.67" y="2065.46">MOD.LECCIONES</tspan></text>
+<text id="&#226;&#151;&#143;_5" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="10" letter-spacing="0em"><tspan x="1373" y="2064.1">&#x25cf;</tspan></text>
+</g>
+<text id="Elegidas por tus factores" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="22" font-weight="500" letter-spacing="0em"><tspan x="1023.67" y="2110.11">Elegidas por tus factores</tspan></text>
+<g id="Frame_65">
+<g clip-path="url(#clip46_6_18)">
+<mask id="path-211-inside-1_6_18" fill="white">
+<path d="M1023.67 2135H1379V2177H1023.67V2135Z"/>
+</mask>
+<text id="Inflaci&#195;&#179;n con tu mercado" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="14" letter-spacing="0em"><tspan x="1023.67" y="2161.34">Inflaci&#xf3;n con tu mercado</tspan></text>
+<text id="4m &#194;&#183; 100%" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="1314" y="2159.32">4m &#xb7; 100%</tspan></text>
+</g>
+<path d="M1023.67 2135V2136H1379V2135V2134H1023.67V2135Z" fill="#232C3B" mask="url(#path-211-inside-1_6_18)"/>
+</g>
+<g id="Frame_66">
+<g clip-path="url(#clip47_6_18)">
+<mask id="path-215-inside-2_6_18" fill="white">
+<path d="M1023.67 2193H1379V2235H1023.67V2193Z"/>
+</mask>
+<text id="Vender en el fondo" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="14" letter-spacing="0em"><tspan x="1023.67" y="2219.34">Vender en el fondo</tspan></text>
+<text id="5m &#194;&#183; 40%" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="1321" y="2217.32">5m &#xb7; 40%</tspan></text>
+</g>
+<path d="M1023.67 2193V2194H1379V2193V2192H1023.67V2193Z" fill="#232C3B" mask="url(#path-215-inside-2_6_18)"/>
+</g>
+<g id="Frame_67">
+<g clip-path="url(#clip48_6_18)">
+<mask id="path-219-inside-3_6_18" fill="white">
+<path d="M1023.67 2251H1379V2293H1023.67V2251Z"/>
+</mask>
+<text id="Ahorro antes que portafolio" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="14" letter-spacing="0em"><tspan x="1023.67" y="2277.34">Ahorro antes que portafolio</tspan></text>
+<text id="3m &#194;&#183; 0%" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="1328" y="2275.32">3m &#xb7; 0%</tspan></text>
+</g>
+<path d="M1023.67 2251V2252H1379V2251V2250H1023.67V2251Z" fill="#232C3B" mask="url(#path-219-inside-3_6_18)"/>
+</g>
+</g>
+</g>
+<g id="Frame_68" clip-path="url(#clip49_6_18)">
+<g id="Frame_69">
+<rect x="156.5" y="2354.5" width="404.333" height="280" rx="5.5" fill="#0E1219"/>
+<rect x="156.5" y="2354.5" width="404.333" height="280" rx="5.5" stroke="#232C3B"/>
+<g id="Frame_70" clip-path="url(#clip50_6_18)">
+<text id="mod.plan" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="181" y="2391.46">MOD.PLAN</tspan></text>
+<text id="&#226;&#151;&#143;_6" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="10" letter-spacing="0em"><tspan x="530.333" y="2390.1">&#x25cf;</tspan></text>
+</g>
+<text id="Tu regla antes de vender" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="22" font-weight="500" letter-spacing="0em"><tspan x="181" y="2436.11">Tu regla antes de vender</tspan></text>
+<g id="Frame_71">
+<text id="[x]" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0em"><tspan x="181" y="2485.18">[x]</tspan></text>
+<text id="&#194;&#191;Necesito este dinero en 12 meses?" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="14" letter-spacing="0em"><tspan x="217" y="2485.34">&#xbf;Necesito este dinero en 12 meses?</tspan></text>
+</g>
+<g id="Frame_72">
+<text id="[x]_2" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0em"><tspan x="181" y="2540.18">[x]</tspan></text>
+<text id="&#194;&#191;Cambi&#195;&#179; la raz&#195;&#179;n por la que compr&#195;&#169;?" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="14" letter-spacing="0em"><tspan x="217" y="2540.34">&#xbf;Cambi&#xf3; la raz&#xf3;n por la que compr&#xe9;?</tspan></text>
+</g>
+<g id="Frame_73">
+<text id="[ ]" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0em"><tspan x="181" y="2595.18">[ ]</tspan></text>
+<text id="&#194;&#191;Esper&#195;&#169; 48 horas?" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="14" letter-spacing="0em"><tspan x="217" y="2595.34">&#xbf;Esper&#xe9; 48 horas?</tspan></text>
+</g>
+</g>
+<g id="Frame_74">
+<rect x="577.833" y="2354.5" width="404.333" height="280" rx="5.5" fill="#0E1219"/>
+<rect x="577.833" y="2354.5" width="404.333" height="280" rx="5.5" stroke="#232C3B"/>
+<g id="Frame_75" clip-path="url(#clip51_6_18)">
+<text id="mod.glosario" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="602.333" y="2391.46">MOD.GLOSARIO</tspan></text>
+<text id="&#226;&#151;&#143;_7" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="10" letter-spacing="0em"><tspan x="951.667" y="2390.1">&#x25cf;</tspan></text>
+</g>
+<text id="18 t&#195;&#169;rminos sin tecnicismos" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="22" font-weight="500" letter-spacing="0em"><tspan x="602.333" y="2436.11">18 t&#xe9;rminos sin tecnicismos</tspan></text>
+<g id="Frame_76" clip-path="url(#clip52_6_18)">
+<g id="Frame_77">
+<rect x="602.833" y="2461.5" width="65" height="31" rx="3.5" fill="#161C27"/>
+<rect x="602.833" y="2461.5" width="65" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="acci&#195;&#179;n" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="613.333" y="2481.32">acci&#xf3;n</tspan></text>
+</g>
+<g id="Frame_78">
+<rect x="674.833" y="2461.5" width="43" height="31" rx="3.5" fill="#161C27"/>
+<rect x="674.833" y="2461.5" width="43" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="etf" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="685.333" y="2481.32">etf</tspan></text>
+</g>
+<g id="Frame_79">
+<rect x="724.833" y="2461.5" width="101" height="31" rx="3.5" fill="#161C27"/>
+<rect x="724.833" y="2461.5" width="101" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="volatilidad" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="735.333" y="2481.32">volatilidad</tspan></text>
+</g>
+<g id="Frame_80">
+<rect x="832.833" y="2461.5" width="86" height="31" rx="3.5" fill="#161C27"/>
+<rect x="832.833" y="2461.5" width="86" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="inflaci&#195;&#179;n" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="843.333" y="2481.32">inflaci&#xf3;n</tspan></text>
+</g>
+<g id="Frame_81">
+<rect x="602.833" y="2499.5" width="86" height="31" rx="3.5" fill="#161C27"/>
+<rect x="602.833" y="2499.5" width="86" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="dividendo" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="613.333" y="2519.32">dividendo</tspan></text>
+</g>
+<g id="Frame_82">
+<rect x="695.833" y="2499.5" width="79" height="31" rx="3.5" fill="#161C27"/>
+<rect x="695.833" y="2499.5" width="79" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="liquidez" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="706.333" y="2519.32">liquidez</tspan></text>
+</g>
+<g id="Frame_83">
+<rect x="781.833" y="2499.5" width="65" height="31" rx="3.5" fill="#161C27"/>
+<rect x="781.833" y="2499.5" width="65" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="riesgo" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="792.333" y="2519.32">riesgo</tspan></text>
+</g>
+<g id="Frame_84">
+<rect x="853.833" y="2499.5" width="65" height="31" rx="3.5" fill="#161C27"/>
+<rect x="853.833" y="2499.5" width="65" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="colcap" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="864.333" y="2519.32">colcap</tspan></text>
+</g>
+<g id="Frame_85">
+<rect x="602.833" y="2537.5" width="93" height="31" rx="3.5" fill="#161C27"/>
+<rect x="602.833" y="2537.5" width="93" height="31" rx="3.5" stroke="#232C3B"/>
+<text id="renta_fija" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="12" letter-spacing="0em"><tspan x="613.333" y="2557.32">renta_fija</tspan></text>
+</g>
+</g>
+</g>
+<g id="Frame_86">
+<rect x="999.167" y="2354.5" width="404.333" height="280" rx="5.5" fill="#0E1219"/>
+<rect x="999.167" y="2354.5" width="404.333" height="280" rx="5.5" stroke="#232C3B"/>
+<g id="Frame_87" clip-path="url(#clip53_6_18)">
+<text id="mod.empresas" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.08em"><tspan x="1023.67" y="2391.46">MOD.EMPRESAS</tspan></text>
+<text id="&#226;&#151;&#143;_8" fill="#C6FF3D" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="10" letter-spacing="0em"><tspan x="1373" y="2390.1">&#x25cf;</tspan></text>
+</g>
+<text id="Panel agregado y an&#195;&#179;nimo" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="22" font-weight="500" letter-spacing="0em"><tspan x="1023.67" y="2436.11">Panel agregado y an&#xf3;nimo</tspan></text>
+<g id="Frame_88" clip-path="url(#clip54_6_18)">
+<g id="Frame_89" clip-path="url(#clip55_6_18)">
+<rect id="Rectangle_69" x="1023.67" y="2499" width="82.8333" height="50" fill="#C6FF3D"/>
+<text id="calma" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="10" letter-spacing="0em"><tspan x="1050.08" y="2566.1">calma</tspan></text>
+</g>
+<g id="Frame_90" clip-path="url(#clip56_6_18)">
+<rect id="Rectangle_70" x="1114.5" y="2461" width="82.8333" height="88" fill="#00E0FF"/>
+<text id="moderado" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="10" letter-spacing="0em"><tspan x="1131.92" y="2566.1">moderado</tspan></text>
+</g>
+<g id="Frame_91" clip-path="url(#clip57_6_18)">
+<rect id="Rectangle_71" x="1205.33" y="2483" width="82.8333" height="66" fill="#FF5C7A"/>
+<text id="reactivo" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="10" letter-spacing="0em"><tspan x="1222.75" y="2566.1">reactivo</tspan></text>
+</g>
+<g id="Frame_92" clip-path="url(#clip58_6_18)">
+<rect id="Rectangle_72" x="1296.17" y="2516" width="82.8333" height="33" fill="#FF5C7A"/>
+<text id="muy_react." fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="10" letter-spacing="0em"><tspan x="1307.58" y="2566.1">muy_react.</tspan></text>
+</g>
+</g>
+</g>
+</g>
+</g>
+<g id="CTA">
+<g id="Frame_93">
+<rect x="156.5" y="2735.5" width="1247" height="170" fill="#0E1219"/>
+<rect x="156.5" y="2735.5" width="1247" height="170" stroke="#00E0FF"/>
+<g id="Frame_94" clip-path="url(#clip59_6_18)">
+<text id="&#62; ejecutar diagnostico --usuario=t&#195;&#186;" fill="#00E0FF" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="14" letter-spacing="0em"><tspan x="205" y="2799.54">&#62; ejecutar diagnostico --usuario=t&#xfa;</tspan></text>
+<text id="&#194;&#191;Listo para conocer tu perfil?" fill="#E6EDF3" style="white-space: pre" xml:space="preserve" font-family="Space Grotesk" font-size="40" font-weight="500" letter-spacing="-0.02em"><tspan x="205" y="2849.84">&#xbf;Listo para conocer tu perfil?</tspan></text>
+</g>
+<g id="Button / Primary_5">
+<rect x="1135" y="2797.5" width="220" height="46" rx="6" fill="#00E0FF"/>
+<text id="BOT&#195;&#147;N_9" fill="#021014" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="13" letter-spacing="0.06em"><tspan x="1155" y="2825.18">INICIAR DIAGN&#xd3;STICO &#x2192;</tspan></text>
+</g>
+</g>
+</g>
+<g id="Footer">
+<mask id="path-272-inside-4_6_18" fill="white">
+<path d="M60 2986H1500V3060H60V2986Z"/>
+</mask>
+<path d="M60 2986V2987H1500V2986V2985H60V2986Z" fill="#232C3B" mask="url(#path-272-inside-4_6_18)"/>
+<text id="BOLSALAB &#194;&#183; ESPECIALIZACI&#195;&#147;N EN IA &#194;&#183; PONTIFICIA UNIVERSIDAD JAVERIANA" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.06em"><tspan x="156" y="3023.46">BOLSALAB &#xb7; ESPECIALIZACI&#xd3;N EN IA &#xb7; PONTIFICIA UNIVERSIDAD JAVERIANA</tspan></text>
+<text id="HERRAMIENTA EDUCATIVA &#194;&#183; NO ES ASESOR&#195;&#141;A DE INVERSI&#195;&#147;N" fill="#7D8A9C" style="white-space: pre" xml:space="preserve" font-family="JetBrains Mono" font-size="11" letter-spacing="0.06em"><tspan x="1034" y="3023.46">HERRAMIENTA EDUCATIVA &#xb7; NO ES ASESOR&#xcd;A DE INVERSI&#xd3;N</tspan></text>
+</g>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_6_18" x="794" y="366" width="620" height="620" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="60" result="effect1_foregroundBlur_6_18"/>
+</filter>
+<filter id="filter1_f_6_18" x="916" y="488" width="376" height="376" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="4" result="effect1_foregroundBlur_6_18"/>
+</filter>
+<linearGradient id="paint0_linear_6_18" x1="156" y1="582" x2="756" y2="582" gradientUnits="userSpaceOnUse">
+<stop stop-color="#00E0FF"/>
+<stop offset="1" stop-color="#C6FF3D"/>
+</linearGradient>
+<linearGradient id="paint1_linear_6_18" x1="804" y1="707" x2="1404" y2="707" gradientUnits="userSpaceOnUse">
+<stop stop-color="#00E0FF" stop-opacity="0"/>
+<stop offset="0.5" stop-color="#00E0FF"/>
+<stop offset="1" stop-color="#00E0FF" stop-opacity="0"/>
+</linearGradient>
+<clipPath id="clip0_6_18">
+<rect width="1440" height="2860" fill="white" transform="translate(60 200)"/>
+</clipPath>
+<clipPath id="clip1_6_18">
+<rect width="181" height="32" fill="white" transform="translate(156 260)"/>
+</clipPath>
+<clipPath id="clip2_6_18">
+<rect width="410" height="20" fill="white" transform="translate(564 266)"/>
+</clipPath>
+<clipPath id="clip3_6_18">
+<rect width="600" height="503" fill="white" transform="translate(156 424.5)"/>
+</clipPath>
+<clipPath id="clip4_6_18">
+<rect width="385" height="48" fill="white" transform="translate(156 819.5)"/>
+</clipPath>
+<clipPath id="clip5_6_18">
+<rect width="327" height="32" fill="white" transform="translate(156 895.5)"/>
+</clipPath>
+<clipPath id="clip6_6_18">
+<rect x="804" y="376" width="600" height="600" fill="white"/>
+</clipPath>
+<clipPath id="clip7_6_18">
+<rect width="1248" height="75" fill="white" transform="translate(156 1120)"/>
+</clipPath>
+<clipPath id="clip8_6_18">
+<rect width="1248" height="167" fill="white" transform="translate(156 1227)"/>
+</clipPath>
+<clipPath id="clip9_6_18">
+<rect width="262" height="18" fill="white" transform="translate(181 1252)"/>
+</clipPath>
+<clipPath id="clip10_6_18">
+<rect width="262" height="18" fill="white" transform="translate(493 1252)"/>
+</clipPath>
+<clipPath id="clip11_6_18">
+<rect width="262" height="18" fill="white" transform="translate(805 1252)"/>
+</clipPath>
+<clipPath id="clip12_6_18">
+<rect width="262" height="18" fill="white" transform="translate(1117 1252)"/>
+</clipPath>
+<clipPath id="clip13_6_18">
+<rect width="1248" height="383" fill="white" transform="translate(156 1613)"/>
+</clipPath>
+<clipPath id="clip14_6_18">
+<rect width="776.667" height="17" fill="white" transform="translate(181 1638)"/>
+</clipPath>
+<clipPath id="clip15_6_18">
+<rect width="396" height="48" fill="white" transform="translate(181 1923)"/>
+</clipPath>
+<clipPath id="clip16_6_18">
+<rect width="355.333" height="17" fill="white" transform="translate(1023.67 1638)"/>
+</clipPath>
+<clipPath id="clip17_6_18">
+<rect width="355.333" height="100" fill="white" transform="translate(1023.67 1720)"/>
+</clipPath>
+<clipPath id="clip18_6_18">
+<rect width="100" height="100" fill="white" transform="translate(1023.67 1720)"/>
+</clipPath>
+<clipPath id="clip19_6_18">
+<rect width="239.333" height="67" fill="white" transform="translate(1139.67 1736.5)"/>
+</clipPath>
+<clipPath id="clip20_6_18">
+<rect width="355.333" height="32" fill="white" transform="translate(1023.67 1836)"/>
+</clipPath>
+<clipPath id="clip21_6_18">
+<rect width="355.333" height="18" fill="white" transform="translate(1023.67 1836)"/>
+</clipPath>
+<clipPath id="clip22_6_18">
+<rect width="355.333" height="6" fill="white" transform="translate(1023.67 1862)"/>
+</clipPath>
+<clipPath id="clip23_6_18">
+<rect width="355.333" height="32" fill="white" transform="translate(1023.67 1884)"/>
+</clipPath>
+<clipPath id="clip24_6_18">
+<rect width="355.333" height="18" fill="white" transform="translate(1023.67 1884)"/>
+</clipPath>
+<clipPath id="clip25_6_18">
+<rect width="355.333" height="6" fill="white" transform="translate(1023.67 1910)"/>
+</clipPath>
+<clipPath id="clip26_6_18">
+<rect width="355.333" height="32" fill="white" transform="translate(1023.67 1932)"/>
+</clipPath>
+<clipPath id="clip27_6_18">
+<rect width="355.333" height="18" fill="white" transform="translate(1023.67 1932)"/>
+</clipPath>
+<clipPath id="clip28_6_18">
+<rect width="355.333" height="6" fill="white" transform="translate(1023.67 1958)"/>
+</clipPath>
+<clipPath id="clip29_6_18">
+<rect width="1248" height="294" fill="white" transform="translate(156 2028)"/>
+</clipPath>
+<clipPath id="clip30_6_18">
+<rect width="355.333" height="17" fill="white" transform="translate(181 2053)"/>
+</clipPath>
+<clipPath id="clip31_6_18">
+<rect width="355.333" height="44" fill="white" transform="translate(181 2135)"/>
+</clipPath>
+<clipPath id="clip32_6_18">
+<rect width="355.333" height="18" fill="white" transform="translate(181 2135)"/>
+</clipPath>
+<clipPath id="clip33_6_18">
+<rect width="355.333" height="16" fill="white" transform="translate(181 2163)"/>
+</clipPath>
+<clipPath id="clip34_6_18">
+<rect width="355.333" height="44" fill="white" transform="translate(181 2195)"/>
+</clipPath>
+<clipPath id="clip35_6_18">
+<rect width="355.333" height="18" fill="white" transform="translate(181 2195)"/>
+</clipPath>
+<clipPath id="clip36_6_18">
+<rect width="355.333" height="16" fill="white" transform="translate(181 2223)"/>
+</clipPath>
+<clipPath id="clip37_6_18">
+<rect width="168" height="42" fill="white" transform="translate(181 2255)"/>
+</clipPath>
+<clipPath id="clip38_6_18">
+<rect width="355.333" height="17" fill="white" transform="translate(602.333 2053)"/>
+</clipPath>
+<clipPath id="clip39_6_18">
+<rect width="355.333" height="32" fill="white" transform="translate(602.333 2168)"/>
+</clipPath>
+<clipPath id="clip40_6_18">
+<rect width="355.333" height="18" fill="white" transform="translate(602.333 2168)"/>
+</clipPath>
+<clipPath id="clip41_6_18">
+<rect width="355.333" height="6" fill="white" transform="translate(602.333 2194)"/>
+</clipPath>
+<clipPath id="clip42_6_18">
+<rect width="355.333" height="32" fill="white" transform="translate(602.333 2216)"/>
+</clipPath>
+<clipPath id="clip43_6_18">
+<rect width="355.333" height="18" fill="white" transform="translate(602.333 2216)"/>
+</clipPath>
+<clipPath id="clip44_6_18">
+<rect width="355.333" height="6" fill="white" transform="translate(602.333 2242)"/>
+</clipPath>
+<clipPath id="clip45_6_18">
+<rect width="355.333" height="17" fill="white" transform="translate(1023.67 2053)"/>
+</clipPath>
+<clipPath id="clip46_6_18">
+<path d="M1023.67 2135H1379V2177H1023.67V2135Z" fill="white"/>
+</clipPath>
+<clipPath id="clip47_6_18">
+<path d="M1023.67 2193H1379V2235H1023.67V2193Z" fill="white"/>
+</clipPath>
+<clipPath id="clip48_6_18">
+<path d="M1023.67 2251H1379V2293H1023.67V2251Z" fill="white"/>
+</clipPath>
+<clipPath id="clip49_6_18">
+<rect width="1248" height="281" fill="white" transform="translate(156 2354)"/>
+</clipPath>
+<clipPath id="clip50_6_18">
+<rect width="355.333" height="17" fill="white" transform="translate(181 2379)"/>
+</clipPath>
+<clipPath id="clip51_6_18">
+<rect width="355.333" height="17" fill="white" transform="translate(602.333 2379)"/>
+</clipPath>
+<clipPath id="clip52_6_18">
+<rect width="355.333" height="108" fill="white" transform="translate(602.333 2461)"/>
+</clipPath>
+<clipPath id="clip53_6_18">
+<rect width="355.333" height="17" fill="white" transform="translate(1023.67 2379)"/>
+</clipPath>
+<clipPath id="clip54_6_18">
+<rect width="355.333" height="109" fill="white" transform="translate(1023.67 2461)"/>
+</clipPath>
+<clipPath id="clip55_6_18">
+<rect width="82.8333" height="71" fill="white" transform="translate(1023.67 2499)"/>
+</clipPath>
+<clipPath id="clip56_6_18">
+<rect width="82.8333" height="109" fill="white" transform="translate(1114.5 2461)"/>
+</clipPath>
+<clipPath id="clip57_6_18">
+<rect width="82.8333" height="87" fill="white" transform="translate(1205.33 2483)"/>
+</clipPath>
+<clipPath id="clip58_6_18">
+<rect width="82.8333" height="54" fill="white" transform="translate(1296.17 2516)"/>
+</clipPath>
+<clipPath id="clip59_6_18">
+<rect width="551" height="73" fill="white" transform="translate(205 2784)"/>
+</clipPath>
+</defs>
+</svg>
