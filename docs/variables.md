@@ -1,6 +1,6 @@
 # Variables del modelo
 
-El modelo aprende de la encuesta japonesa (54.704 inversionistas). Usa 17 variables de entrada, que salen de 14 preguntas que la app le hace al usuario, y una variable objetivo. `bolsalab/features.py` construye esta tabla.
+El modelo aprende de la encuesta japonesa (54.704 inversionistas). Usa 17 variables de entrada y una variable objetivo. La app le hace 13 preguntas al usuario: de ahí salen 13 variables, 2 más se calculan (`overconfidence` y `age_squared`) y las otras 2 (`risk_aversion` y `short_term_view`) no se preguntan y toman un valor fijo. `bolsalab/features.py` construye esta tabla.
 
 ## Variable objetivo
 
