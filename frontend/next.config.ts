@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
 
-const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+const base: NextConfig = {
   turbopack: {
     rules: {
       "*.css": {
@@ -14,4 +12,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default function config(phase: string): NextConfig {
+  if (phase === PHASE_DEVELOPMENT_SERVER) {
+    return {
+      ...base,
+      rewrites: async () => [
+        { source: "/api/:path*", destination: "http://localhost:8000/api/:path*" },
+      ],
+    };
+  }
+
+  return { ...base, output: "export", trailingSlash: true };
+}
