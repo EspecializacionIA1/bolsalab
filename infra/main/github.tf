@@ -58,3 +58,53 @@ resource "aws_iam_role_policy" "github_deploy" {
     ]
   })
 }
+
+# ============================================================================
+# EKS (PROPUESTA, COMENTADO): ver eks.tf
+# ============================================================================
+# Hoy el CD manda un comando SSM al servidor (git pull + deploy/start.sh). Con
+# EKS el CD cambia a:
+#   1. Construir las imágenes en GitHub Actions y subirlas a ECR (ecr.tf),
+#      etiquetadas con el commit.
+#   2. `aws eks update-kubeconfig` y `helm upgrade` en los espacios "bolsalab" y
+#      "mlops". El permiso dentro del clúster lo da la access entry de eks.tf.
+# El rol y su condición de OIDC (solo main de este repo) no cambian; se le suma
+# esta política, y la de SSM de arriba se borra cuando el servidor desaparezca.
+
+# resource "aws_iam_role_policy" "github_deploy_eks" {
+#   name = "${var.project}-github-deploy-eks"
+#   role = aws_iam_role.github_deploy.id
+#
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         # Esta acción de AWS no se puede limitar a un recurso.
+#         Sid      = "EcrLogin"
+#         Effect   = "Allow"
+#         Action   = "ecr:GetAuthorizationToken"
+#         Resource = "*"
+#       },
+#       {
+#         Sid    = "PushImages"
+#         Effect = "Allow"
+#         Action = [
+#           "ecr:BatchCheckLayerAvailability",
+#           "ecr:BatchGetImage",
+#           "ecr:CompleteLayerUpload",
+#           "ecr:InitiateLayerUpload",
+#           "ecr:PutImage",
+#           "ecr:UploadLayerPart",
+#         ]
+#         Resource = [for repo in aws_ecr_repository.this : repo.arn]
+#       },
+#       {
+#         # Lo único que pide `aws eks update-kubeconfig`.
+#         Sid      = "DescribeCluster"
+#         Effect   = "Allow"
+#         Action   = "eks:DescribeCluster"
+#         Resource = aws_eks_cluster.main.arn
+#       }
+#     ]
+#   })
+# }

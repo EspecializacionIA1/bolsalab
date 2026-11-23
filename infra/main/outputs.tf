@@ -27,3 +27,38 @@ output "connect_command" {
   description = "Comando para abrir una terminal en el servidor"
   value       = "aws ssm start-session --target ${aws_instance.server.id}"
 }
+
+# ============================================================================
+# EKS (PROPUESTA, COMENTADO): ver eks.tf
+# ============================================================================
+# server_id, server_ip y connect_command se borran cuando el servidor desaparezca.
+
+# output "eks_cluster_name" {
+#   description = "Nombre del clúster"
+#   value       = aws_eks_cluster.main.name
+# }
+#
+# output "kubeconfig_command" {
+#   description = "Comando para que kubectl y helm se conecten al clúster"
+#   value       = "aws eks update-kubeconfig --region ${var.region} --name ${aws_eks_cluster.main.name}"
+# }
+#
+# output "ecr_repositories" {
+#   description = "Dirección de cada repositorio de imágenes (para el CD)"
+#   value       = { for name, repo in aws_ecr_repository.this : name => repo.repository_url }
+# }
+#
+# output "mlops_db_endpoint" {
+#   description = "Postgres de MLflow y Airflow (la contraseña está en Secrets Manager)"
+#   value       = aws_db_instance.mlops.endpoint
+# }
+#
+# output "mlops_db_secret_arn" {
+#   description = "Secreto con la contraseña de Postgres"
+#   value       = aws_db_instance.mlops.master_user_secret[0].secret_arn
+# }
+#
+# output "pipeline_efs_id" {
+#   description = "Volumen compartido de las etapas de Airflow (para su StorageClass)"
+#   value       = aws_efs_file_system.pipeline.id
+# }

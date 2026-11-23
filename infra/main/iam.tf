@@ -54,3 +54,12 @@ resource "aws_iam_instance_profile" "server" {
   name = "${var.project}-server"
   role = aws_iam_role.server.name
 }
+
+# ============================================================================
+# EKS (PROPUESTA, COMENTADO): ver eks.tf
+# ============================================================================
+# En EKS no hay un rol único para todo: cada componente recibe el suyo con EKS
+# Pod Identity (sección "Roles de los pods" de eks.tf). El permiso del bucket de
+# MLflow pasa al rol "mlflow"; los parámetros /bolsalab/* ya no hacen falta
+# (la contraseña de Caddy desaparece y la de Postgres vive en Secrets Manager).
+# Este rol se borra junto con el servidor.

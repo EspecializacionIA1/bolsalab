@@ -80,3 +80,12 @@ resource "aws_eip" "server" {
     Name = "${var.project}-server"
   }
 }
+
+# ============================================================================
+# EKS (PROPUESTA, COMENTADO): ver eks.tf
+# ============================================================================
+# Con EKS este servidor, su IP fija y user_data.sh dejan de hacer falta: Caddy
+# pasa a ser el ALB, la API y MLflow pasan a ser pods y Docker Compose pasa a ser
+# Helm. Recomendado: mantenerlo mientras se migra, mover el DNS al ALB
+# (dns.tf), comprobar que todo responde y solo entonces borrar este archivo,
+# user_data.sh y los recursos de SSM de github.tf.

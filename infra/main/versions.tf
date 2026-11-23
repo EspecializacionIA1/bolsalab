@@ -29,3 +29,19 @@ provider "aws" {
     }
   }
 }
+
+# ============================================================================
+# EKS (PROPUESTA, COMENTADO): ver eks_addons.tf
+# ============================================================================
+# Para instalar charts de Helm desde Terraform se suman dos proveedores dentro de
+# required_providers (arriba), y después `terraform init -upgrade` para que
+# .terraform.lock.hcl los registre:
+#
+#     helm = {
+#       source  = "hashicorp/helm"
+#       version = "~> 3.0"
+#     }
+#     kubernetes = {
+#       source  = "hashicorp/kubernetes"
+#       version = "~> 2.38"
+#     }
