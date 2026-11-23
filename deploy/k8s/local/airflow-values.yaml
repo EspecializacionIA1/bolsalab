@@ -1,0 +1,32 @@
+# Valores del chart oficial de Airflow (apache-airflow/airflow) para kind.
+# Solo pruebas locales: la contraseña es la del Postgres local de mlops.
+#   helm upgrade --install airflow apache-airflow/airflow -n airflow \
+#     -f deploy/k8s/local/airflow-values.yaml --timeout 10m
+
+executor: KubernetesExecutor   # cada tarea corre en su propio pod
+
+# Imagen con los flujos de deploy/airflow/dags adentro (cargada con kind load).
+images:
+  airflow:
+    repository: bolsalab/airflow
+    tag: dev
+    pullPolicy: IfNotPresent
+
+# Base de datos: el Postgres del namespace mlops, base "airflow".
+postgresql:
+  enabled: false
+data:
+  metadataConnection:
+    user: bolsalab
+    pass: solo-local
+    protocol: postgresql
+    host: postgres.mlops.svc.cluster.local
+    port: 5432
+    db: airflow
+    sslmode: disable
+
+# No hacen falta con KubernetesExecutor; ahorran memoria.
+redis:
+  enabled: false
+statsd:
+  enabled: false

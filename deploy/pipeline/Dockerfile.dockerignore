@@ -1,0 +1,9 @@
+# Contexto de la imagen pipeline: solo el código y el lock. Nunca data/,
+# models/, mlflow.db ni los .env.
+*
+!pyproject.toml
+!uv.lock
+!README.md
+!bolsalab/
+!tests/
+**/__pycache__

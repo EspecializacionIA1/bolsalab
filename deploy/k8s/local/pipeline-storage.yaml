@@ -1,0 +1,41 @@
+# Volumen de trabajo del flujo de Airflow en kind: data/, reports/ y models/
+# que comparten las etapas. Solo para pruebas locales.
+#
+# local-path guarda el volumen en un solo nodo: el primer pod que lo usa lo
+# ata a ese nodo y Kubernetes manda ahí todas las etapas después.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bolsalab-trabajo
+  namespace: airflow
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 5Gi
+---
+# Pod auxiliar para subir la encuesta al volumen (kubectl cp) y bajar
+# resultados. Crea las carpetas con dueño 1000, el usuario de la imagen
+# pipeline. Se borra cuando ya no se necesita; el volumen se queda.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cargador
+  namespace: airflow
+spec:
+  containers:
+    - name: cargador
+      image: busybox:1.37
+      command: ["sh", "-c"]
+      args:
+        - mkdir -p /trabajo/data/external/crash /trabajo/data/interim /trabajo/data/processed
+          /trabajo/reports/figures /trabajo/models
+          && chown -R 1000:1000 /trabajo
+          && sleep 86400
+      volumeMounts:
+        - name: trabajo
+          mountPath: /trabajo
+  volumes:
+    - name: trabajo
+      persistentVolumeClaim:
+        claimName: bolsalab-trabajo

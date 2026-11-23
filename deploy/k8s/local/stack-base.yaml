@@ -1,0 +1,203 @@
+# Base del stack local en kind: Postgres y MLflow (namespace mlops) y la API
+# (namespace bolsalab). Solo pruebas locales: la contraseña es de juguete.
+#   kubectl apply -f deploy/k8s/local/stack-base.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: bolsalab
+---
+# ---------------------------------------------------------------- Postgres
+# Base de datos de MLflow (base "mlflow") y de Airflow (base "airflow", se crea aparte).
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres
+  namespace: mlops
+stringData:
+  POSTGRES_USER: bolsalab
+  POSTGRES_PASSWORD: solo-local
+  POSTGRES_DB: mlflow
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres
+  namespace: mlops
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: mlops
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate          # un solo pod a la vez sobre el mismo volumen
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17
+          envFrom:
+            - secretRef:
+                name: postgres
+          env:
+            # Subcarpeta: la raíz del volumen trae lost+found y Postgres no arranca ahí.
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          ports:
+            - containerPort: 5432
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "bolsalab"]
+            periodSeconds: 5
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: mlops
+spec:
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+# ---------------------------------------------------------------- MLflow
+# Registro en Postgres y artefactos en su propio volumen, servidos por el
+# mismo MLflow (--serve-artifacts): los clientes no necesitan acceso al disco.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mlflow-artifacts
+  namespace: mlops
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow
+  namespace: mlops
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mlflow
+  template:
+    metadata:
+      labels:
+        app: mlflow
+    spec:
+      containers:
+        - name: mlflow
+          image: bolsalab/mlflow:dev-pg3      # deploy/mlflow + el driver psycopg (v3)
+          imagePullPolicy: IfNotPresent
+          command:
+            - mlflow
+            - server
+            - --host=0.0.0.0
+            - --port=5000
+            - --workers=1
+            - --backend-store-uri=postgresql://bolsalab:solo-local@postgres:5432/mlflow
+            - --artifacts-destination=/mlflow/artifacts
+            - --serve-artifacts
+            # Nombres con los que se llega a MLflow: port-forward y desde otros pods.
+            - --allowed-hosts=localhost:5000,mlflow:5000,mlflow.mlops:5000,mlflow.mlops.svc.cluster.local:5000
+            - --cors-allowed-origins=http://localhost:5000
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: artifacts
+              mountPath: /mlflow/artifacts
+      volumes:
+        - name: artifacts
+          persistentVolumeClaim:
+            claimName: mlflow-artifacts
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlflow
+  namespace: mlops
+spec:
+  selector:
+    app: mlflow
+  ports:
+    - port: 5000
+      targetPort: 5000
+---
+# ---------------------------------------------------------------- API
+# FastAPI con el modelo de models/ copiado en la imagen (backend/Dockerfile).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: bolsalab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: bolsalab/api:dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: 512Mi
+            limits:
+              memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: bolsalab
+spec:
+  selector:
+    app: api
+  ports:
+    - port: 8000
+      targetPort: 8000

@@ -1,0 +1,8 @@
+# Clúster local de BolsaLAB: un plano de control y dos nodos de trabajo.
+#   kind create cluster --name dslab --config deploy/k8s/local/kind-config.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+  - role: worker
+  - role: worker
