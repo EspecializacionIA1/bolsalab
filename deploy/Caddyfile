@@ -17,6 +17,12 @@
 		root * /srv/site
 		file_server
 	}
+
+	handle_errors 404 {
+		root * /srv/site
+		rewrite * /404.html
+		file_server
+	}
 }
 
 www.{$DOMAIN} {

@@ -4,7 +4,7 @@ BolsaLAB corre en un solo servidor de AWS (`us-east-1`), con el dominio `bolsa-l
 
 | Dirección | Qué es | Acceso |
 |---|---|---|
-| https://bolsa-lab.site | La app. Por ahora, una página temporal | Pública |
+| https://bolsa-lab.site | La app en Next.js, en construcción | Pública |
 | https://bolsa-lab.site/api/docs | La API en FastAPI y su documentación | Pública, con límite de 30 predicciones por minuto por IP |
 | https://mlflow.bolsa-lab.site | Experimentos y modelo registrado | Usuario y contraseña del equipo |
 
@@ -12,7 +12,7 @@ BolsaLAB corre en un solo servidor de AWS (`us-east-1`), con el dominio `bolsa-l
 
 ```
 Navegador ──443──▶ EC2 t3.small ──▶ Caddy ──┬─▶ /api/* ──▶ API (FastAPI + modelo crash_reaction_v1)
-                                             ├─▶ página estática (luego el frontend)
+                                             ├─▶ frontend (sitio estático de Next.js)
                                              └─▶ MLflow ──┬─ corridas: SQLite en el disco
                                                           └─ modelos: S3
 ```
@@ -35,7 +35,7 @@ Navegador ──443──▶ EC2 t3.small ──▶ Caddy ──┬─▶ /api/*
 | `server.tf` | EC2 `t3.small` con Amazon Linux 2023, disco cifrado de 20 GB, CPU en modo `standard` (si se pasa, se vuelve lento pero no cobra más), solo IMDSv2 y una IP fija |
 | `user_data.sh` | Al primer arranque instala Docker y docker compose, y crea 2 GB de swap |
 | `iam.tf` | Rol del servidor: SSM, el bucket de artefactos y solo los parámetros `/bolsalab/*` |
-| `storage.tf` | Bucket privado y cifrado para los artefactos de MLflow |
+| `storage.tf` | Bucket privado y cifrado para los artefactos de MLflow y el frontend compilado (carpeta `frontend/`) |
 | `budget.tf` | Aviso por correo al 80 % del gasto real y si el pronóstico pasa los USD 25 |
 | `dns.tf` | Zona de `bolsa-lab.site`: `A` para la raíz y para `mlflow`, `CNAME` de `www`, `CAA` (solo Let's Encrypt) y SPF y DMARC, que rechazan correos falsos con nuestro dominio |
 
@@ -46,13 +46,12 @@ El dominio está comprado en GoDaddy; allá solo cambiamos los servidores DNS po
 | Archivo | Para qué |
 |---|---|
 | `docker-compose.yml` | Los servicios `caddy`, `api` y `mlflow`. La imagen de la API se construye con `backend/Dockerfile` |
-| `Caddyfile` | Qué dominio va a dónde y dónde se pide la contraseña |
+| `Caddyfile` | Qué dominio va a dónde, dónde se pide la contraseña y qué página se muestra en un 404 |
 | `mlflow/Dockerfile` | MLflow 3.18 con boto3, instalado con uv |
 | `mlflow/requirements.txt` | Versiones exactas, generadas con `uv pip compile requirements.in` |
-| `site/index.html` | La página temporal |
-| `start.sh` | Lee el hash de la contraseña de Parameter Store, crea el `.env` del servidor y levanta todo |
+| `start.sh` | Lee el hash de la contraseña de Parameter Store, crea el `.env` del servidor, descarga el frontend desde S3 y levanta todo |
 
-En el servidor, el repo vive en `/opt/bolsalab/repo` y los datos en `/opt/bolsalab/data` (certificados y base de MLflow), fuera de los contenedores.
+En el servidor, el repo vive en `/opt/bolsalab/repo` y los datos en `/opt/bolsalab/data` (certificados, base de MLflow y frontend compilado), fuera de los contenedores.
 
 ## Usuario y contraseña de MLflow
 
@@ -96,7 +95,7 @@ cd infra/main
 terraform output -raw connect_command
 ```
 
-**Actualizar lo que corre en el servidor:** lo hace solo el CD (`.github/workflows/cd.yml`). Después de cada merge a `main`, si la CI pasó, GitHub Actions pide credenciales temporales a AWS con OIDC (rol `bolsalab-github-deploy`, definido en `infra/main/github.tf`), le manda al servidor por SSM `git pull` y `deploy/start.sh`, y comprueba `/api/health`. El rol solo lo puede usar este repo desde `main`, y solo puede mandar comandos a este servidor. El pipeline lee dos variables del repo en GitHub: `AWS_DEPLOY_ROLE_ARN` y `SERVER_ID` (`terraform output deploy_role_arn` y `terraform output server_id`).
+**Actualizar lo que corre en el servidor:** lo hace solo el CD (`.github/workflows/cd.yml`). Después de cada merge a `main`, si la CI pasó, GitHub Actions compila el frontend, pide credenciales temporales a AWS con OIDC (rol `bolsalab-github-deploy`, definido en `infra/main/github.tf`), sube el sitio a la carpeta `frontend/` del bucket, le manda al servidor por SSM `git pull` y `deploy/start.sh`, y comprueba `/api/health`. El rol solo lo puede usar este repo desde `main`, y solo puede mandar comandos a este servidor y escribir en esa carpeta. El pipeline lee dos variables del repo en GitHub: `AWS_DEPLOY_ROLE_ARN` y `SERVER_ID` (`terraform output deploy_role_arn` y `terraform output server_id`).
 
 A mano, si hace falta revisar algo en el servidor:
 ```bash
@@ -105,6 +104,16 @@ sudo git pull && sudo bash start.sh
 sudo docker compose ps
 sudo docker compose logs mlflow --tail 30
 ```
+
+**Probar en local como en producción** (el frontend compilado, Caddy y la API en Docker). Necesita un `deploy/.env` con valores de prueba y `DOMAIN=localhost`:
+```powershell
+cd frontend
+npm run build
+cd ..\deploy
+$env:SITE_DIR = "../frontend/out"
+docker compose up --build --no-deps api caddy
+```
+Queda en `https://localhost`; el navegador advierte del certificado porque es local.
 
 **Publicar las corridas y el modelo en MLflow** (no reentrena ni toca el 20 % de prueba), con el `.env` apuntando al servidor:
 ```bash

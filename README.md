@@ -40,7 +40,7 @@ El MLflow del equipo está publicado en https://mlflow.bolsa-lab.site (con usuar
 
 | Dirección | Qué es |
 |---|---|
-| https://bolsa-lab.site | La app (por ahora, una página temporal) |
+| https://bolsa-lab.site | La app en Next.js, en construcción |
 | https://mlflow.bolsa-lab.site | Experimentos y modelo registrado |
 
 Todo corre en AWS y está escrito en Terraform (`infra/`) y Docker Compose (`deploy/`). Cómo está armado, cómo se despliega y cómo se apaga está en [`docs/infraestructura.md`](docs/infraestructura.md).
@@ -137,7 +137,7 @@ bolsalab/
 ├── tests/                 ← Pruebas del paquete
 ├── app/                   ← Prototipo en Streamlit
 ├── backend/               ← API en FastAPI que expone el modelo
-├── frontend/prototypes/   ← Prototipos HTML validados con usuarios
+├── frontend/              ← App en Next.js; prototypes/ guarda los prototipos HTML
 ├── infra/                 ← Terraform: servidor, red, DNS y presupuesto en AWS
 └── deploy/                ← Docker Compose y Caddy: lo que corre en el servidor
 ```

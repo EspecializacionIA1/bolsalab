@@ -1,5 +1,4 @@
 # Despliegue en el servidor después de cada merge a main, solo si la CI pasó.
-# Hace lo mismo que se hacía a mano por SSM: git pull y deploy/start.sh.
 name: CD
 
 on:
@@ -19,6 +18,7 @@ concurrency:
 
 env:
   AWS_REGION: us-east-1
+  ARTIFACTS_BUCKET: bolsa-lab-site-mlflow-artifacts
   SERVER_ID: ${{ vars.SERVER_ID }}
 
 jobs:
@@ -28,11 +28,30 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Compilar el frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
       - name: Credenciales de AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Subir el frontend
+        run: aws s3 sync frontend/out "s3://$ARTIFACTS_BUCKET/frontend/" --delete --only-show-errors
 
       - name: Actualizar el servidor
         run: |

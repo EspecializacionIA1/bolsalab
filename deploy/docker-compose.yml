@@ -13,7 +13,7 @@ services:
       MLFLOW_PASSWORD_HASH: ${MLFLOW_PASSWORD_HASH}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./site:/srv/site:ro
+      - ${SITE_DIR:-/opt/bolsalab/data/site}:/srv/site:ro
       # Certificados HTTPS: se guardan para no pedirlos de nuevo en cada reinicio.
       - /opt/bolsalab/data/caddy:/data
     depends_on:
