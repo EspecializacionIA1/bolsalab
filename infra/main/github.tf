@@ -31,7 +31,6 @@ resource "aws_iam_role" "github_deploy" {
   })
 }
 
-# Lo único que puede hacer: mandar comandos SSM a este servidor y leer su resultado.
 resource "aws_iam_role_policy" "github_deploy" {
   name = "${var.project}-github-deploy"
   role = aws_iam_role.github_deploy.id
@@ -54,6 +53,21 @@ resource "aws_iam_role_policy" "github_deploy" {
         Effect   = "Allow"
         Action   = "ssm:GetCommandInvocation"
         Resource = "*"
+      },
+      {
+        Sid      = "ListFrontendFiles"
+        Effect   = "Allow"
+        Action   = "s3:ListBucket"
+        Resource = aws_s3_bucket.artifacts.arn
+        Condition = {
+          StringLike = { "s3:prefix" = ["frontend/*"] }
+        }
+      },
+      {
+        Sid      = "WriteFrontendFiles"
+        Effect   = "Allow"
+        Action   = ["s3:PutObject", "s3:DeleteObject"]
+        Resource = "${aws_s3_bucket.artifacts.arn}/frontend/*"
       }
     ]
   })
