@@ -1,8 +1,8 @@
 export const hero = {
-  title: "Descubre cómo reaccionarías",
-  highlight: "antes de que la bolsa caiga",
+  title: "Estima cómo reaccionarías",
+  highlight: "si la bolsa cae",
   body: "Responde 13 preguntas y compara tu perfil con el de 54.704 inversionistas reales que vivieron la caída de marzo de 2020. Te mostramos qué pesó en tu resultado y qué puedes aprender.",
-  facts: ["13 preguntas", "Unos 3 minutos", "Sin registro", "Gratis"],
+  facts: ["13 preguntas", "Unos 3 minutos", "Sin registro"],
   secondaryCta: { label: "Cómo funciona", href: "/how-it-works" },
 };
 
@@ -26,7 +26,7 @@ export const steps = {
     },
     {
       number: "04",
-      title: "Prepárate",
+      title: "Aprende",
       body: "Lecciones cortas y una regla personal para la próxima caída.",
     },
   ],

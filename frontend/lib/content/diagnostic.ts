@@ -1,4 +1,5 @@
 import type { Answers } from "@/schemas/prediction";
+import type { ApiErrorKind } from "@/services/api-client";
 
 export type BlockId = "about" | "economy" | "knowledge";
 
@@ -59,6 +60,33 @@ export const navigation = {
   why: "¿Por qué preguntamos esto?",
   ageLabel: "Tu edad en años",
   progress: (current: number, total: number, block: string) => `Pregunta ${current} de ${total} · ${block}`,
+};
+
+export const calculating = {
+  title: "Estamos calculando tu perfil",
+  body: "Comparamos tus respuestas con las de 54.704 inversionistas y vemos cuáles pesaron más. Tarda unos segundos.",
+};
+
+const failedError = {
+  title: "No pudimos calcular tu resultado",
+  body: "Puede ser tu conexión o nuestro servidor. Tus respuestas siguen aquí.",
+  action: "Intentar de nuevo",
+};
+
+export const submitErrors: Record<ApiErrorKind, typeof failedError> = {
+  validation: {
+    title: "Falta una respuesta",
+    body: "Revisa la pregunta marcada y vuelve a intentarlo. Tus otras respuestas siguen aquí.",
+    action: "Ir a la pregunta",
+  },
+  rate_limit: {
+    title: "Vamos un poco rápido",
+    body: "Recibimos muchas solicitudes desde tu conexión. Espera un minuto y vuelve a intentarlo; tus respuestas siguen aquí.",
+    action: "Intentar de nuevo",
+  },
+  network: failedError,
+  server: failedError,
+  invalid_response: failedError,
 };
 
 export const blocks: Record<BlockId, { title: string; intro?: string; note?: string }> = {
