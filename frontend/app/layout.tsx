@@ -18,7 +18,7 @@ const jetBrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: { default: "BolsaLAB", template: "%s · BolsaLAB" },
-  description: "Descubre cómo reaccionarías si la bolsa cae, antes de que pase.",
+  description: "Estima cómo reaccionarías si la bolsa cae.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
