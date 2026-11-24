@@ -2,7 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { AgeWarnings } from "@/components/result/AgeWarnings";
 import { categoryColors } from "@/components/result/categoryColors";
+import { QuizChallenge } from "@/components/result/challenges/QuizChallenge";
+import { RuleBuilder } from "@/components/result/challenges/RuleBuilder";
+import { FactorsSection } from "@/components/result/FactorsSection";
 import { TercileBar } from "@/components/result/TercileBar";
 import { Button } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -12,7 +16,7 @@ import { comparison, headlines, meaning, restart } from "@/lib/content/result";
 
 export function ResultView() {
   const router = useRouter();
-  const { result, ready, reset } = useDiagnostic();
+  const { answers, result, ready, reset } = useDiagnostic();
 
   useEffect(() => {
     if (ready && !result) router.replace("/diagnostic");
@@ -44,6 +48,15 @@ export function ResultView() {
         </dl>
 
         <Notice>{comparison}</Notice>
+
+        <AgeWarnings age={answers.age} warnings={result.warnings} />
+
+        <FactorsSection factors={result.top_factors} />
+
+        <QuizChallenge result={result} answers={answers} />
+
+        <RuleBuilder result={result} assetsLevel={answers.assets_level} />
+
         <Button variant="ghost" className="w-full sm:w-fit" onClick={reset}>
           {restart}
         </Button>
