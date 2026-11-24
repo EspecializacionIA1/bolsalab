@@ -1,4 +1,4 @@
-import type { Result } from "@/schemas/prediction";
+import type { Factor, Result } from "@/schemas/prediction";
 
 type Headline = {
   label: string;
@@ -42,6 +42,22 @@ export const meaning = [
   { title: "Qué significa", body: "Tus respuestas se parecen a las de ese grupo de inversionistas." },
   { title: "Qué no significa", body: "Que vayas a vender, ni que vender sea un error en tu caso." },
 ];
+
+export const ageWarnings = {
+  outsideRange: "Tu edad está fuera de las edades del estudio (18 a 93 años). Toma este resultado con más cuidado.",
+  senior: "Con personas de 60 años o más, el modelo acierta menos que con las demás. Toma este resultado con más cuidado.",
+};
+
+export const factorsCopy = {
+  title: "Lo que más pesó",
+  directions: {
+    increases: "Te acerca a vender",
+    decreases: "Te ayuda a mantener",
+  } satisfies Record<Factor["direction"], string>,
+  actionable: { title: "Lo que puedes trabajar", body: "Esto cambia si aprendes." },
+  situation: { title: "Tu situación", body: "No depende de ti, pero es bueno conocerla." },
+  note: "Esto explica cómo llegó el modelo a tu resultado, no por qué haces lo que haces. Ninguna respuesta es buena o mala.",
+};
 
 export const comparison =
   "Te comparamos con 54.704 inversionistas de Japón que vivieron la caída de marzo de 2020, cuando el COVID-19 hizo caer las bolsas del mundo. 1 de cada 5 vendió todo o parte. No mostramos un porcentaje porque el modelo es una herramienta de aprendizaje y una cifra exacta daría una falsa precisión.";
