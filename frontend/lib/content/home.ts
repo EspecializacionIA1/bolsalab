@@ -1,5 +1,4 @@
 export const hero = {
-  eyebrow: "Inteligencia artificial que se explica",
   title: "Descubre cómo reaccionarías",
   highlight: "antes de que la bolsa caiga",
   body: "Responde 13 preguntas y compara tu perfil con el de 54.704 inversionistas reales que vivieron la caída de marzo de 2020. Te mostramos qué pesó en tu resultado y qué puedes aprender.",
