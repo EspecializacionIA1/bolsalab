@@ -11,15 +11,15 @@ const LOW_ASSETS_LEVEL = 2;
 const OTHER_MAX_LENGTH = 120;
 
 type RuleBuilderProps = {
-  result: Result;
+  result: Result | null;
   assetsLevel?: number;
 };
 
-function suggestedActions(result: Result, assetsLevel?: number): PlanActionId[] {
+function suggestedActions(result: Result | null, assetsLevel?: number): PlanActionId[] {
   const suggested: PlanActionId[] = [];
-  if (result.category === "more_likely") suggested.push("wait");
+  if (result?.category === "more_likely") suggested.push("wait");
   if (assetsLevel !== undefined && assetsLevel <= LOW_ASSETS_LEVEL) suggested.push("needMoney", "cushion");
-  if (result.overconfident) suggested.push("howDoIKnow");
+  if (result?.overconfident) suggested.push("howDoIKnow");
   return suggested;
 }
 
@@ -29,11 +29,11 @@ function joinActions(items: string[]) {
 }
 
 export function RuleBuilder({ result, assetsLevel }: RuleBuilderProps) {
+  const suggested = suggestedActions(result, assetsLevel);
   const [drop, setDrop] = useState(planCopy.drops[1]);
-  const [selected, setSelected] = useState<PlanActionId[]>([]);
+  const [selected, setSelected] = useState<PlanActionId[]>(() => (suggested.length > 0 ? suggested : ["wait"]));
   const [other, setOther] = useState("");
 
-  const suggested = suggestedActions(result, assetsLevel);
   const actions = [
     ...planActions.filter((action) => selected.includes(action.id)).map((action) => action.label),
     ...(other.trim() ? [other.trim()] : []),
@@ -44,15 +44,7 @@ export function RuleBuilder({ result, assetsLevel }: RuleBuilderProps) {
   }
 
   return (
-    <section aria-labelledby="plan-title" className="flex flex-col gap-6 border-t border-border pt-10">
-      <div className="flex flex-col gap-2">
-        <Eyebrow>{planCopy.label}</Eyebrow>
-        <h2 id="plan-title" className="text-2xl font-medium tracking-[-0.01em] md:text-3xl">
-          {planCopy.title}
-        </h2>
-        <p className="text-muted">{planCopy.intro}</p>
-      </div>
-
+    <div className="flex flex-col gap-6">
       <fieldset className="flex flex-col gap-3">
         <legend className="mb-3 font-medium">{planCopy.dropQuestion}</legend>
         <div className="flex flex-wrap gap-2">
@@ -65,7 +57,8 @@ export function RuleBuilder({ result, assetsLevel }: RuleBuilderProps) {
       </fieldset>
 
       <fieldset className="flex flex-col gap-3">
-        <legend className="mb-3 font-medium">{planCopy.actionsQuestion}</legend>
+        <legend className="mb-1 font-medium">{planCopy.actionsQuestion}</legend>
+        <p className="text-sm text-muted">{planCopy.prefilled}</p>
         <div className="flex flex-wrap gap-2">
           {planActions.map((action) => (
             <Chip
@@ -106,11 +99,11 @@ export function RuleBuilder({ result, assetsLevel }: RuleBuilderProps) {
       </div>
 
       <div className="flex flex-col items-start gap-2">
-        <Button variant="ghost" disabled={actions.length === 0} onClick={() => window.print()}>
+        <Button disabled={actions.length === 0} onClick={() => window.print()}>
           {planCopy.print}
         </Button>
         <p className="text-sm text-muted">{planCopy.privacy}</p>
       </div>
-    </section>
+    </div>
   );
 }

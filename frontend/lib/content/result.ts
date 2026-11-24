@@ -62,4 +62,12 @@ export const factorsCopy = {
 export const comparison =
   "Te comparamos con 54.704 inversionistas de Japón que vivieron la caída de marzo de 2020, cuando el COVID-19 hizo caer las bolsas del mundo. 1 de cada 5 vendió todo o parte. No mostramos un porcentaje porque el modelo es una herramienta de aprendizaje y una cifra exacta daría una falsa precisión.";
 
+export const nextStep = {
+  label: "Siguiente paso",
+  title: "Arma tu regla para una caída",
+  body: "Decide hoy qué vas a revisar antes de tomar una decisión si tus inversiones caen. Unos 2 minutos.",
+  action: "Armar mi regla",
+  href: "/plan",
+};
+
 export const restart = "Repetir el diagnóstico";

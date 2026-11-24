@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { AgeWarnings } from "@/components/result/AgeWarnings";
 import { categoryColors } from "@/components/result/categoryColors";
-import { QuizChallenge } from "@/components/result/challenges/QuizChallenge";
-import { RuleBuilder } from "@/components/result/challenges/RuleBuilder";
 import { FactorsSection } from "@/components/result/FactorsSection";
+import { NextStep } from "@/components/result/NextStep";
+import { ReviewSection } from "@/components/result/review/ReviewSection";
 import { TercileBar } from "@/components/result/TercileBar";
 import { Button } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -53,9 +53,9 @@ export function ResultView() {
 
         <FactorsSection factors={result.top_factors} />
 
-        <QuizChallenge result={result} answers={answers} />
+        <ReviewSection result={result} answers={answers} />
 
-        <RuleBuilder result={result} assetsLevel={answers.assets_level} />
+        <NextStep />
 
         <Button variant="ghost" className="w-full sm:w-fit" onClick={reset}>
           {restart}

@@ -1,12 +1,11 @@
 export type PlanActionId = "wait" | "needMoney" | "reason" | "cushion" | "news" | "howDoIKnow" | "talk";
 
 export const planCopy = {
-  label: "Reto 2",
-  title: "Tu regla antes de vender",
-  intro: "Decide hoy, con calma, cómo vas a pensar el día que el mercado caiga. Arma tu regla tocando las opciones.",
+  back: "← Volver a mi resultado",
   dropQuestion: "Si mis inversiones caen",
   drops: ["10 %", "20 %", "30 %"],
   actionsQuestion: "antes de decidir, voy a",
+  prefilled: "Marcamos algunas para empezar. Cambia lo que quieras.",
   suggested: "Para ti",
   otherLabel: "Otra cosa que harás (opcional)",
   ruleTitle: "Mi regla",

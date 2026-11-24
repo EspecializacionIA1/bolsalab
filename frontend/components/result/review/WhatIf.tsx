@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { submitErrors } from "@/lib/content/diagnostic";
-import { originalQuestions, whatIfCopy, type KnowledgeField } from "@/lib/content/quiz";
+import { reviewQuestions, whatIfCopy, type KnowledgeField } from "@/lib/content/quiz";
 import type { Answers, Result } from "@/schemas/prediction";
 import { ApiError, type ApiErrorKind } from "@/services/api-client";
 import { predict } from "@/services/prediction-service";
@@ -25,7 +25,7 @@ export function WhatIf({ field, answers, current }: WhatIfProps) {
     setLoading(true);
     setError(null);
     try {
-      const result = await predict({ ...answers, [field]: originalQuestions[field].correct });
+      const result = await predict({ ...answers, [field]: reviewQuestions[field].correct });
       setNext(result.category);
     } catch (caught) {
       setError(caught instanceof ApiError ? caught.kind : "server");
