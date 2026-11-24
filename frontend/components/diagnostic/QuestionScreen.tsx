@@ -19,10 +19,11 @@ type QuestionScreenProps = {
   number: number;
   value: AnswerValue;
   onAnswer: (value: AnswerValue) => void;
+  alert?: ReactNode;
   children: ReactNode;
 };
 
-export function QuestionScreen({ question, number, value, onAnswer, children }: QuestionScreenProps) {
+export function QuestionScreen({ question, number, value, onAnswer, alert, children }: QuestionScreenProps) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const block = blocks[question.block];
   const progressLabel = navigation.progress(number, questions.length, block.title);
@@ -37,6 +38,8 @@ export function QuestionScreen({ question, number, value, onAnswer, children }: 
         <p className="font-mono text-xs tracking-[0.06em] text-muted uppercase">{progressLabel}</p>
         <Progress current={number} total={questions.length} label={progressLabel} />
       </div>
+
+      {alert}
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-16">
         <section className="flex min-w-0 flex-col gap-6">
