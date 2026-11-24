@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { TopBar } from "@/components/layout/TopBar";
+import { DiagnosticProvider } from "@/context/DiagnosticContext";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -29,7 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-dvh flex-col">
         <TopBar />
-        {children}
+        <DiagnosticProvider>{children}</DiagnosticProvider>
       </body>
     </html>
   );
