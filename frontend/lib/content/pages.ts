@@ -17,7 +17,7 @@ export const pages = {
   study: {
     name: "El estudio",
     title: "Lo que pasó en el estudio",
-    description: "Quiénes vendieron más en la caída de 2020 y qué tan bien acierta el modelo.",
+    description: "Quiénes vendieron más cuando la bolsa cayó en marzo de 2020.",
   },
   glossary: {
     name: "Glosario",
@@ -27,7 +27,7 @@ export const pages = {
   howItWorks: {
     name: "Cómo funciona",
     title: "Cómo funciona",
-    description: "De dónde salen los datos, qué hace el modelo, qué tan bien acierta y sus límites.",
+    description: "De dónde sale tu resultado, qué tan bien acierta y qué no puede decirte.",
   },
   simulator: {
     name: "Simulador",
