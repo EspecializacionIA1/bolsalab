@@ -62,6 +62,15 @@ export const factorsCopy = {
 export const comparison =
   "Te comparamos con 54.704 inversionistas de Japón que vivieron la caída de marzo de 2020, cuando el COVID-19 hizo caer las bolsas del mundo. 1 de cada 5 vendió todo o parte. No mostramos un porcentaje porque el modelo es una herramienta de aprendizaje y una cifra exacta daría una falsa precisión.";
 
+export const figure = {
+  caption: "Tu figura muestra la tendencia de tus respuestas de hoy.",
+  labels: {
+    less_likely: "Figura decorativa: tu tendencia es la del tercio que menos vende.",
+    similar: "Figura decorativa: tu tendencia es la del tercio del medio.",
+    more_likely: "Figura decorativa: tu tendencia es la del tercio que más vende.",
+  } satisfies Record<Result["category"], string>,
+};
+
 export const nextStep = {
   label: "Siguiente paso",
   title: "Arma tu regla para una caída",
