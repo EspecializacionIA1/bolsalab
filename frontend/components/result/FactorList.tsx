@@ -25,8 +25,8 @@ export function FactorList({ factors, maxImpact }: FactorListProps) {
               <span>{factor.label}</span>
               <span className={`font-mono text-xs ${colors.text}`}>{factorsCopy.directions[factor.direction]}</span>
             </div>
-            <span aria-hidden className="h-1.5 rounded-[1px] bg-surface-raised">
-              <span className={`block h-full rounded-[1px] ${colors.bar}`} style={{ width: `${width}%` }} />
+            <span aria-hidden className="print-track h-1.5 rounded-[1px] bg-surface-raised">
+              <span className={`print-bar block h-full rounded-[1px] ${colors.bar}`} style={{ width: `${width}%` }} />
             </span>
           </li>
         );

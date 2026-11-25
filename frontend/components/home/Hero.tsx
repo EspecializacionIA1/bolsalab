@@ -31,7 +31,7 @@ export function Hero() {
         </ul>
       </div>
 
-      <FigureBox className="hidden lg:block">
+      <FigureBox className="hidden w-full lg:block">
         <WireFigure />
       </FigureBox>
     </section>

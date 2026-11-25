@@ -15,6 +15,12 @@ export type QuizQuestion = {
 
 export const knowledgeFields: KnowledgeField[] = ["interest", "inflation", "diversification"];
 
+export const knowledgeTopics: Record<KnowledgeField, string> = {
+  interest: "Interés compuesto",
+  inflation: "Inflación",
+  diversification: "Diversificación",
+};
+
 const DONT_KNOW = "dont_know";
 
 function diagnosticQuestion(field: KnowledgeField) {
@@ -66,8 +72,8 @@ export const reviewCopy = {
   sureAndWrong: "Estabas seguro y no era. Le pasa a mucha gente.",
   whyInACrash: "¿Y en una caída?",
   next: "Siguiente",
-  finish: "Ver mi resumen",
-  summaryTitle: "Tu resumen",
+  finish: "Terminar",
+  summaryTitle: "Cómo te fue",
   summary: (correct: number, total: number) => `Acertaste ${correct} de ${total}.`,
   summaryWithCertainty: (sure: number, correct: number, total: number) =>
     `Te sentiste seguro en ${sure} de ${total}. Acertaste ${correct} de ${total}.`,

@@ -8,10 +8,15 @@ type AgeWarningsProps = {
   warnings: string[];
 };
 
-export function AgeWarnings({ age, warnings }: AgeWarningsProps) {
+export function ageMessages(age: number | undefined, warnings: string[]): string[] {
   const messages: string[] = [];
   if (warnings.includes("age_outside_training_range")) messages.push(ageWarnings.outsideRange);
   if (age !== undefined && age >= SENIOR_AGE) messages.push(ageWarnings.senior);
+  return messages;
+}
+
+export function AgeWarnings({ age, warnings }: AgeWarningsProps) {
+  const messages = ageMessages(age, warnings);
 
   if (messages.length === 0) return null;
 

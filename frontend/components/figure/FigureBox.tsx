@@ -5,7 +5,7 @@ const gridBackground =
 
 export function FigureBox({ className = "", children }: { className?: string; children: ReactNode }) {
   return (
-    <div className={`aspect-square w-full rounded-md border border-border bg-surface ${gridBackground} ${className}`}>
+    <div className={`aspect-square rounded-md border border-border bg-surface ${gridBackground} ${className}`}>
       {children}
     </div>
   );
