@@ -21,7 +21,7 @@ MLFLOW_PASSWORD_HASH='$HASH'
 EOF
 
 mkdir -p /opt/bolsalab/data/caddy /opt/bolsalab/data/mlflow /opt/bolsalab/data/site
-aws s3 sync "s3://$ARTIFACTS_BUCKET/frontend/" /opt/bolsalab/data/site --delete --only-show-errors --region "$AWS_REGION"
+aws s3 sync "s3://$ARTIFACTS_BUCKET/frontend/" /opt/bolsalab/data/site --delete --exact-timestamps --only-show-errors --region "$AWS_REGION"
 docker compose up -d --build
 # Caddy se recrea siempre para que lea el Caddyfile actual: si solo cambió ese archivo,
 # compose no lo nota. Los certificados se conservan en /opt/bolsalab/data/caddy.
