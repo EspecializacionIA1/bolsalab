@@ -34,3 +34,33 @@
     outline-offset: 2px;
   }
 }
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  body * {
+    display: none !important;
+  }
+
+  body *:has(#rule-card),
+  #rule-card,
+  #rule-card * {
+    display: revert !important;
+  }
+
+  body *:has(#rule-card) {
+    border: 0 !important;
+  }
+
+  #rule-card,
+  #rule-card * {
+    color: #000 !important;
+    background: transparent !important;
+  }
+
+  #rule-card {
+    border-color: #999 !important;
+  }
+}

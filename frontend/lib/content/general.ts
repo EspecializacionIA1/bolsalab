@@ -1,6 +1,7 @@
 export const brand = {
   name: "BolsaLAB",
   tag: "LAB",
+  description: "Estima cómo reaccionarías si la bolsa cae.",
 };
 
 export const topBar = {
