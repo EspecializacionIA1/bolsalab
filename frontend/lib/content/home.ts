@@ -27,7 +27,7 @@ export const steps = {
     {
       number: "04",
       title: "Aprende",
-      body: "Lecciones cortas y una regla personal para la próxima caída.",
+      body: "Repasa lo que fallaste y arma tu regla para la próxima caída.",
     },
   ],
 };
