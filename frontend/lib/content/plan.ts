@@ -1,9 +1,10 @@
-export type PlanActionId = "wait" | "needMoney" | "reason" | "cushion" | "news" | "howDoIKnow" | "talk";
+import type { PlanActionId } from "@/schemas/rule";
 
 export const planCopy = {
   back: "← Volver a mi resultado",
   dropQuestion: "Si mis inversiones caen",
   drops: ["10 %", "20 %", "30 %"],
+  defaultDrop: "20 %",
   actionsQuestion: "antes de decidir, voy a",
   prefilled: "Marcamos algunas para empezar. Cambia lo que quieras.",
   suggested: "Para ti",
@@ -12,8 +13,8 @@ export const planCopy = {
   rule: (drop: string, actions: string) => `Si mis inversiones caen ${drop}, antes de decidir voy a ${actions}.`,
   and: "y",
   empty: "Elige al menos una acción para armar tu regla.",
-  print: "Imprimir o guardar en PDF",
-  privacy: "Tu regla no sale de tu navegador: no la guardamos ni la vemos.",
+  summary: "Ver mi resumen →",
+  privacy: "Tu regla se queda en esta pestaña: no la guardamos en ningún servidor.",
   note: "BolsaLAB no te dice qué comprar ni qué vender. Esta regla es tuya.",
 };
 

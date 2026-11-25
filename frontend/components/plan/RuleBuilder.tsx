@@ -1,46 +1,23 @@
-"use client";
-
-import { useState } from "react";
-import { Button } from "@/components/ui/Button";
+import { ruleSentence } from "@/components/plan/rule";
 import { Chip } from "@/components/ui/Chip";
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import { planActions, planCopy, type PlanActionId } from "@/lib/content/plan";
-import type { Result } from "@/schemas/prediction";
+import { planActions, planCopy } from "@/lib/content/plan";
+import type { PlanActionId, SavedRule } from "@/schemas/rule";
 
-const LOW_ASSETS_LEVEL = 2;
 const OTHER_MAX_LENGTH = 120;
 
 type RuleBuilderProps = {
-  result: Result | null;
-  assetsLevel?: number;
+  rule: SavedRule;
+  suggested: PlanActionId[];
+  onChange: (rule: SavedRule) => void;
 };
 
-function suggestedActions(result: Result | null, assetsLevel?: number): PlanActionId[] {
-  const suggested: PlanActionId[] = [];
-  if (result?.category === "more_likely") suggested.push("wait");
-  if (assetsLevel !== undefined && assetsLevel <= LOW_ASSETS_LEVEL) suggested.push("needMoney", "cushion");
-  if (result?.overconfident) suggested.push("howDoIKnow");
-  return suggested;
-}
-
-function joinActions(items: string[]) {
-  if (items.length <= 1) return items.join("");
-  return `${items.slice(0, -1).join(", ")} ${planCopy.and} ${items.at(-1)}`;
-}
-
-export function RuleBuilder({ result, assetsLevel }: RuleBuilderProps) {
-  const suggested = suggestedActions(result, assetsLevel);
-  const [drop, setDrop] = useState(planCopy.drops[1]);
-  const [selected, setSelected] = useState<PlanActionId[]>(() => (suggested.length > 0 ? suggested : ["wait"]));
-  const [other, setOther] = useState("");
-
-  const actions = [
-    ...planActions.filter((action) => selected.includes(action.id)).map((action) => action.label),
-    ...(other.trim() ? [other.trim()] : []),
-  ];
+export function RuleBuilder({ rule, suggested, onChange }: RuleBuilderProps) {
+  const sentence = ruleSentence(rule);
 
   function toggle(id: PlanActionId) {
-    setSelected((current) => (current.includes(id) ? current.filter((item) => item !== id) : [...current, id]));
+    const actions = rule.actions.includes(id) ? rule.actions.filter((item) => item !== id) : [...rule.actions, id];
+    onChange({ ...rule, actions });
   }
 
   return (
@@ -49,7 +26,13 @@ export function RuleBuilder({ result, assetsLevel }: RuleBuilderProps) {
         <legend className="mb-3 font-medium">{planCopy.dropQuestion}</legend>
         <div className="flex flex-wrap gap-2">
           {planCopy.drops.map((option) => (
-            <Chip key={option} type="radio" name="plan-drop" checked={drop === option} onChange={() => setDrop(option)}>
+            <Chip
+              key={option}
+              type="radio"
+              name="plan-drop"
+              checked={rule.drop === option}
+              onChange={() => onChange({ ...rule, drop: option })}
+            >
               {option}
             </Chip>
           ))}
@@ -65,7 +48,7 @@ export function RuleBuilder({ result, assetsLevel }: RuleBuilderProps) {
               key={action.id}
               type="checkbox"
               name="plan-actions"
-              checked={selected.includes(action.id)}
+              checked={rule.actions.includes(action.id)}
               onChange={() => toggle(action.id)}
             >
               <span>{action.label}</span>
@@ -80,29 +63,18 @@ export function RuleBuilder({ result, assetsLevel }: RuleBuilderProps) {
         <label className="mt-2 flex flex-col gap-2 text-sm text-muted">
           {planCopy.otherLabel}
           <input
-            value={other}
+            value={rule.other}
             maxLength={OTHER_MAX_LENGTH}
-            onChange={(event) => setOther(event.target.value)}
+            onChange={(event) => onChange({ ...rule, other: event.target.value })}
             className="h-11 rounded-md border border-border bg-surface px-4 text-base text-foreground focus:border-primary"
           />
         </label>
       </fieldset>
 
-      <div id="rule-card" aria-live="polite" className="flex flex-col gap-2 rounded-md border border-primary/60 bg-primary/5 p-5">
+      <div aria-live="polite" className="flex flex-col gap-2 rounded-md border border-primary/60 bg-primary/5 p-5">
         <Eyebrow>{planCopy.ruleTitle}</Eyebrow>
-        {actions.length > 0 ? (
-          <p className="text-xl leading-snug">{planCopy.rule(drop, joinActions(actions))}</p>
-        ) : (
-          <p className="text-muted">{planCopy.empty}</p>
-        )}
+        {sentence ? <p className="text-xl leading-snug">{sentence}</p> : <p className="text-muted">{planCopy.empty}</p>}
         <p className="text-sm text-muted">{planCopy.note}</p>
-      </div>
-
-      <div className="flex flex-col items-start gap-2">
-        <Button disabled={actions.length === 0} onClick={() => window.print()}>
-          {planCopy.print}
-        </Button>
-        <p className="text-sm text-muted">{planCopy.privacy}</p>
       </div>
     </div>
   );
