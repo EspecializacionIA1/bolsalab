@@ -35,32 +35,35 @@
   }
 }
 
+@page {
+  margin: 10mm;
+}
+
 @media print {
+  html {
+    color-scheme: light;
+    font-size: 11px;
+  }
+
   body {
-    background: #fff;
-  }
-
-  body * {
-    display: none !important;
-  }
-
-  body *:has(#rule-card),
-  #rule-card,
-  #rule-card * {
-    display: revert !important;
-  }
-
-  body *:has(#rule-card) {
-    border: 0 !important;
-  }
-
-  #rule-card,
-  #rule-card * {
+    background: #fff !important;
     color: #000 !important;
-    background: transparent !important;
   }
 
-  #rule-card {
+  #summary-sheet,
+  #summary-sheet * {
+    color: #000 !important;
+    background-color: transparent !important;
     border-color: #999 !important;
+  }
+
+  #summary-sheet .print-bar {
+    background-color: #000 !important;
+    print-color-adjust: exact;
+  }
+
+  #summary-sheet .print-track {
+    background-color: #ddd !important;
+    print-color-adjust: exact;
   }
 }

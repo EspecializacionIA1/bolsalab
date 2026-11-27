@@ -2,6 +2,7 @@
 
 import { createContext, use, useEffect, useReducer, type ReactNode } from "react";
 import type { Answers, Result } from "@/schemas/prediction";
+import type { SavedRule } from "@/schemas/rule";
 import {
   emptyDiagnostic,
   loadDiagnostic,
@@ -15,11 +16,13 @@ type Action =
   | { type: "load"; saved: SavedDiagnostic }
   | { type: "answer"; answers: Partial<Answers> }
   | { type: "result"; result: Result }
+  | { type: "rule"; rule: SavedRule }
   | { type: "reset" };
 
 type DiagnosticContextValue = State & {
   setAnswer: <Field extends keyof Answers>(field: Field, value: Answers[Field] | undefined) => void;
   setResult: (result: Result) => void;
+  setRule: (rule: SavedRule) => void;
   reset: () => void;
 };
 
@@ -33,6 +36,8 @@ function reducer(state: State, action: Action): State {
       return { ...state, answers: { ...state.answers, ...action.answers }, result: null };
     case "result":
       return { ...state, result: action.result };
+    case "rule":
+      return { ...state, rule: action.rule };
     case "reset":
       return { ...emptyDiagnostic, ready: true };
   }
@@ -40,20 +45,21 @@ function reducer(state: State, action: Action): State {
 
 export function DiagnosticProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, { ...emptyDiagnostic, ready: false });
-  const { answers, result, ready } = state;
+  const { answers, result, rule, ready } = state;
 
   useEffect(() => {
     dispatch({ type: "load", saved: loadDiagnostic() });
   }, []);
 
   useEffect(() => {
-    if (ready) saveDiagnostic({ answers, result });
-  }, [answers, result, ready]);
+    if (ready) saveDiagnostic({ answers, result, rule });
+  }, [answers, result, rule, ready]);
 
   const value: DiagnosticContextValue = {
     ...state,
     setAnswer: (field, answer) => dispatch({ type: "answer", answers: { [field]: answer } }),
     setResult: (newResult) => dispatch({ type: "result", result: newResult }),
+    setRule: (newRule) => dispatch({ type: "rule", rule: newRule }),
     reset: () => dispatch({ type: "reset" }),
   };
 

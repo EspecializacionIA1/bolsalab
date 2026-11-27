@@ -14,7 +14,7 @@ export function TercileBar({ category }: { category: Result["category"] }) {
           const current = item === category;
           return (
             <li key={item} aria-current={current ? "true" : undefined} className="flex flex-col gap-2">
-              <span className={`h-2 rounded-[1px] ${current ? categoryColors[item].bar : "bg-surface-raised"}`} />
+              <span className={`h-2 rounded-[1px] ${current ? `print-bar ${categoryColors[item].bar}` : "print-track bg-surface-raised"}`} />
               <span className={`text-sm ${current ? "font-medium text-foreground" : "text-muted"}`}>
                 {tercileBar.segments[item]}
               </span>
