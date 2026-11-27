@@ -62,13 +62,28 @@ export const factorsCopy = {
 export const comparison =
   "Te comparamos con 54.704 inversionistas de Japón que vivieron la caída de marzo de 2020, cuando el COVID-19 hizo caer las bolsas del mundo. 1 de cada 5 vendió todo o parte. No mostramos un porcentaje porque el modelo es una herramienta de aprendizaje y una cifra exacta daría una falsa precisión.";
 
+export type ProfilePart = "knowledge" | "situation" | "confidence";
+export type PartEffect = "increases" | "decreases" | "low";
+
 export const figure = {
-  caption: "Tu figura muestra la tendencia de tus respuestas de hoy.",
-  labels: {
-    less_likely: "Figura decorativa: tu tendencia es la del tercio que menos vende.",
-    similar: "Figura decorativa: tu tendencia es la del tercio del medio.",
-    more_likely: "Figura decorativa: tu tendencia es la del tercio que más vende.",
-  } satisfies Record<Result["category"], string>,
+  caption: "Cada punta es una parte de tu perfil. Su color muestra si, para el modelo, te acerca a vender o te ayuda a mantener.",
+  parts: {
+    knowledge: { position: "Arriba", name: "Lo que sabes" },
+    situation: { position: "Derecha", name: "Tu situación" },
+    confidence: { position: "Izquierda", name: "Tu confianza" },
+  } satisfies Record<ProfilePart, { position: string; name: string }>,
+  details: {
+    knowledge: (correct: number) => `Acertaste ${correct} de 3 preguntas de finanzas.`,
+    confidence: (answer: string) => `Respondiste «${answer}».`,
+    confidenceHigh: "Es alta frente a tus aciertos.",
+    situation: "Edad, ingreso, ahorros y otros datos.",
+  },
+  effects: {
+    increases: "Te acerca a vender",
+    decreases: "Te ayuda a mantener",
+    low: "Pesó poco en tu caso",
+  } satisfies Record<PartEffect, string>,
+  label: (parts: string) => `Tu figura: ${parts}.`,
 };
 
 export const nextStep = {

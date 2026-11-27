@@ -30,8 +30,8 @@ export function ResultView() {
 
   return (
     <main className="mx-auto grid w-full max-w-[1312px] gap-8 px-4 py-12 md:px-8 md:py-20 lg:grid-cols-[minmax(0,48rem)_300px] lg:items-start lg:gap-16">
-      <aside className="order-first lg:sticky lg:top-8 lg:order-last">
-        <ResultFigure category={result.category} />
+      <aside className="hidden lg:sticky lg:top-8 lg:order-last lg:block">
+        <ResultFigure result={result} answers={answers} />
       </aside>
       <div className="flex min-w-0 flex-col gap-6">
         <Eyebrow className={color}>{headline.label}</Eyebrow>
@@ -41,6 +41,10 @@ export function ResultView() {
         <p className="text-lg text-muted">{headline.body}</p>
 
         <TercileBar category={result.category} />
+
+        <div className="lg:hidden">
+          <ResultFigure result={result} answers={answers} />
+        </div>
 
         <dl className="grid gap-4 sm:grid-cols-2">
           {meaning.map((item) => (
