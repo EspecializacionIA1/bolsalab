@@ -59,10 +59,17 @@ type WireFigureProps = {
   shift?: PieceShift;
   pieceStroke?: string;
   pieceFill?: string;
+  cornerFills?: [string, string, string];
   label?: string;
 };
 
-export function WireFigure({ shift = "none", pieceStroke = "stroke-holds", pieceFill = "fill-holds", label }: WireFigureProps) {
+export function WireFigure({
+  shift = "none",
+  pieceStroke = "stroke-holds",
+  pieceFill = "fill-holds",
+  cornerFills,
+  label,
+}: WireFigureProps) {
   const [angle, setAngle] = useState(0.6);
 
   useEffect(() => {
@@ -107,7 +114,13 @@ export function WireFigure({ shift = "none", pieceStroke = "stroke-holds", piece
         strokeWidth={1.2}
       />
       {corners.map((corner, index) => (
-        <circle key={index} cx={corner.x} cy={corner.y} r={2.2} className={pieceFill} />
+        <circle
+          key={index}
+          cx={corner.x}
+          cy={corner.y}
+          r={cornerFills ? 4.5 : 2.2}
+          className={cornerFills ? cornerFills[index] : pieceFill}
+        />
       ))}
     </svg>
   );
